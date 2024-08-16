@@ -1,4 +1,4 @@
-package ua.marchenko.artauction.enums.artwork
+package ua.marchenko.artauction.artwork.enums
 
 enum class ArtworkStyle {
     REALISM,
