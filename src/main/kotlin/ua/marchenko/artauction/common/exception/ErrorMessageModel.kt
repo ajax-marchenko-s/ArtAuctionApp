@@ -1,4 +1,4 @@
-package ua.marchenko.artauction.exception
+package ua.marchenko.artauction.common.exception
 
 import java.time.LocalDateTime
 
