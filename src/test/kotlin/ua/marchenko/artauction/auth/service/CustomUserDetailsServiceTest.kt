@@ -10,6 +10,7 @@ import ua.marchenko.artauction.auth.mapper.toUserDetails
 import ua.marchenko.artauction.common.user.getRandomUser
 import ua.marchenko.artauction.user.repository.UserRepository
 import kotlin.test.Test
+import ua.marchenko.artauction.common.getRandomEmail
 
 class CustomUserDetailsServiceTest {
 
@@ -19,18 +20,26 @@ class CustomUserDetailsServiceTest {
 
     @Test
     fun `loadUserByUsername should return UserDetails by username if user with this email exists`() {
-        val email = "email"
+        //GIVEN
+        val email = getRandomEmail()
         val user = getRandomUser(email = email)
+
         `when`(mockUserRepository.findByEmail(email)).thenReturn(user)
+
+        //WHEN
         val result = userDetailsService.loadUserByUsername(email)
+
+        //THEN
         assertEquals(result, user.toUserDetails())
     }
 
     @Test
     fun `loadUserByUsername should throw UsernameNotFoundException if there is no user with this email`() {
-        val email = "email"
+        //GIVEN
+        val email = getRandomEmail()
         `when`(mockUserRepository.findByEmail(email)).thenReturn(null)
+
+        //WHEN-THEN
         assertThrows<UsernameNotFoundException> { userDetailsService.loadUserByUsername(email) }
     }
-
 }

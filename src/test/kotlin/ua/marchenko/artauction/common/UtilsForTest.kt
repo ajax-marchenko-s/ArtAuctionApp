@@ -6,3 +6,7 @@ fun getRandomString(length: Int = 10): String {
         .map { allowedChars.random() }
         .joinToString("")
 }
+
+fun getRandomEmail(): String {
+    return getRandomString(10) + "@email.com"
+}

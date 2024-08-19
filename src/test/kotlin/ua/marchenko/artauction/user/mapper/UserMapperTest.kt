@@ -11,17 +11,24 @@ class UserMapperTest {
 
     @Test
     fun `UserToUserResponse should return UserResponse if User has not null properties (except fields from bl)`() {
+        //GIVEN
         val user = getRandomUser(role = Role.ARTIST)
         val expectedUser =
-            UserResponse(user.id ?: "", user.name ?: "", user.lastName ?: "", user.email ?: "", Role.ARTIST)
+            UserResponse(user.id!!, user.name!!, user.lastName!!, user.email!!, user.role!!)
+
+        //WHEN
         val result = user.toUserResponse()
+
+        //THEN
         assertEquals(expectedUser, result)
     }
 
     @Test
     fun `UserToUserResponse should throwIllegalArgumentException if User has null properties (except fields from bl)`() {
+        //GIVEN
         val user = getRandomUser(role = Role.ARTIST, email = null)
+
+        //WHEN-THEN
         assertThrows<IllegalArgumentException> { user.toUserResponse() }
     }
-
 }

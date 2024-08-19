@@ -10,6 +10,7 @@ import ua.marchenko.artauction.auction.service.AuctionService
 import ua.marchenko.artauction.common.auction.getRandomAuction
 import ua.marchenko.artauction.common.auction.getRandomAuctionRequest
 import kotlin.test.Test
+import ua.marchenko.artauction.common.getRandomString
 
 class AuctionControllerTest {
 
@@ -18,43 +19,67 @@ class AuctionControllerTest {
 
     @Test
     fun `getAllAuctions should return a list of AuctionResponse`() {
+        //GIVEN
         val auctions = listOf(getRandomAuction())
         `when`(mockAuctionService.getAll()).thenReturn(auctions)
+
+        //WHEN
         val result = auctionController.getAllAuctions()
+
+        //THEN
         assertEquals(1, result.size)
         assertEquals(auctions[0].toAuctionResponse(), result[0])
     }
 
     @Test
     fun `getAllAuctions should return an empty list if there are no auction`() {
+        //GIVEN
         `when`(mockAuctionService.getAll()).thenReturn(listOf())
+
+        //WHEN
         val result = auctionController.getAllAuctions()
+
+        //THEN
         assertEquals(0, result.size)
     }
 
     @Test
     fun `getAuctionById should return auction with given id if auction with this id exists`() {
-        val id = "1"
+        //GIVEN
+        val id = getRandomString()
         val auction = getRandomAuction(id = id)
+
         `when`(mockAuctionService.getById(id)).thenReturn(auction)
+
+        //WHEN
         val result = auctionController.getAuctionById(id)
+
+        //THEN
         assertEquals(auction.toAuctionResponse(), result)
     }
 
     @Test
     fun `getAuctionById should throw AuctionNotFoundException if there is no auction with this id`() {
-        val id = "1"
+        //GIVEN
+        val id = getRandomString()
         `when`(mockAuctionService.getById(id)).thenThrow(AuctionNotFoundException(id))
+
+        //WHEN-THEN
         assertThrows<AuctionNotFoundException> { auctionController.getAuctionById(id) }
     }
 
     @Test
     fun `save should return AuctionResponse`() {
+        //GIVEN
         val auctionRequest = getRandomAuctionRequest()
         val auction = getRandomAuction()
+
         `when`(mockAuctionService.save(auctionRequest)).thenReturn(auction.toAuctionResponse())
+
+        //WHEN
         val result = auctionController.addAuction(auctionRequest)
+
+        //THEN
         assertEquals(auction.toAuctionResponse(), result)
     }
-
 }

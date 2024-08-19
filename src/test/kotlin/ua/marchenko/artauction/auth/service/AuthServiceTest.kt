@@ -39,39 +39,47 @@ class AuthServiceTest {
 
     @Test
     fun `authentication should return AuthenticationResponse if provided credentials are correct`() {
+        //GIVEN
         val authenticationRequest = getRandomAuthenticationRequest()
         val usernamePasswordAuthenticationToken =
             UsernamePasswordAuthenticationToken(authenticationRequest.email, authenticationRequest.password)
         val userDetails = CustomUserDetails(getRandomString(), getRandomString(), Role.ARTIST)
-        val expectedResponse = AuthenticationResponse("smth_like_token")
+        val expectedResponse = AuthenticationResponse(getRandomString())
 
         `when`(mockUserDetailsService.loadUserByUsername(authenticationRequest.email)).thenReturn(userDetails)
         `when`(mockJwtService.generate(userDetails)).thenReturn(expectedResponse.accessToken)
 
+        //WHEN
         val result = authenticationService.authentication(authenticationRequest)
 
+        //THEN
         verify(mockAuthManager).authenticate(usernamePasswordAuthenticationToken)
         assertEquals(expectedResponse, result)
     }
 
     @Test
     fun `authentication should throw RuntimeException if provided credentials are incorrect`() {
+        //GIVEN
         val authenticationRequest = getRandomAuthenticationRequest()
         val usernamePasswordAuthenticationToken =
             UsernamePasswordAuthenticationToken(authenticationRequest.email, authenticationRequest.password)
+
         `when`(mockAuthManager.authenticate(usernamePasswordAuthenticationToken))
             .thenThrow(RuntimeException("Unauthorized"))
+
+        //WHEN-THEN
         assertThrows<RuntimeException> { authenticationService.authentication(authenticationRequest) }
     }
 
     @Test
     fun `register should create user and return access token if user with provided email doesnt exist`() {
+        //GIVEN
         val registrationRequest = getRandomRegistrationRequest()
         val encodedPassword = getRandomString()
         val savedUser = registrationRequest.toUser().copy(password = encodedPassword, id = getRandomString())
         val userDetails =
             CustomUserDetails(registrationRequest.email, registrationRequest.password, registrationRequest.role)
-        val expectedResponse = AuthenticationResponse("smth_like_token")
+        val expectedResponse = AuthenticationResponse(getRandomString())
 
         `when`(mockUserRepository.existsByEmail(registrationRequest.email)).thenReturn(false)
         `when`(mockPasswordEncoder.encode(registrationRequest.password)).thenReturn(encodedPassword)
@@ -79,16 +87,20 @@ class AuthServiceTest {
         `when`(mockUserDetailsService.loadUserByUsername(registrationRequest.email)).thenReturn(userDetails)
         `when`(mockJwtService.generate(userDetails)).thenReturn(expectedResponse.accessToken)
 
+        //WHEN
         val result = authenticationService.register(registrationRequest)
 
+        //THEN
         assertEquals(expectedResponse, result)
     }
 
     @Test
     fun `register should throw UserAlreadyExistsException if user with email is exist`() {
+        //GIVEN
         val registrationRequest = getRandomRegistrationRequest()
         `when`(mockUserRepository.existsByEmail(registrationRequest.email)).thenReturn(true)
+
+        //WHEN-THEN
         assertThrows<UserAlreadyExistsException> { authenticationService.register(registrationRequest) }
     }
-
 }
