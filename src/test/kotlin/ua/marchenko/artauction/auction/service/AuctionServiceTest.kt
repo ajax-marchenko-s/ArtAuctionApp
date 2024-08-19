@@ -3,11 +3,18 @@ package ua.marchenko.artauction.auction.service
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.*
+import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.service.ArtworkService
 import ua.marchenko.artauction.auction.exception.AuctionNotFoundException
+import ua.marchenko.artauction.auction.exception.InvalidAuctionOperationException
+import ua.marchenko.artauction.auction.mapper.toAuction
+import ua.marchenko.artauction.auction.mapper.toAuctionResponse
 import ua.marchenko.artauction.auction.model.Auction
 import ua.marchenko.artauction.auction.repository.AuctionRepository
+import ua.marchenko.artauction.common.artwork.getRandomArtwork
 import ua.marchenko.artauction.common.auction.getRandomAuction
+import ua.marchenko.artauction.common.auction.getRandomAuctionRequest
+import ua.marchenko.artauction.common.getRandomString
 import kotlin.test.Test
 
 class AuctionServiceTest {
@@ -48,6 +55,31 @@ class AuctionServiceTest {
         assertThrows<AuctionNotFoundException> { auctionService.findById(id) }
     }
 
-    //todo add test for save method
+    @Test
+    fun `save should change artwork status and save`() {
+        val newAuctionId = getRandomString()
+        val artwork = getRandomArtwork()
+        val auctionRequest = getRandomAuctionRequest(artworkId = artwork.id ?: "")
+        val auction = auctionRequest.toAuction(artwork.copy(status = ArtworkStatus.ON_AUCTION), null)
+        `when`(mockArtworkService.findById(auctionRequest.artworkId)).thenReturn(artwork)
+        `when`(
+            mockArtworkService.update(
+                auctionRequest.artworkId,
+                artwork.copy(status = ArtworkStatus.ON_AUCTION),
+                true
+            )
+        ).thenReturn(artwork.copy(status = ArtworkStatus.ON_AUCTION))
+        `when`(mockAuctionRepository.save(auction)).thenReturn(auction.copy(id = newAuctionId))
+        val result = auctionService.save(auctionRequest)
+        assertEquals(auction.copy(id = newAuctionId).toAuctionResponse(), result)
+    }
+
+    @Test
+    fun `save should throw InvalidAuctionOperationException if artwork doesnt have VIEW status`() {
+        val artwork = getRandomArtwork(status = ArtworkStatus.ON_AUCTION)
+        val auctionRequest = getRandomAuctionRequest(artworkId = artwork.id ?: "")
+        `when`(mockArtworkService.findById(auctionRequest.artworkId)).thenReturn(artwork)
+        assertThrows<InvalidAuctionOperationException> { auctionService.save(auctionRequest) }
+    }
 
 }

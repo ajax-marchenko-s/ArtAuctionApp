@@ -17,9 +17,9 @@ fun getRandomAuction(id: String = getRandomString(10), artwork: Artwork? = getRa
     )
 }
 
-fun getRandomAuctionRequest(): AuctionRequest {
+fun getRandomAuctionRequest(artworkId: String = getRandomString()): AuctionRequest {
     return AuctionRequest(
-        artworkId = getRandomString(),
+        artworkId = artworkId,
         bid = 100.0,
         buyerId = null,
         startedAt = LocalDateTime.now(),
