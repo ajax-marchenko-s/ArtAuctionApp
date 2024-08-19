@@ -18,6 +18,6 @@ fun Artwork.toArtworkResponse() = ArtworkResponse(
 
 fun ArtworkRequest.toArtwork() = Artwork(null, title, description, style, width, height, null, null)
 
-private fun throwIllegalArgumentException(field: String): Nothing {
+private fun throwIllegalArgumentException(field: String): Nothing =
     throw IllegalArgumentException("Artwork entity is in an invalid state: missing required field: $field")
-}
+

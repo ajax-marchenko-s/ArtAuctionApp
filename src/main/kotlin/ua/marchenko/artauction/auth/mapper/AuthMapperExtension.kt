@@ -13,6 +13,5 @@ fun User.toUserDetails(): UserDetails = CustomUserDetails(
     this.role ?: throwIllegalArgumentException("role")
 )
 
-private fun throwIllegalArgumentException(field: String): Nothing {
+private fun throwIllegalArgumentException(field: String): Nothing =
     throw IllegalArgumentException("User entity is in an invalid state: missing required field: $field")
-}

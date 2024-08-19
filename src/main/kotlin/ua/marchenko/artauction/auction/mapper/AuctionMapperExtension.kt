@@ -8,7 +8,6 @@ import ua.marchenko.artauction.auction.model.Auction
 import ua.marchenko.artauction.user.mapper.toUserResponse
 import ua.marchenko.artauction.user.model.User
 
-
 fun Auction.toAuctionResponse() = AuctionResponse(
     id ?: throwIllegalArgumentException("id"),
     artwork?.toArtworkResponse() ?: throwIllegalArgumentException("artwork"),
@@ -20,6 +19,5 @@ fun Auction.toAuctionResponse() = AuctionResponse(
 
 fun AuctionRequest.toAuction(artwork: Artwork, buyer: User?) = Auction(null, artwork, bid, buyer, startedAt, finishedAt)
 
-private fun throwIllegalArgumentException(field: String): Nothing {
+private fun throwIllegalArgumentException(field: String): Nothing =
     throw IllegalArgumentException("Auction entity is in an invalid state: missing required field: $field")
-}

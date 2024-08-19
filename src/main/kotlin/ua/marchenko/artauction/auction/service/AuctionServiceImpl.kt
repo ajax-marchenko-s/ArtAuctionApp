@@ -10,7 +10,6 @@ import ua.marchenko.artauction.auction.exception.AuctionNotFoundException
 import ua.marchenko.artauction.auction.exception.InvalidAuctionOperationException
 import ua.marchenko.artauction.auction.mapper.toAuction
 import ua.marchenko.artauction.auction.mapper.toAuctionResponse
-import ua.marchenko.artauction.auction.model.Auction
 
 @Service
 class AuctionServiceImpl(
@@ -18,13 +17,9 @@ class AuctionServiceImpl(
     private val artworkService: ArtworkService
 ) : AuctionService {
 
-    override fun findAll(): List<Auction> {
-        return auctionRepository.getAll()
-    }
+    override fun findAll() = auctionRepository.getAll()
 
-    override fun findById(id: String): Auction {
-        return auctionRepository.getByIdOrNull(id) ?: throwAuctionNotFoundException(id)
-    }
+    override fun findById(id: String) = auctionRepository.getByIdOrNull(id) ?: throwAuctionNotFoundException(id)
 
     override fun save(auction: AuctionRequest): AuctionResponse {
         val artwork = artworkService.findById(auction.artworkId)
@@ -39,12 +34,9 @@ class AuctionServiceImpl(
         return auctionRepository.save(auction.toAuction(updatedArtwork, null)).toAuctionResponse()
     }
 
-    private fun throwAuctionNotFoundException(artworkId: String): Nothing {
-        throw AuctionNotFoundException(artworkId)
-    }
+    private fun throwAuctionNotFoundException(artworkId: String): Nothing = throw AuctionNotFoundException(artworkId)
 
-    private fun throwInvalidAuctionOperationException(message: String): Nothing {
+    private fun throwInvalidAuctionOperationException(message: String): Nothing =
         throw InvalidAuctionOperationException(message)
-    }
 
 }

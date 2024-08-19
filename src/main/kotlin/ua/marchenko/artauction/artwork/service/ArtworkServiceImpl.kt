@@ -16,13 +16,9 @@ class ArtworkServiceImpl(
     private val userService: UserService
 ) : ArtworkService {
 
-    override fun findAll(): List<Artwork> {
-        return artworkRepository.getAll()
-    }
+    override fun findAll() = artworkRepository.getAll()
 
-    override fun findById(id: String): Artwork {
-        return artworkRepository.getByIdOrNull(id) ?: throwArtworkNotFoundException(id)
-    }
+    override fun findById(id: String) = artworkRepository.getByIdOrNull(id) ?: throwArtworkNotFoundException(id)
 
     override fun save(artwork: Artwork): Artwork {
         val authentication: Authentication = SecurityContextHolder.getContext().authentication
@@ -41,11 +37,8 @@ class ArtworkServiceImpl(
         return artworkRepository.save(updatedArtwork)
     }
 
-    override fun existsById(id: String): Boolean {
-        return artworkRepository.existsById(id)
-    }
+    override fun existsById(id: String) = artworkRepository.existsById(id)
 
-    private fun throwArtworkNotFoundException(artworkId: String): Nothing {
-        throw ArtworkNotFoundException(artworkId)
-    }
+    private fun throwArtworkNotFoundException(artworkId: String): Nothing = throw ArtworkNotFoundException(artworkId)
+
 }

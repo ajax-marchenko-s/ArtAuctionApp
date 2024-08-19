@@ -1,8 +1,12 @@
 package ua.marchenko.artauction.artwork.controller
 
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import ua.marchenko.artauction.artwork.controller.dto.ArtworkRequest
-import ua.marchenko.artauction.artwork.controller.dto.ArtworkResponse
 import ua.marchenko.artauction.artwork.mapper.toArtwork
 import ua.marchenko.artauction.artwork.mapper.toArtworkResponse
 import ua.marchenko.artauction.artwork.service.ArtworkService
@@ -12,17 +16,12 @@ import ua.marchenko.artauction.artwork.service.ArtworkService
 class ArtworkController(private val artworkService: ArtworkService) {
 
     @GetMapping("{id}")
-    fun getArtworkById(@PathVariable id: String): ArtworkResponse {
-        return artworkService.findById(id).toArtworkResponse()
-    }
+    fun getArtworkById(@PathVariable id: String) = artworkService.findById(id).toArtworkResponse()
 
     @GetMapping
-    fun getAllArtworks(): List<ArtworkResponse> {
-        return artworkService.findAll().map { it.toArtworkResponse() }
-    }
+    fun getAllArtworks() = artworkService.findAll().map { it.toArtworkResponse() }
 
     @PostMapping
-    fun addArtwork(@RequestBody artwork: ArtworkRequest): ArtworkResponse {
-        return artworkService.save(artwork.toArtwork()).toArtworkResponse()
-    }
+    fun addArtwork(@RequestBody artwork: ArtworkRequest) = artworkService.save(artwork.toArtwork()).toArtworkResponse()
+
 }

@@ -2,7 +2,6 @@ package ua.marchenko.artauction.auction.service
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito.*
 import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.service.ArtworkService
 import ua.marchenko.artauction.auction.exception.AuctionNotFoundException
@@ -16,6 +15,8 @@ import ua.marchenko.artauction.common.auction.getRandomAuction
 import ua.marchenko.artauction.common.auction.getRandomAuctionRequest
 import ua.marchenko.artauction.common.getRandomString
 import kotlin.test.Test
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 
 class AuctionServiceTest {
 

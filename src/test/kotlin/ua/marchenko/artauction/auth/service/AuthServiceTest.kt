@@ -2,7 +2,6 @@ package ua.marchenko.artauction.auth.service
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito.*
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -18,6 +17,9 @@ import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.exception.UserAlreadyExistsException
 import ua.marchenko.artauction.user.repository.UserRepository
 import kotlin.test.Test
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 
 class AuthServiceTest {
 

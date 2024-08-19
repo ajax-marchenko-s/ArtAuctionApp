@@ -2,7 +2,6 @@ package ua.marchenko.artauction.artwork.service
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito.*
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
@@ -17,7 +16,9 @@ import ua.marchenko.artauction.user.service.UserService
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 
 class ArtworkServiceTest {
 

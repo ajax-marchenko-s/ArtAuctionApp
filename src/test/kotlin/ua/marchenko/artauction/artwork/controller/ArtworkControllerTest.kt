@@ -2,7 +2,6 @@ package ua.marchenko.artauction.artwork.controller
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito.*
 import ua.marchenko.artauction.artwork.exception.ArtworkNotFoundException
 import ua.marchenko.artauction.artwork.mapper.toArtwork
 import ua.marchenko.artauction.artwork.mapper.toArtworkResponse
@@ -10,6 +9,8 @@ import ua.marchenko.artauction.artwork.service.ArtworkService
 import ua.marchenko.artauction.common.artwork.getRandomArtwork
 import ua.marchenko.artauction.common.artwork.getRandomArtworkRequest
 import kotlin.test.Test
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 
 class ArtworkControllerTest {
 

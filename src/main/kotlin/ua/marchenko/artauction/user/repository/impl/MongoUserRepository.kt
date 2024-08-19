@@ -10,9 +10,7 @@ import ua.marchenko.artauction.user.repository.UserRepository
 @Repository
 class MongoUserRepository(private val mongoTemplate: MongoTemplate) : UserRepository {
 
-    override fun save(user: User): User {
-        return mongoTemplate.save(user)
-    }
+    override fun save(user: User) = mongoTemplate.save(user)
 
     override fun getByIdOrNull(id: String): User? {
         val query = Query.query(Criteria.where("id").`is`(id))
@@ -24,9 +22,7 @@ class MongoUserRepository(private val mongoTemplate: MongoTemplate) : UserReposi
         return mongoTemplate.findOne(query, User::class.java)
     }
 
-    override fun getAll(): List<User> {
-        return mongoTemplate.findAll(User::class.java)
-    }
+    override fun getAll(): List<User> = mongoTemplate.findAll(User::class.java)
 
     override fun existsByEmail(email: String): Boolean {
         val query = Query(Criteria.where("email").`is`(email))

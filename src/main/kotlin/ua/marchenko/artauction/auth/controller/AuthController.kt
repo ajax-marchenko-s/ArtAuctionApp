@@ -2,7 +2,6 @@ package ua.marchenko.artauction.auth.controller
 
 import org.springframework.web.bind.annotation.*
 import ua.marchenko.artauction.auth.controller.dto.AuthenticationRequest
-import ua.marchenko.artauction.auth.controller.dto.AuthenticationResponse
 import ua.marchenko.artauction.auth.controller.dto.RegistrationRequest
 import ua.marchenko.artauction.auth.service.AuthenticationService
 
@@ -13,12 +12,11 @@ class AuthController(
 ) {
 
     @PostMapping("/authenticate")
-    fun authenticate(@RequestBody authRequest: AuthenticationRequest): AuthenticationResponse {
-        return authenticationService.authentication(authRequest)
-    }
+    fun authenticate(@RequestBody authRequest: AuthenticationRequest) =
+        authenticationService.authentication(authRequest)
 
     @PostMapping("/registration")
-    fun registerUser(@RequestBody registrationRequest: RegistrationRequest): AuthenticationResponse {
-        return authenticationService.register(registrationRequest)
-    }
+    fun registerUser(@RequestBody registrationRequest: RegistrationRequest) =
+        authenticationService.register(registrationRequest)
+
 }
