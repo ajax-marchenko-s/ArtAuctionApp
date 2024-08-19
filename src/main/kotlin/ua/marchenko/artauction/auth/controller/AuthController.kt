@@ -1,6 +1,9 @@
 package ua.marchenko.artauction.auth.controller
 
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import ua.marchenko.artauction.auth.controller.dto.AuthenticationRequest
 import ua.marchenko.artauction.auth.controller.dto.RegistrationRequest
 import ua.marchenko.artauction.auth.service.AuthenticationService
@@ -18,5 +21,4 @@ class AuthController(
     @PostMapping("/registration")
     fun registerUser(@RequestBody registrationRequest: RegistrationRequest) =
         authenticationService.register(registrationRequest)
-
 }

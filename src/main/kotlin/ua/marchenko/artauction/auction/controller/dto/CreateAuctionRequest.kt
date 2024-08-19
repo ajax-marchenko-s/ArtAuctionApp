@@ -2,7 +2,7 @@ package ua.marchenko.artauction.auction.controller.dto
 
 import java.time.LocalDateTime
 
-data class AuctionRequest(
+data class CreateAuctionRequest(
     val artworkId: String,
     val bid: Double,
     val buyerId: String?,

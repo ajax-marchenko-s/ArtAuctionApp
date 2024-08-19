@@ -45,5 +45,4 @@ class AuthenticationServiceImpl(
         val user = userRepository.save(newUser.toUser()).toUserResponse()
         return authentication(AuthenticationRequest(user.email, registrationRequest.password))
     }
-
 }

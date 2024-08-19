@@ -13,14 +13,16 @@ import java.time.LocalDateTime
 @ControllerAdvice
 class ExceptionController {
 
+    //todo add general method handler
+
     @ExceptionHandler(ExpiredJwtException::class)
     fun handleExpiredJwtException(ex: ExpiredJwtException): ResponseEntity<ErrorMessageModel> {
-        val errorResponse = ErrorMessageModel(
+        val errorMessage = ErrorMessageModel(
             HttpStatus.UNAUTHORIZED.value(),
             "The token has expired.",
             LocalDateTime.now()
         )
-        return ResponseEntity(errorResponse, HttpStatus.UNAUTHORIZED)
+        return ResponseEntity(errorMessage, HttpStatus.UNAUTHORIZED)
     }
 
     @ExceptionHandler(NotFoundException::class)
@@ -73,5 +75,4 @@ class ExceptionController {
         )
         return ResponseEntity(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR)
     }
-
 }

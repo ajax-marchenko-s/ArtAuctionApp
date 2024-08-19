@@ -1,7 +1,7 @@
 package ua.marchenko.artauction.auction.mapper
 
 import ua.marchenko.artauction.artwork.mapper.toArtworkResponse
-import ua.marchenko.artauction.auction.controller.dto.AuctionRequest
+import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.artwork.model.Artwork
 import ua.marchenko.artauction.auction.controller.dto.AuctionResponse
 import ua.marchenko.artauction.auction.model.Auction
@@ -17,7 +17,7 @@ fun Auction.toAuctionResponse() = AuctionResponse(
     finishedAt ?: throwIllegalArgumentException("finishedAt")
 )
 
-fun AuctionRequest.toAuction(artwork: Artwork, buyer: User?) = Auction(null, artwork, bid, buyer, startedAt, finishedAt)
+fun CreateAuctionRequest.toAuction(artwork: Artwork, buyer: User?) = Auction(null, artwork, bid, buyer, startedAt, finishedAt)
 
 private fun throwIllegalArgumentException(field: String): Nothing =
     throw IllegalArgumentException("Auction entity is in an invalid state: missing required field: $field")

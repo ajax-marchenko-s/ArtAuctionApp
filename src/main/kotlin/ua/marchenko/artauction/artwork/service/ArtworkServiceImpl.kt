@@ -27,18 +27,22 @@ class ArtworkServiceImpl(
         return artworkRepository.save(artworkToSave)
     }
 
-    override fun update(artworkId: String, artwork: Artwork, isStatusUpdated: Boolean): Artwork {
-        val savedArtwork = findById(artworkId)
+    override fun update(artworkId: String, artwork: Artwork): Artwork {
+        val artworkFromDB = findById(artworkId)
         val updatedArtwork = artwork.copy(
             id = artworkId,
-            status = if (isStatusUpdated) artwork.status else savedArtwork.status,
-            artist = savedArtwork.artist
+            status = artworkFromDB.status,
+            artist = artworkFromDB.artist
         )
         return artworkRepository.save(updatedArtwork)
+    }
+
+    override fun updateStatus(artworkId: String, status: ArtworkStatus): Artwork {
+        val artworkFromDB = findById(artworkId)
+        return artworkRepository.save(artworkFromDB.copy(status = status))
     }
 
     override fun existsById(id: String) = artworkRepository.existsById(id)
 
     private fun throwArtworkNotFoundException(artworkId: String): Nothing = throw ArtworkNotFoundException(artworkId)
-
 }

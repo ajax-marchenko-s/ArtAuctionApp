@@ -1,6 +1,6 @@
 package ua.marchenko.artauction.common.artwork
 
-import ua.marchenko.artauction.artwork.controller.dto.ArtworkRequest
+import ua.marchenko.artauction.artwork.controller.dto.CreateArtworkRequest
 import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.enums.ArtworkStyle
 import ua.marchenko.artauction.artwork.model.Artwork
@@ -26,8 +26,8 @@ fun getRandomArtwork(
     )
 }
 
-fun getRandomArtworkRequest(): ArtworkRequest {
-    return ArtworkRequest(
+fun getRandomArtworkRequest(): CreateArtworkRequest {
+    return CreateArtworkRequest(
         title = getRandomString(),
         description = getRandomString(),
         style = ArtworkStyle.POP_ART,

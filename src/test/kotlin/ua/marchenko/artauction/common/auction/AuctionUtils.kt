@@ -1,7 +1,7 @@
 package ua.marchenko.artauction.common.auction
 
 import ua.marchenko.artauction.artwork.model.Artwork
-import ua.marchenko.artauction.auction.controller.dto.AuctionRequest
+import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.auction.model.Auction
 import ua.marchenko.artauction.common.artwork.getRandomArtwork
 import ua.marchenko.artauction.common.getRandomString
@@ -17,8 +17,8 @@ fun getRandomAuction(id: String = getRandomString(10), artwork: Artwork? = getRa
     )
 }
 
-fun getRandomAuctionRequest(artworkId: String = getRandomString()): AuctionRequest {
-    return AuctionRequest(
+fun getRandomAuctionRequest(artworkId: String = getRandomString()): CreateAuctionRequest {
+    return CreateAuctionRequest(
         artworkId = artworkId,
         bid = 100.0,
         buyerId = null,

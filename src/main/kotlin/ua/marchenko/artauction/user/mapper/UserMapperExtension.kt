@@ -11,4 +11,5 @@ fun User.toUserResponse() = UserResponse(
     role ?: throwIllegalArgumentException("role")
 )
 
-private fun throwIllegalArgumentException(field: String): Nothing = throw IllegalArgumentException("User entity is in an invalid state: missing required field: $field")
+private fun throwIllegalArgumentException(field: String): Nothing =
+    throw IllegalArgumentException("User entity is in an invalid state: missing required field: $field")

@@ -3,6 +3,7 @@ package ua.marchenko.artauction.user.repository.impl
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.stereotype.Repository
 import ua.marchenko.artauction.user.model.User
 import ua.marchenko.artauction.user.repository.UserRepository
@@ -13,20 +14,19 @@ class MongoUserRepository(private val mongoTemplate: MongoTemplate) : UserReposi
     override fun save(user: User) = mongoTemplate.save(user)
 
     override fun getByIdOrNull(id: String): User? {
-        val query = Query.query(Criteria.where("id").`is`(id))
+        val query = Query.query(Criteria.where("id").isEqualTo(id))
         return mongoTemplate.findOne(query, User::class.java)
     }
 
     override fun getByEmailOrNull(email: String): User? {
-        val query = Query(Criteria.where("email").`is`(email))
+        val query = Query(Criteria.where("email").isEqualTo(email))
         return mongoTemplate.findOne(query, User::class.java)
     }
 
     override fun getAll(): List<User> = mongoTemplate.findAll(User::class.java)
 
     override fun existsByEmail(email: String): Boolean {
-        val query = Query(Criteria.where("email").`is`(email))
+        val query = Query(Criteria.where("email").isEqualTo(email))
         return mongoTemplate.exists(query, User::class.java)
     }
-
 }

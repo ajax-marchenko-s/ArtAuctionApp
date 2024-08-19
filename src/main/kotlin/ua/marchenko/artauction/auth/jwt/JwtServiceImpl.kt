@@ -12,14 +12,14 @@ import java.util.Date
 @Service
 class JwtServiceImpl(
     @Value("\${security.jwt.key}")
-    private val secret_key: String,
+    private val secret: String,
 
     @Value("\${security.jwt.expiration}")
     private val expiration: Int
 ) : JwtService {
 
     private val secretKey = Keys.hmacShaKeyFor(
-        secret_key.toByteArray()
+        secret.toByteArray()
     )
 
     override fun generate(

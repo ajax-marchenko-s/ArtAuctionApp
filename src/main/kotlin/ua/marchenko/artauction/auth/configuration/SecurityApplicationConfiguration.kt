@@ -25,12 +25,11 @@ class SecurityApplicationConfiguration {
     @Bean
     fun authenticationProvider(userRepository: UserRepository): AuthenticationProvider =
         DaoAuthenticationProvider()
-            .also {
-                it.setUserDetailsService(userDetailsService(userRepository))
-                it.setPasswordEncoder(passwordEncoder())
+            .apply {
+                setUserDetailsService(userDetailsService(userRepository))
+                setPasswordEncoder(passwordEncoder())
             }
 
     @Bean
     fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager = config.authenticationManager
-
 }

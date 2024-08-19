@@ -3,6 +3,7 @@ package ua.marchenko.artauction.auction.repository.impl
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.stereotype.Repository
 import ua.marchenko.artauction.auction.model.Auction
 import ua.marchenko.artauction.auction.repository.AuctionRepository
@@ -12,10 +13,9 @@ class MongoAuctionRepository(private val mongoTemplate: MongoTemplate) : Auction
     override fun save(auction: Auction): Auction = mongoTemplate.save(auction)
 
     override fun getByIdOrNull(id: String): Auction? {
-        val query = Query.query(Criteria.where("id").`is`(id))
+        val query = Query.query(Criteria.where("id").isEqualTo(id))
         return mongoTemplate.findOne(query, Auction::class.java)
     }
 
     override fun getAll(): List<Auction> = mongoTemplate.findAll(Auction::class.java)
-
 }

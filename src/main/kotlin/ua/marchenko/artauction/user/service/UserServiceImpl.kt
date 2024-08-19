@@ -20,5 +20,4 @@ class UserServiceImpl(
         throw UserNotFoundException(value, field)
 
     private fun throwUserNotFoundException(value: String): Nothing = throw UserNotFoundException(value)
-
 }
