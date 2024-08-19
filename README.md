@@ -8,6 +8,7 @@ So firstly artist could add new artwork to the platform and then (whenever he/sh
 - Add artwork: user with role ARTIST add new artwork => artistId is set from security context, artwork status is set to VIEW
 - Create auction: user with role ARTIST create auction => artwork status is checked to be VIEW and changed to ON_AUCTION
 - Registration: user service check if user with given email exist
+- Exception handlers: global exception handler (ExceptionController) could handle general and custom common exceptions (NotFoundException etc). For example artwork service could throw ArtworkNotFoundException, but ExceptionController would catch it like NotFoundException, because *ArtworkNotFoundException : NotFoundException*
 
 ## Implemented
 - CREATE-READ operations for artwork, user and auction entities
