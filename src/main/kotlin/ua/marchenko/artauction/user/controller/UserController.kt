@@ -5,7 +5,7 @@ import ua.marchenko.artauction.user.mapper.toUserResponse
 import ua.marchenko.artauction.user.service.UserService
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v1/users")
 class UserController(private val userService: UserService) {
 
     @GetMapping("{id}")
