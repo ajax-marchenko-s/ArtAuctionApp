@@ -32,4 +32,5 @@ class CustomUserDetailsServiceTest {
         `when`(mockUserRepository.getByEmailOrNull(email)).thenReturn(null)
         assertThrows<UsernameNotFoundException> { userDetailsService.loadUserByUsername(email) }
     }
+
 }

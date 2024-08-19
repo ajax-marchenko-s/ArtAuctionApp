@@ -64,7 +64,6 @@ class ExceptionController {
     }
 
 
-
     @ExceptionHandler(Exception::class)
     fun handleException(ex: Exception): ResponseEntity<ErrorMessageModel> {
         val errorMessage = ErrorMessageModel(

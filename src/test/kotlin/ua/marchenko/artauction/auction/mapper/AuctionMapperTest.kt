@@ -17,7 +17,14 @@ class AuctionMapperTest {
     @Test
     fun `AuctionToAuctionResponse should return AuctionResponse if Auction has not null properties (except fields from business logic)`() {
         val auction = getRandomAuction()
-        val expectedAuction = AuctionResponse(auction.id ?: "", auction.artwork?.toArtworkResponse() ?: getRandomArtwork().toArtworkResponse(), auction.bid ?: 0.0, auction.buyer?.toUserResponse(), auction.startedAt ?: LocalDateTime.now(), auction.finishedAt ?: LocalDateTime.now())
+        val expectedAuction = AuctionResponse(
+            auction.id ?: "",
+            auction.artwork?.toArtworkResponse() ?: getRandomArtwork().toArtworkResponse(),
+            auction.bid ?: 0.0,
+            auction.buyer?.toUserResponse(),
+            auction.startedAt ?: LocalDateTime.now(),
+            auction.finishedAt ?: LocalDateTime.now()
+        )
         val result = auction.toAuctionResponse()
         assertEquals(expectedAuction, result)
     }

@@ -46,4 +46,5 @@ class ArtworkMapperTest {
         val result = artwork.toArtwork()
         assertEquals(expectedArtwork, result)
     }
+
 }
