@@ -32,7 +32,7 @@ class AuctionServiceImpl(
             throwInvalidAuctionOperationException("Trying to create auction with non-VIEW artwork")
         }
         val updatedArtwork = artworkService.update(
-            artwork.id ?: throwIllegalArgumentException("id"),
+            auction.artworkId,
             artwork.copy(status = ArtworkStatus.ON_AUCTION),
             isStatusUpdated = true
         )
@@ -47,7 +47,4 @@ class AuctionServiceImpl(
         throw InvalidAuctionOperationException(message)
     }
 
-    private fun throwIllegalArgumentException(field: String): Nothing {
-        throw IllegalArgumentException("Artwork entity is in an invalid state: missing required field: $field")
-    }
 }
