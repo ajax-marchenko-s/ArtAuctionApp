@@ -21,8 +21,8 @@ class UserServiceTest {
     @Test
     fun `findAll should return a list of users if there are users`() {
         val users = listOf(getRandomUser(role = Role.ARTIST), getRandomUser(role = Role.BUYER))
-        `when`(mockUserRepository.getAll()).thenReturn(users)
-        val result = userService.findAll()
+        `when`(mockUserRepository.findAll()).thenReturn(users)
+        val result = userService.getAll()
         assertEquals(2, result.size)
         assertEquals(users[0].name, result[0].name)
         assertEquals(users[1].name, result[1].name)
@@ -31,8 +31,8 @@ class UserServiceTest {
     @Test
     fun `findAll should return an empty list of users if there are no users`() {
         val users = listOf<User>()
-        `when`(mockUserRepository.getAll()).thenReturn(users)
-        val result = userService.findAll()
+        `when`(mockUserRepository.findAll()).thenReturn(users)
+        val result = userService.getAll()
         assertEquals(0, result.size)
     }
 
@@ -40,32 +40,32 @@ class UserServiceTest {
     fun `findById should return user by id if user with this id exists`() {
         val id = "1"
         val user = getRandomUser(id = id)
-        `when`(mockUserRepository.getByIdOrNull(id)).thenReturn(user)
-        val result = userService.findById(id)
+        `when`(mockUserRepository.findById(id)).thenReturn(user)
+        val result = userService.getById(id)
         assertEquals(result, user)
     }
 
     @Test
     fun `findById should throw UserNotFoundException if there is no user with this id`() {
         val id = "1"
-        `when`(mockUserRepository.getByIdOrNull(id)).thenReturn(null)
-        assertThrows<UserNotFoundException> { userService.findById(id) }
+        `when`(mockUserRepository.findById(id)).thenReturn(null)
+        assertThrows<UserNotFoundException> { userService.getById(id) }
     }
 
     @Test
     fun `findByEmail should return user by email if user with this email exists`() {
         val email = "test@example.com"
         val user = getRandomUser(email = email)
-        `when`(mockUserRepository.getByEmailOrNull(email)).thenReturn(user)
-        val result = userService.findByEmail(email)
+        `when`(mockUserRepository.findByEmail(email)).thenReturn(user)
+        val result = userService.getByEmail(email)
         assertEquals(result, user)
     }
 
     @Test
     fun `findByEmail should throw UserNotFoundException if there is no user with this email`() {
         val email = "test@example.com"
-        `when`(mockUserRepository.getByEmailOrNull(email)).thenReturn(null)
-        assertThrows<UserNotFoundException> { userService.findByEmail(email) }
+        `when`(mockUserRepository.findByEmail(email)).thenReturn(null)
+        assertThrows<UserNotFoundException> { userService.getByEmail(email) }
     }
 
 }

@@ -12,10 +12,10 @@ import ua.marchenko.artauction.auction.repository.AuctionRepository
 class MongoAuctionRepository(private val mongoTemplate: MongoTemplate) : AuctionRepository {
     override fun save(auction: Auction): Auction = mongoTemplate.save(auction)
 
-    override fun getByIdOrNull(id: String): Auction? {
+    override fun findById(id: String): Auction? {
         val query = Query.query(Criteria.where("id").isEqualTo(id))
         return mongoTemplate.findOne(query, Auction::class.java)
     }
 
-    override fun getAll(): List<Auction> = mongoTemplate.findAll(Auction::class.java)
+    override fun findAll(): List<Auction> = mongoTemplate.findAll(Auction::class.java)
 }

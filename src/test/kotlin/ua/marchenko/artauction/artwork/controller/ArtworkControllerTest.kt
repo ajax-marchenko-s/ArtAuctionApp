@@ -20,7 +20,7 @@ class ArtworkControllerTest {
     @Test
     fun `getAllArtworks should return a list of ArtworkResponse`() {
         val artworks = listOf(getRandomArtwork())
-        `when`(mockArtworkService.findAll()).thenReturn(artworks)
+        `when`(mockArtworkService.getAll()).thenReturn(artworks)
         val result = artworkController.getAllArtworks()
         assertEquals(1, result.size)
         assertEquals(artworks[0].toArtworkResponse(), result[0])
@@ -28,7 +28,7 @@ class ArtworkControllerTest {
 
     @Test
     fun `getAllArtworks should return an empty list if there are no artworks`() {
-        `when`(mockArtworkService.findAll()).thenReturn(listOf())
+        `when`(mockArtworkService.getAll()).thenReturn(listOf())
         val result = artworkController.getAllArtworks()
         assertEquals(0, result.size)
     }
@@ -37,7 +37,7 @@ class ArtworkControllerTest {
     fun `getArtworkById should return artwork by id if artwork with this id exists`() {
         val id = "1"
         val artwork = getRandomArtwork(id = id)
-        `when`(mockArtworkService.findById(id)).thenReturn(artwork)
+        `when`(mockArtworkService.getById(id)).thenReturn(artwork)
         val result = artworkController.getArtworkById(id)
         assertEquals(artwork.toArtworkResponse(), result)
     }
@@ -45,7 +45,7 @@ class ArtworkControllerTest {
     @Test
     fun `getArtworkById should throw ArtworkNotFoundException if there is no artwork with this id`() {
         val id = "1"
-        `when`(mockArtworkService.findById(id)).thenThrow(ArtworkNotFoundException(id))
+        `when`(mockArtworkService.getById(id)).thenThrow(ArtworkNotFoundException(id))
         assertThrows<ArtworkNotFoundException> { artworkController.getArtworkById(id) }
     }
 

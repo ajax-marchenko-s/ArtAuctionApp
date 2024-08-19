@@ -14,7 +14,7 @@ class CustomUserDetailsServiceImpl(
 ) : UserDetailsService {
 
     override fun loadUserByUsername(email: String): UserDetails {
-        return userRepository.getByEmailOrNull(email)
+        return userRepository.findByEmail(email)
             ?.toUserDetails()
             ?: throw UsernameNotFoundException("User not found: $email")
     }

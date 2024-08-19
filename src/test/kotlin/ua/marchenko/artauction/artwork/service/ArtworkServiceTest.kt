@@ -32,16 +32,16 @@ class ArtworkServiceTest {
     @Test
     fun `findAll should return a list of artworks if there are present`() {
         val artworks = listOf(getRandomArtwork())
-        `when`(mockArtworkRepository.getAll()).thenReturn(artworks)
-        val result = artworkService.findAll()
+        `when`(mockArtworkRepository.findAll()).thenReturn(artworks)
+        val result = artworkService.getAll()
         assertEquals(1, result.size)
         assertEquals(artworks[0].title, result[0].title)
     }
 
     @Test
     fun `findAll should return an empty list of artworks if there are no artworks`() {
-        `when`(mockArtworkRepository.getAll()).thenReturn(listOf<Artwork>())
-        val result = artworkService.findAll()
+        `when`(mockArtworkRepository.findAll()).thenReturn(listOf<Artwork>())
+        val result = artworkService.getAll()
         assertEquals(0, result.size)
     }
 
@@ -49,16 +49,16 @@ class ArtworkServiceTest {
     fun `findById should return artwork by id if artwork with this id exists`() {
         val id = "1"
         val artwork = getRandomArtwork(id = id)
-        `when`(mockArtworkRepository.getByIdOrNull(id)).thenReturn(artwork)
-        val result = artworkService.findById(id)
+        `when`(mockArtworkRepository.findById(id)).thenReturn(artwork)
+        val result = artworkService.getById(id)
         assertEquals(artwork, result)
     }
 
     @Test
     fun `findById should throw ArtworkNotFoundException if there is no artwork with this id`() {
         val id = "1"
-        `when`(mockArtworkRepository.getByIdOrNull(id)).thenReturn(null)
-        assertThrows<ArtworkNotFoundException> { artworkService.findById(id) }
+        `when`(mockArtworkRepository.findById(id)).thenReturn(null)
+        assertThrows<ArtworkNotFoundException> { artworkService.getById(id) }
     }
 
     @Test
@@ -68,7 +68,7 @@ class ArtworkServiceTest {
         SecurityContextHolder.setContext(mockSecurityContext)
         `when`(mockSecurityContext.authentication).thenReturn(mockAuthentication)
         `when`(mockAuthentication.name).thenReturn(email)
-        `when`(mockUserService.findByEmail(email)).thenReturn(user)
+        `when`(mockUserService.getByEmail(email)).thenReturn(user)
         val artwork = getRandomArtwork(status = null, artist = null)
         artworkService.save(artwork)
         verify(mockArtworkRepository).save(artwork.copy(status = ArtworkStatus.VIEW, artist = user))

@@ -21,7 +21,7 @@ class CustomUserDetailsServiceTest {
     fun `loadUserByUsername should return UserDetails by username if user with this email exists`() {
         val email = "email"
         val user = getRandomUser(email = email)
-        `when`(mockUserRepository.getByEmailOrNull(email)).thenReturn(user)
+        `when`(mockUserRepository.findByEmail(email)).thenReturn(user)
         val result = userDetailsService.loadUserByUsername(email)
         assertEquals(result, user.toUserDetails())
     }
@@ -29,7 +29,7 @@ class CustomUserDetailsServiceTest {
     @Test
     fun `loadUserByUsername should throw UsernameNotFoundException if there is no user with this email`() {
         val email = "email"
-        `when`(mockUserRepository.getByEmailOrNull(email)).thenReturn(null)
+        `when`(mockUserRepository.findByEmail(email)).thenReturn(null)
         assertThrows<UsernameNotFoundException> { userDetailsService.loadUserByUsername(email) }
     }
 

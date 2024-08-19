@@ -11,18 +11,24 @@ import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import ua.marchenko.artauction.auth.service.CustomUserDetailsServiceImpl
 
+
 @Component
 class JwtAuthenticationFilter(
     private val userDetailsService: CustomUserDetailsServiceImpl,
     private val jwtService: JwtService
 ) : OncePerRequestFilter() {
 
+    companion object {
+        const val HEADER_AUTHORIZATION = "Authorization"
+        const val HEADER_BEARER_PREFIX = "Bearer "
+    }
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        val authHeader: String? = request.getHeader("Authorization")
+        val authHeader: String? = request.getHeader(HEADER_AUTHORIZATION)
         if (authHeader.doesNotContainBearerToken()) {
             filterChain.doFilter(request, response)
             return
@@ -37,9 +43,9 @@ class JwtAuthenticationFilter(
         }
     }
 
-    private fun String?.doesNotContainBearerToken() = this == null || !this.startsWith("Bearer ")
+    private fun String?.doesNotContainBearerToken() = this == null || !this.startsWith(HEADER_BEARER_PREFIX)
 
-    private fun String.extractTokenValue() = this.substringAfter("Bearer ")
+    private fun String.extractTokenValue() = this.substringAfter(HEADER_BEARER_PREFIX)
 
     private fun updateContext(foundUser: UserDetails, request: HttpServletRequest) {
         val authToken = UsernamePasswordAuthenticationToken(foundUser, null, foundUser.authorities)

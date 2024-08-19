@@ -4,7 +4,7 @@ import ua.marchenko.artauction.artwork.model.Artwork
 
 interface ArtworkRepository {
     fun save(auction: Artwork): Artwork
-    fun getByIdOrNull(id: String): Artwork?
-    fun getAll(): List<Artwork>
+    fun findById(id: String): Artwork?
+    fun findAll(): List<Artwork>
     fun existsById(id: String): Boolean
 }

@@ -9,12 +9,12 @@ class UserServiceImpl(
     private val userRepository: UserRepository
 ) : UserService {
 
-    override fun findAll() = userRepository.getAll()
+    override fun getAll() = userRepository.findAll()
 
-    override fun findById(id: String) = userRepository.getByIdOrNull(id) ?: throwUserNotFoundException(value = id)
+    override fun getById(id: String) = userRepository.findById(id) ?: throwUserNotFoundException(value = id)
 
-    override fun findByEmail(email: String) =
-        userRepository.getByEmailOrNull(email) ?: throwUserNotFoundException(value = email, field = "email")
+    override fun getByEmail(email: String) =
+        userRepository.findByEmail(email) ?: throwUserNotFoundException(value = email, field = "email")
 
     private fun throwUserNotFoundException(value: String, field: String): Nothing =
         throw UserNotFoundException(value, field)

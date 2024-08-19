@@ -18,7 +18,7 @@ class UserControllerTest {
     @Test
     fun `getAllUsers should return a list of UserResponse`() {
         val users = listOf(getRandomUser())
-        `when`(mockUserService.findAll()).thenReturn(users)
+        `when`(mockUserService.getAll()).thenReturn(users)
         val result = userController.getAllUsers()
         assertEquals(1, result.size)
         assertEquals(users[0].toUserResponse(), result[0])
@@ -26,7 +26,7 @@ class UserControllerTest {
 
     @Test
     fun `getAllUsers should return an empty list if there are no user`() {
-        `when`(mockUserService.findAll()).thenReturn(listOf())
+        `when`(mockUserService.getAll()).thenReturn(listOf())
         val result = userController.getAllUsers()
         assertEquals(0, result.size)
     }
@@ -35,7 +35,7 @@ class UserControllerTest {
     fun `getUserById should return user with given id if auction with this id exists`() {
         val id = "1"
         val user = getRandomUser(id = id)
-        `when`(mockUserService.findById(id)).thenReturn(user)
+        `when`(mockUserService.getById(id)).thenReturn(user)
         val result = userController.getUserById(id)
         assertEquals(user.toUserResponse(), result)
     }
@@ -43,7 +43,7 @@ class UserControllerTest {
     @Test
     fun `getUserById should throw UserNotFoundException if there is no user with this id`() {
         val id = "1"
-        `when`(mockUserService.findById(id)).thenThrow(UserNotFoundException(id))
+        `when`(mockUserService.getById(id)).thenThrow(UserNotFoundException(id))
         assertThrows<UserNotFoundException> { userController.getUserById(id) }
     }
 

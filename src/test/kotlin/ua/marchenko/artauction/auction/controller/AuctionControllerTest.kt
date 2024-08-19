@@ -19,7 +19,7 @@ class AuctionControllerTest {
     @Test
     fun `getAllAuctions should return a list of AuctionResponse`() {
         val auctions = listOf(getRandomAuction())
-        `when`(mockAuctionService.findAll()).thenReturn(auctions)
+        `when`(mockAuctionService.getAll()).thenReturn(auctions)
         val result = auctionController.getAllAuctions()
         assertEquals(1, result.size)
         assertEquals(auctions[0].toAuctionResponse(), result[0])
@@ -27,7 +27,7 @@ class AuctionControllerTest {
 
     @Test
     fun `getAllAuctions should return an empty list if there are no auction`() {
-        `when`(mockAuctionService.findAll()).thenReturn(listOf())
+        `when`(mockAuctionService.getAll()).thenReturn(listOf())
         val result = auctionController.getAllAuctions()
         assertEquals(0, result.size)
     }
@@ -36,7 +36,7 @@ class AuctionControllerTest {
     fun `getAuctionById should return auction with given id if auction with this id exists`() {
         val id = "1"
         val auction = getRandomAuction(id = id)
-        `when`(mockAuctionService.findById(id)).thenReturn(auction)
+        `when`(mockAuctionService.getById(id)).thenReturn(auction)
         val result = auctionController.getAuctionById(id)
         assertEquals(auction.toAuctionResponse(), result)
     }
@@ -44,7 +44,7 @@ class AuctionControllerTest {
     @Test
     fun `getAuctionById should throw AuctionNotFoundException if there is no auction with this id`() {
         val id = "1"
-        `when`(mockAuctionService.findById(id)).thenThrow(AuctionNotFoundException(id))
+        `when`(mockAuctionService.getById(id)).thenThrow(AuctionNotFoundException(id))
         assertThrows<AuctionNotFoundException> { auctionController.getAuctionById(id) }
     }
 

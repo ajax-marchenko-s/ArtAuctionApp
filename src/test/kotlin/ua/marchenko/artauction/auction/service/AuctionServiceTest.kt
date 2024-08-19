@@ -27,16 +27,16 @@ class AuctionServiceTest {
     @Test
     fun `findAll should return a list of auctions if there are present`() {
         val auctions = listOf(getRandomAuction())
-        `when`(mockAuctionRepository.getAll()).thenReturn(auctions)
-        val result = auctionService.findAll()
+        `when`(mockAuctionRepository.findAll()).thenReturn(auctions)
+        val result = auctionService.getAll()
         assertEquals(1, result.size)
         assertEquals(auctions[0].id, result[0].id)
     }
 
     @Test
     fun `findAll should return an empty list of auctions if there are no auctions`() {
-        `when`(mockAuctionRepository.getAll()).thenReturn(listOf<Auction>())
-        val result = auctionService.findAll()
+        `when`(mockAuctionRepository.findAll()).thenReturn(listOf<Auction>())
+        val result = auctionService.getAll()
         assertEquals(0, result.size)
     }
 
@@ -44,16 +44,16 @@ class AuctionServiceTest {
     fun `findById should return auction by id if auction with this id exists`() {
         val id = "1"
         val auction = getRandomAuction(id)
-        `when`(mockAuctionRepository.getByIdOrNull(id)).thenReturn(auction)
-        val result = auctionService.findById(id)
+        `when`(mockAuctionRepository.findById(id)).thenReturn(auction)
+        val result = auctionService.getById(id)
         assertEquals(auction, result)
     }
 
     @Test
     fun `findById should throw AuctionNotFoundException if there is no artwork with this id`() {
         val id = "1"
-        `when`(mockAuctionRepository.getByIdOrNull(id)).thenReturn(null)
-        assertThrows<AuctionNotFoundException> { auctionService.findById(id) }
+        `when`(mockAuctionRepository.findById(id)).thenReturn(null)
+        assertThrows<AuctionNotFoundException> { auctionService.getById(id) }
     }
 
     @Test
@@ -62,12 +62,11 @@ class AuctionServiceTest {
         val artwork = getRandomArtwork()
         val auctionRequest = getRandomAuctionRequest(artworkId = artwork.id ?: "")
         val auction = auctionRequest.toAuction(artwork.copy(status = ArtworkStatus.ON_AUCTION), null)
-        `when`(mockArtworkService.findById(auctionRequest.artworkId)).thenReturn(artwork)
+        `when`(mockArtworkService.getById(auctionRequest.artworkId)).thenReturn(artwork)
         `when`(
-            mockArtworkService.update(
+            mockArtworkService.updateStatus(
                 auctionRequest.artworkId,
-                artwork.copy(status = ArtworkStatus.ON_AUCTION),
-                true
+                ArtworkStatus.ON_AUCTION
             )
         ).thenReturn(artwork.copy(status = ArtworkStatus.ON_AUCTION))
         `when`(mockAuctionRepository.save(auction)).thenReturn(auction.copy(id = newAuctionId))
@@ -79,7 +78,7 @@ class AuctionServiceTest {
     fun `save should throw InvalidAuctionOperationException if artwork doesnt have VIEW status`() {
         val artwork = getRandomArtwork(status = ArtworkStatus.ON_AUCTION)
         val auctionRequest = getRandomAuctionRequest(artworkId = artwork.id ?: "")
-        `when`(mockArtworkService.findById(auctionRequest.artworkId)).thenReturn(artwork)
+        `when`(mockArtworkService.getById(auctionRequest.artworkId)).thenReturn(artwork)
         assertThrows<InvalidAuctionOperationException> { auctionService.save(auctionRequest) }
     }
 

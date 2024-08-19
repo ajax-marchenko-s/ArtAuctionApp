@@ -13,12 +13,12 @@ class MongoArtworkRepository(private val mongoTemplate: MongoTemplate) : Artwork
 
     override fun save(auction: Artwork) = mongoTemplate.save(auction)
 
-    override fun getByIdOrNull(id: String): Artwork? {
+    override fun findById(id: String): Artwork? {
         val query = Query.query(Criteria.where("id").isEqualTo(id))
         return mongoTemplate.findOne(query, Artwork::class.java)
     }
 
-    override fun getAll(): List<Artwork> = mongoTemplate.findAll(Artwork::class.java)
+    override fun findAll(): List<Artwork> = mongoTemplate.findAll(Artwork::class.java)
 
     override fun existsById(id: String): Boolean {
         val query = Query.query(Criteria.where("id").isEqualTo(id))

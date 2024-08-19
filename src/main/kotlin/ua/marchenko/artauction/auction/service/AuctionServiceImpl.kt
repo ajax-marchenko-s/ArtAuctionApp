@@ -17,12 +17,12 @@ class AuctionServiceImpl(
     private val artworkService: ArtworkService,
 ) : AuctionService {
 
-    override fun findAll() = auctionRepository.getAll()
+    override fun getAll() = auctionRepository.findAll()
 
-    override fun findById(id: String) = auctionRepository.getByIdOrNull(id) ?: throw AuctionNotFoundException(id)
+    override fun getById(id: String) = auctionRepository.findById(id) ?: throw AuctionNotFoundException(id)
 
     override fun save(auction: CreateAuctionRequest): AuctionResponse {
-        val artwork = artworkService.findById(auction.artworkId)
+        val artwork = artworkService.getById(auction.artworkId)
         if (artwork.status != ArtworkStatus.VIEW) {
             throw InvalidAuctionOperationException("Trying to create auction with non-VIEW artwork")
         }

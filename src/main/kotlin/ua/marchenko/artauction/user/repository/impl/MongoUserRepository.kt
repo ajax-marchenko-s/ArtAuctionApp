@@ -13,17 +13,17 @@ class MongoUserRepository(private val mongoTemplate: MongoTemplate) : UserReposi
 
     override fun save(user: User) = mongoTemplate.save(user)
 
-    override fun getByIdOrNull(id: String): User? {
+    override fun findById(id: String): User? {
         val query = Query.query(Criteria.where("id").isEqualTo(id))
         return mongoTemplate.findOne(query, User::class.java)
     }
 
-    override fun getByEmailOrNull(email: String): User? {
+    override fun findByEmail(email: String): User? {
         val query = Query(Criteria.where("email").isEqualTo(email))
         return mongoTemplate.findOne(query, User::class.java)
     }
 
-    override fun getAll(): List<User> = mongoTemplate.findAll(User::class.java)
+    override fun findAll(): List<User> = mongoTemplate.findAll(User::class.java)
 
     override fun existsByEmail(email: String): Boolean {
         val query = Query(Criteria.where("email").isEqualTo(email))
