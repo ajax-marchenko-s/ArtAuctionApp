@@ -9,9 +9,9 @@ import ua.marchenko.artauction.user.enums.Role
 data class User(
     @MongoId(FieldType.OBJECT_ID)
     val id: String? = null,
-    val name: String?,
-    val lastName: String?,
-    val email: String?,
-    val password: String?,
-    val role: Role?
+    val name: String? = null,
+    val lastName: String? = null,
+    val email: String? = null,
+    val password: String? = null,
+    val role: Role? = null,
 )

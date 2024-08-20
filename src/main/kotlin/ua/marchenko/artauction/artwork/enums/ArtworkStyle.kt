@@ -9,5 +9,6 @@ enum class ArtworkStyle {
     ABSTRACT,
     POP_ART,
     MINIMALISM,
-    RENAISSANCE
+    RENAISSANCE,
+    UNKNOWN,
 }

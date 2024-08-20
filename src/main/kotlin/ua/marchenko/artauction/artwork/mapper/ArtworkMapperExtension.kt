@@ -2,22 +2,21 @@ package ua.marchenko.artauction.artwork.mapper
 
 import ua.marchenko.artauction.artwork.controller.dto.CreateArtworkRequest
 import ua.marchenko.artauction.artwork.controller.dto.ArtworkResponse
+import ua.marchenko.artauction.artwork.enums.ArtworkStatus
+import ua.marchenko.artauction.artwork.enums.ArtworkStyle
 import ua.marchenko.artauction.artwork.model.Artwork
 import ua.marchenko.artauction.user.mapper.toUserResponse
+import ua.marchenko.artauction.user.model.User
 
 fun Artwork.toArtworkResponse() = ArtworkResponse(
-    id ?: throwIllegalArgumentException("id"),
-    title ?: throwIllegalArgumentException("title"),
-    description ?: throwIllegalArgumentException("description"),
-    style ?: throwIllegalArgumentException("style"),
-    width ?: throwIllegalArgumentException("width"),
-    height ?: throwIllegalArgumentException("height"),
-    status ?: throwIllegalArgumentException("status"),
-    artist?.toUserResponse() ?: throwIllegalArgumentException("artist")
+    id ?: "unknown",
+    title ?: "unknown",
+    description ?: "unknown",
+    style ?: ArtworkStyle.UNKNOWN,
+    width ?: 0,
+    height ?: 0,
+    status ?: ArtworkStatus.UNKNOW,
+    artist?.toUserResponse() ?: User().toUserResponse(),
 )
 
 fun CreateArtworkRequest.toArtwork() = Artwork(null, title, description, style, width, height, null, null)
-
-private fun throwIllegalArgumentException(field: String): Nothing =
-    throw IllegalArgumentException("Artwork entity is in an invalid state: missing required field: $field")
-
