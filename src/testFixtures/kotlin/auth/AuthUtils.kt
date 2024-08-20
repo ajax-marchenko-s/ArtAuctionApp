@@ -11,7 +11,7 @@ fun getRandomRegistrationRequest(): RegistrationRequest {
         password = getRandomString(),
         name = getRandomString(),
         lastname = getRandomString(),
-        role = Role.ARTIST
+        role = Role.ARTIST,
     )
 }
 

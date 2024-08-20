@@ -10,7 +10,7 @@ import ua.marchenko.artauction.user.repository.UserRepository
 
 @Service
 class CustomUserDetailsServiceImpl(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : UserDetailsService {
 
     override fun loadUserByUsername(email: String): UserDetails {

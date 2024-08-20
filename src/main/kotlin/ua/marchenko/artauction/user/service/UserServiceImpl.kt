@@ -5,9 +5,7 @@ import ua.marchenko.artauction.user.exception.UserNotFoundException
 import ua.marchenko.artauction.user.repository.UserRepository
 
 @Service
-class UserServiceImpl(
-    private val userRepository: UserRepository
-) : UserService {
+class UserServiceImpl(private val userRepository: UserRepository) : UserService {
 
     override fun getAll() = userRepository.findAll()
 

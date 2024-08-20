@@ -12,5 +12,5 @@ data class ArtworkResponse(
     val width: Int,
     val height: Int,
     val status: ArtworkStatus,
-    val artist: UserResponse
+    val artist: UserResponse,
 )

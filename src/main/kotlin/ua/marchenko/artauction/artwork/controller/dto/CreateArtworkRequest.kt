@@ -7,5 +7,5 @@ data class CreateArtworkRequest(
     val description: String,
     val style: ArtworkStyle,
     val width: Int,
-    val height: Int
+    val height: Int,
 )

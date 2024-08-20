@@ -7,5 +7,5 @@ data class CreateAuctionRequest(
     val bid: Double,
     val buyerId: String?,
     val startedAt: LocalDateTime,
-    val finishedAt: LocalDateTime
+    val finishedAt: LocalDateTime,
 )

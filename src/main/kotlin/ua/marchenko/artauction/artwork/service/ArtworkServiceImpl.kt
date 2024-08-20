@@ -13,7 +13,7 @@ import ua.marchenko.artauction.user.service.UserService
 @Service
 class ArtworkServiceImpl(
     private val artworkRepository: ArtworkRepository,
-    private val userService: UserService
+    private val userService: UserService,
 ) : ArtworkService {
 
     override fun getAll() = artworkRepository.findAll()

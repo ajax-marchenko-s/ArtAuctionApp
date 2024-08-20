@@ -17,7 +17,7 @@ fun getRandomAuction(
         artwork = artwork,
         bid = bid,
         startedAt = LocalDateTime.now(),
-        finishedAt = LocalDateTime.now()
+        finishedAt = LocalDateTime.now(),
     )
 }
 
@@ -27,6 +27,6 @@ fun getRandomAuctionRequest(artworkId: String = getRandomString()): CreateAuctio
         bid = 100.0,
         buyerId = null,
         startedAt = LocalDateTime.now(),
-        finishedAt = LocalDateTime.now()
+        finishedAt = LocalDateTime.now(),
     )
 }

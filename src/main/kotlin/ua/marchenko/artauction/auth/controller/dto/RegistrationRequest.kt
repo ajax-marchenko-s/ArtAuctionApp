@@ -7,5 +7,5 @@ data class RegistrationRequest(
     val lastname: String,
     val email: String,
     val password: String,
-    val role: Role
+    val role: Role,
 )

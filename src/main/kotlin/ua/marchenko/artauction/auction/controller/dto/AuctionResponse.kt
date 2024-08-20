@@ -10,5 +10,5 @@ data class AuctionResponse(
     val bid: Double,
     val buyer: UserResponse?,
     val startedAt: LocalDateTime,
-    val finishedAt: LocalDateTime
+    val finishedAt: LocalDateTime,
 )

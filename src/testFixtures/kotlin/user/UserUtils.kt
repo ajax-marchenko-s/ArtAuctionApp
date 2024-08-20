@@ -7,7 +7,7 @@ import ua.marchenko.artauction.user.model.User
 fun getRandomUser(
     id: String = getRandomString(),
     role: Role? = Role.ARTIST,
-    email: String? = getRandomString(10)
+    email: String? = getRandomString(10),
 ): User {
     return User(
         id = id,
@@ -15,6 +15,6 @@ fun getRandomUser(
         lastName = getRandomString(),
         email = email,
         password = getRandomString(),
-        role = role
+        role = role,
     )
 }

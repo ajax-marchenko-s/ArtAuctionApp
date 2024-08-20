@@ -10,7 +10,7 @@ import java.util.Collections
 data class CustomUserDetails(
     private val username: String,
     private val password: String,
-    private val role: Role
+    private val role: Role,
 ) : UserDetails {
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> =

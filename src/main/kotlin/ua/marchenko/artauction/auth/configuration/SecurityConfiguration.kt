@@ -14,7 +14,7 @@ import ua.marchenko.artauction.auth.jwt.JwtAuthenticationFilter
 @Configuration
 @EnableWebSecurity
 class SecurityConfiguration(
-    private val authenticationProvider: AuthenticationProvider
+    private val authenticationProvider: AuthenticationProvider,
 ) {
     @Bean
     fun securityFilterChain(

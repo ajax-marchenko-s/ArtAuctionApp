@@ -15,7 +15,7 @@ import ua.marchenko.artauction.auth.service.CustomUserDetailsServiceImpl
 @Component
 class JwtAuthenticationFilter(
     private val userDetailsService: CustomUserDetailsServiceImpl,
-    private val jwtService: JwtService
+    private val jwtService: JwtService,
 ) : OncePerRequestFilter() {
 
     companion object {

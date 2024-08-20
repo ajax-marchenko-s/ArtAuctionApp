@@ -2,15 +2,15 @@ spring:
   application:
     name: artauction
 
-data:
-  mongodb:
-    host: localhost
-    port: 27017
-    username: root
-    password: password
-    database: admin
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      username: root
+      password: password
+      database: admin
 
 security:
   jwt:
     key: "133e80b2ff104f99fe24c5adf3a408d686ec5aed39899916b623cda190630515"
-    expiration: 1800000
+    expiration: 1800000000
