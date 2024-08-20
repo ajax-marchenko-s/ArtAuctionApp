@@ -3,8 +3,8 @@ package ua.marchenko.artauction.auth.mapper
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.springframework.security.core.userdetails.UserDetails
 import ua.marchenko.artauction.auth.data.CustomUserDetails
-import ua.marchenko.artauction.common.auth.getRandomRegistrationRequest
-import ua.marchenko.artauction.common.user.getRandomUser
+import auth.getRandomRegistrationRequest
+import user.getRandomUser
 import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.model.User
 import kotlin.test.Test

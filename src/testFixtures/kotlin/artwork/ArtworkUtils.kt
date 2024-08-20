@@ -1,11 +1,11 @@
-package ua.marchenko.artauction.common.artwork
+package artwork
 
 import ua.marchenko.artauction.artwork.controller.dto.CreateArtworkRequest
 import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.enums.ArtworkStyle
 import ua.marchenko.artauction.artwork.model.Artwork
-import ua.marchenko.artauction.common.getRandomString
-import ua.marchenko.artauction.common.user.getRandomUser
+import getRandomString
+import user.getRandomUser
 import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.model.User
 

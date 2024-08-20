@@ -7,10 +7,10 @@ import org.mockito.Mockito.`when`
 import ua.marchenko.artauction.auction.exception.AuctionNotFoundException
 import ua.marchenko.artauction.auction.mapper.toAuctionResponse
 import ua.marchenko.artauction.auction.service.AuctionService
-import ua.marchenko.artauction.common.auction.getRandomAuction
-import ua.marchenko.artauction.common.auction.getRandomAuctionRequest
+import auction.getRandomAuction
+import auction.getRandomAuctionRequest
 import kotlin.test.Test
-import ua.marchenko.artauction.common.getRandomString
+import getRandomString
 
 class AuctionControllerTest {
 

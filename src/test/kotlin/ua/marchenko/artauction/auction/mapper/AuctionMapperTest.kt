@@ -1,17 +1,20 @@
 package ua.marchenko.artauction.auction.mapper
 
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.assertThrows
 import ua.marchenko.artauction.artwork.mapper.toArtworkResponse
 import ua.marchenko.artauction.auction.controller.dto.AuctionResponse
 import ua.marchenko.artauction.auction.model.Auction
-import ua.marchenko.artauction.common.artwork.getRandomArtwork
-import ua.marchenko.artauction.common.auction.getRandomAuction
-import ua.marchenko.artauction.common.auction.getRandomAuctionRequest
+import artwork.getRandomArtwork
+import auction.getRandomAuction
+import auction.getRandomAuctionRequest
 import ua.marchenko.artauction.user.mapper.toUserResponse
 import kotlin.test.Test
 
 class AuctionMapperTest {
+
+    companion object {
+        const val defaultBid = 0.0
+    }
 
     @Test
     fun `AuctionToAuctionResponse should return AuctionResponse if Auction has not null properties (except fields from business logic)`() {
@@ -34,12 +37,15 @@ class AuctionMapperTest {
     }
 
     @Test
-    fun `AuctionToAuctionResponse should throwIllegalArgumentException if Auction has null properties (except fields from bl)`() {
-        //GIVEN
-        val auction = getRandomAuction(artwork = null)
+    fun `AuctionToAuctionResponse should set default values if Auction has null properties (except fields from bl)`() {
+        // GIVEN
+        val auction = getRandomAuction(bid = null)
 
-        //WHEN-THEN
-        assertThrows<IllegalArgumentException> { auction.toAuctionResponse() }
+        //WHEN
+        val result = auction.toAuctionResponse()
+
+        //THEN
+        assertEquals(defaultBid, result.bid)
     }
 
     @Test

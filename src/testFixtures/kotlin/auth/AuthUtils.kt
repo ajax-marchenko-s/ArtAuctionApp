@@ -1,8 +1,8 @@
-package ua.marchenko.artauction.common.auth
+package auth
 
 import ua.marchenko.artauction.auth.controller.dto.AuthenticationRequest
 import ua.marchenko.artauction.auth.controller.dto.RegistrationRequest
-import ua.marchenko.artauction.common.getRandomString
+import getRandomString
 import ua.marchenko.artauction.user.enums.Role
 
 fun getRandomRegistrationRequest(): RegistrationRequest {

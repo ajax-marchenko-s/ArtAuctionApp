@@ -1,17 +1,21 @@
-package ua.marchenko.artauction.common.auction
+package auction
 
 import ua.marchenko.artauction.artwork.model.Artwork
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.auction.model.Auction
-import ua.marchenko.artauction.common.artwork.getRandomArtwork
-import ua.marchenko.artauction.common.getRandomString
+import artwork.getRandomArtwork
+import getRandomString
 import java.time.LocalDateTime
 
-fun getRandomAuction(id: String = getRandomString(10), artwork: Artwork? = getRandomArtwork()): Auction {
+fun getRandomAuction(
+    id: String = getRandomString(10),
+    artwork: Artwork? = getRandomArtwork(),
+    bid: Double? = 100.0,
+): Auction {
     return Auction(
         id = id,
         artwork = artwork,
-        bid = 100.0,
+        bid = bid,
         startedAt = LocalDateTime.now(),
         finishedAt = LocalDateTime.now()
     )

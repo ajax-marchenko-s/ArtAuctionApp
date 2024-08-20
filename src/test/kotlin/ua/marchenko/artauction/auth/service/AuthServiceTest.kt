@@ -10,9 +10,9 @@ import ua.marchenko.artauction.auth.controller.dto.AuthenticationResponse
 import ua.marchenko.artauction.auth.data.CustomUserDetails
 import ua.marchenko.artauction.auth.jwt.JwtService
 import ua.marchenko.artauction.auth.mapper.toUser
-import ua.marchenko.artauction.common.auth.getRandomAuthenticationRequest
-import ua.marchenko.artauction.common.auth.getRandomRegistrationRequest
-import ua.marchenko.artauction.common.getRandomString
+import auth.getRandomAuthenticationRequest
+import auth.getRandomRegistrationRequest
+import getRandomString
 import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.exception.UserAlreadyExistsException
 import ua.marchenko.artauction.user.repository.UserRepository

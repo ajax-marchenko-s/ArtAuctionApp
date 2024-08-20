@@ -4,14 +4,14 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
-import ua.marchenko.artauction.common.user.getRandomUser
+import user.getRandomUser
 import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.exception.UserNotFoundException
 import ua.marchenko.artauction.user.model.User
 import ua.marchenko.artauction.user.repository.UserRepository
 import kotlin.test.Test
-import ua.marchenko.artauction.common.getRandomEmail
-import ua.marchenko.artauction.common.getRandomString
+import getRandomEmail
+import getRandomString
 
 class UserServiceTest {
 

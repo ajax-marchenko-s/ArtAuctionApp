@@ -9,10 +9,10 @@ import ua.marchenko.artauction.auction.exception.InvalidAuctionOperationExceptio
 import ua.marchenko.artauction.auction.mapper.toAuction
 import ua.marchenko.artauction.auction.mapper.toAuctionResponse
 import ua.marchenko.artauction.auction.repository.AuctionRepository
-import ua.marchenko.artauction.common.artwork.getRandomArtwork
-import ua.marchenko.artauction.common.auction.getRandomAuction
-import ua.marchenko.artauction.common.auction.getRandomAuctionRequest
-import ua.marchenko.artauction.common.getRandomString
+import artwork.getRandomArtwork
+import auction.getRandomAuction
+import auction.getRandomAuctionRequest
+import getRandomString
 import kotlin.test.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`

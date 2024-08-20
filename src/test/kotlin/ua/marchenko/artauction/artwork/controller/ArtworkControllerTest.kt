@@ -6,12 +6,12 @@ import ua.marchenko.artauction.artwork.exception.ArtworkNotFoundException
 import ua.marchenko.artauction.artwork.mapper.toArtwork
 import ua.marchenko.artauction.artwork.mapper.toArtworkResponse
 import ua.marchenko.artauction.artwork.service.ArtworkService
-import ua.marchenko.artauction.common.artwork.getRandomArtwork
-import ua.marchenko.artauction.common.artwork.getRandomArtworkRequest
+import artwork.getRandomArtwork
+import artwork.getRandomArtworkRequest
 import kotlin.test.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
-import ua.marchenko.artauction.common.getRandomString
+import getRandomString
 
 class ArtworkControllerTest {
 

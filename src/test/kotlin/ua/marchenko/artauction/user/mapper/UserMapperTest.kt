@@ -1,8 +1,7 @@
 package ua.marchenko.artauction.user.mapper
 
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.assertThrows
-import ua.marchenko.artauction.common.user.getRandomUser
+import user.getRandomUser
 import ua.marchenko.artauction.user.controller.dto.UserResponse
 import ua.marchenko.artauction.user.enums.Role
 import kotlin.test.Test
@@ -24,11 +23,14 @@ class UserMapperTest {
     }
 
     @Test
-    fun `UserToUserResponse should throwIllegalArgumentException if User has null properties (except fields from bl)`() {
+    fun `UserToUserResponse should set default values if User has null properties (except fields from bl)`() {
         //GIVEN
-        val user = getRandomUser(role = Role.ARTIST, email = null)
+        val user = getRandomUser(role = null)
 
-        //WHEN-THEN
-        assertThrows<IllegalArgumentException> { user.toUserResponse() }
+        //WHEN
+        val result = user.toUserResponse()
+
+        //THEN
+        assertEquals(Role.UNKNOWN, result.role)
     }
 }

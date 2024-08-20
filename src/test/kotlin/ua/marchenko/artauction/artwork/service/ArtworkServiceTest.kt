@@ -9,8 +9,8 @@ import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.exception.ArtworkNotFoundException
 import ua.marchenko.artauction.artwork.model.Artwork
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
-import ua.marchenko.artauction.common.artwork.getRandomArtwork
-import ua.marchenko.artauction.common.user.getRandomUser
+import artwork.getRandomArtwork
+import user.getRandomUser
 import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.service.UserService
 import kotlin.test.Test
@@ -18,8 +18,8 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
-import ua.marchenko.artauction.common.getRandomEmail
-import ua.marchenko.artauction.common.getRandomString
+import getRandomEmail
+import getRandomString
 
 class ArtworkServiceTest {
 
@@ -92,7 +92,14 @@ class ArtworkServiceTest {
         `when`(mockSecurityContext.authentication).thenReturn(mockAuthentication)
         `when`(mockAuthentication.name).thenReturn(email)
         `when`(mockUserService.getByEmail(email)).thenReturn(user)
-        `when`(mockArtworkRepository.save(artworkToSave.copy(status = ArtworkStatus.VIEW, artist = user))).thenReturn(
+        `when`(
+            mockArtworkRepository.save(
+                artworkToSave.copy(
+                    status = ArtworkStatus.VIEW,
+                    artist = user
+                )
+            )
+        ).thenReturn(
             artworkToSave.copy(status = ArtworkStatus.VIEW, artist = user)
         )
 

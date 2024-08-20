@@ -7,10 +7,10 @@ import org.mockito.Mockito.`when`
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import ua.marchenko.artauction.auth.mapper.toUserDetails
-import ua.marchenko.artauction.common.user.getRandomUser
+import user.getRandomUser
 import ua.marchenko.artauction.user.repository.UserRepository
 import kotlin.test.Test
-import ua.marchenko.artauction.common.getRandomEmail
+import getRandomEmail
 
 class CustomUserDetailsServiceTest {
 
