@@ -37,4 +37,18 @@ class AuthMapperTest {
         //THEN
         assertEquals(expectedUserDetails, result)
     }
+
+    @Test
+    fun `UserToUserDetails should set default values if User has null properties (except fields from bl)`() {
+        //GIVEN
+        val user = getRandomUser(role = null)
+        val expectedUserDetails: UserDetails =
+            CustomUserDetails(user.email!!, user.password!!, Role.UNKNOWN)
+
+        //WHEN
+        val result = user.toUserDetails()
+
+        //THEN
+        assertEquals(expectedUserDetails, result)
+    }
 }

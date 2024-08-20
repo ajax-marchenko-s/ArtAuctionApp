@@ -26,11 +26,13 @@ class UserMapperTest {
     fun `UserToUserResponse should set default values if User has null properties (except fields from bl)`() {
         //GIVEN
         val user = getRandomUser(role = null)
+        val expectedUser =
+            UserResponse(user.id!!, user.name!!, user.lastName!!, user.email!!, Role.UNKNOWN)
 
         //WHEN
         val result = user.toUserResponse()
 
         //THEN
-        assertEquals(Role.UNKNOWN, result.role)
+        assertEquals(expectedUser, result)
     }
 }

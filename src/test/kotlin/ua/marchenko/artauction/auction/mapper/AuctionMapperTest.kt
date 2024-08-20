@@ -13,7 +13,7 @@ import kotlin.test.Test
 class AuctionMapperTest {
 
     companion object {
-        const val defaultBid = 0.0
+        const val BID = 0.0
     }
 
     @Test
@@ -40,12 +40,20 @@ class AuctionMapperTest {
     fun `AuctionToAuctionResponse should set default values if Auction has null properties (except fields from bl)`() {
         // GIVEN
         val auction = getRandomAuction(bid = null)
+        val expectedAuction = AuctionResponse(
+            auction.id!!,
+            auction.artwork!!.toArtworkResponse(),
+            BID,
+            auction.buyer?.toUserResponse(),
+            auction.startedAt!!,
+            auction.finishedAt!!
+        )
 
         //WHEN
         val result = auction.toAuctionResponse()
 
         //THEN
-        assertEquals(defaultBid, result.bid)
+        assertEquals(expectedAuction, result)
     }
 
     @Test

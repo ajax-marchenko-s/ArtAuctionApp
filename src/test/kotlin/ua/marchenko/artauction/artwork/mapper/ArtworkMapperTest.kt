@@ -39,12 +39,22 @@ class ArtworkMapperTest {
     fun `ArtworkToArtworkResponse should set default values if Artwork has null properties (except fields from bl)`() {
         // GIVEN
         val artwork = getRandomArtwork(status = null)
+        val expectedArtwork = ArtworkResponse(
+            artwork.id!!,
+            artwork.title!!,
+            artwork.description!!,
+            artwork.style!!,
+            artwork.width!!,
+            artwork.height!!,
+            ArtworkStatus.UNKNOW,
+            artwork.artist!!.toUserResponse()
+        )
 
         //WHEN
         val result = artwork.toArtworkResponse()
 
         //THEN
-        assertEquals(ArtworkStatus.UNKNOW, result.status)
+        assertEquals(expectedArtwork, result)
     }
 
     @Test
