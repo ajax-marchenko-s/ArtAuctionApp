@@ -1,21 +1,23 @@
 package artwork
 
+import getRandomObjectId
 import ua.marchenko.artauction.artwork.controller.dto.CreateArtworkRequest
 import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.enums.ArtworkStyle
 import ua.marchenko.artauction.artwork.model.Artwork
 import getRandomString
+import ua.marchenko.artauction.common.mongodb.id.toObjectId
 import user.getRandomUser
 import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.model.User
 
 fun getRandomArtwork(
-    id: String = getRandomString(),
+    id: String = getRandomObjectId().toString(),
     status: ArtworkStatus? = ArtworkStatus.VIEW,
     artist: User? = getRandomUser(role = Role.ARTIST),
 ): Artwork {
     return Artwork(
-        id = id,
+        id = id.toObjectId(),
         title = getRandomString(),
         description = getRandomString(),
         style = ArtworkStyle.POP_ART,

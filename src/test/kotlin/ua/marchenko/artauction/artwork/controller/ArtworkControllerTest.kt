@@ -8,6 +8,7 @@ import ua.marchenko.artauction.artwork.mapper.toArtworkResponse
 import ua.marchenko.artauction.artwork.service.ArtworkService
 import artwork.getRandomArtwork
 import artwork.getRandomArtworkRequest
+import getRandomObjectId
 import kotlin.test.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
@@ -47,7 +48,7 @@ class ArtworkControllerTest {
     @Test
     fun `getArtworkById should return artwork by id if artwork with this id exists`() {
         // GIVEN
-        val id = getRandomString()
+        val id = getRandomObjectId().toString()
         val artwork = getRandomArtwork(id = id)
 
         `when`(mockArtworkService.getById(id)).thenReturn(artwork)

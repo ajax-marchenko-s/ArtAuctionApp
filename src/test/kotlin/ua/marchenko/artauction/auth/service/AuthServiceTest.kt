@@ -12,6 +12,7 @@ import ua.marchenko.artauction.auth.jwt.JwtService
 import ua.marchenko.artauction.auth.mapper.toUser
 import auth.getRandomAuthenticationRequest
 import auth.getRandomRegistrationRequest
+import getRandomObjectId
 import getRandomString
 import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.exception.UserAlreadyExistsException
@@ -76,7 +77,8 @@ class AuthServiceTest {
         //GIVEN
         val registrationRequest = getRandomRegistrationRequest()
         val encodedPassword = getRandomString()
-        val savedUser = registrationRequest.toUser().copy(password = encodedPassword, id = getRandomString())
+        val savedUser =
+            registrationRequest.toUser().copy(password = encodedPassword, id = getRandomObjectId())
         val userDetails =
             CustomUserDetails(registrationRequest.email, registrationRequest.password, registrationRequest.role)
         val expectedResponse = AuthenticationResponse(getRandomString())

@@ -19,7 +19,8 @@ import kotlin.test.assertTrue
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import getRandomEmail
-import getRandomString
+import getRandomObjectId
+import ua.marchenko.artauction.common.mongodb.id.toObjectId
 
 class ArtworkServiceTest {
 
@@ -59,10 +60,10 @@ class ArtworkServiceTest {
     @Test
     fun `getById should return artwork by id if artwork with this id exists`() {
         // GIVEN
-        val id = getRandomString()
+        val id = getRandomObjectId().toString()
         val artwork = getRandomArtwork(id = id)
 
-        `when`(mockArtworkRepository.findById(id)).thenReturn(artwork)
+        `when`(mockArtworkRepository.findById(id.toObjectId())).thenReturn(artwork)
 
         //WHEN
         val result = artworkService.getById(id)
@@ -74,8 +75,8 @@ class ArtworkServiceTest {
     @Test
     fun `getById should throw ArtworkNotFoundException if there is no artwork with this id`() {
         //GIVEN
-        val id = getRandomString()
-        `when`(mockArtworkRepository.findById(id)).thenReturn(null)
+        val id = getRandomObjectId().toString()
+        `when`(mockArtworkRepository.findById(id.toObjectId())).thenReturn(null)
 
         //WHEN-THEN
         assertThrows<ArtworkNotFoundException> { artworkService.getById(id) }
@@ -113,8 +114,8 @@ class ArtworkServiceTest {
     @Test
     fun `existsById should return false if there are no artworks`() {
         //GIVEN
-        val id = getRandomString()
-        `when`(mockArtworkRepository.existsById(id)).thenReturn(false)
+        val id = getRandomObjectId().toString()
+        `when`(mockArtworkRepository.existsById(id.toObjectId())).thenReturn(false)
 
         //WHEN
         val result = artworkService.existsById(id)
@@ -126,8 +127,8 @@ class ArtworkServiceTest {
     @Test
     fun `existsById should return true if artwork with this id exists`() {
         //GIVEN
-        val id = getRandomString()
-        `when`(mockArtworkRepository.existsById(id)).thenReturn(true)
+        val id = getRandomObjectId().toString()
+        `when`(mockArtworkRepository.existsById(id.toObjectId())).thenReturn(true)
 
         //WHEN
         val result = artworkService.existsById(id)

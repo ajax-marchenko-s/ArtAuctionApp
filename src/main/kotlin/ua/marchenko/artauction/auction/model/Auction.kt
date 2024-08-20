@@ -2,16 +2,16 @@ package ua.marchenko.artauction.auction.model
 
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
-import org.springframework.data.mongodb.core.mapping.FieldType
 import org.springframework.data.mongodb.core.mapping.MongoId
 import ua.marchenko.artauction.artwork.model.Artwork
 import ua.marchenko.artauction.user.model.User
 import java.time.LocalDateTime
+import org.bson.types.ObjectId
 
 @Document(collection = "auction")
 data class Auction(
-    @MongoId(FieldType.OBJECT_ID)
-    val id: String? = null,
+    @MongoId
+    val id: ObjectId? = null,
     @DBRef
     val artwork: Artwork? = null,
     val bid: Double? = null,

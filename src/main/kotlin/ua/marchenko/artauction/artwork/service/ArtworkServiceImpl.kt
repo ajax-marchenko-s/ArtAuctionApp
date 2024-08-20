@@ -7,6 +7,7 @@ import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.exception.ArtworkNotFoundException
 import ua.marchenko.artauction.artwork.model.Artwork
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
+import ua.marchenko.artauction.common.mongodb.id.toObjectId
 import ua.marchenko.artauction.user.model.User
 import ua.marchenko.artauction.user.service.UserService
 
@@ -18,7 +19,7 @@ class ArtworkServiceImpl(
 
     override fun getAll() = artworkRepository.findAll()
 
-    override fun getById(id: String) = artworkRepository.findById(id) ?: throwArtworkNotFoundException(id)
+    override fun getById(id: String) = artworkRepository.findById(id.toObjectId()) ?: throwArtworkNotFoundException(id)
 
     override fun save(artwork: Artwork): Artwork {
         val authentication: Authentication = SecurityContextHolder.getContext().authentication
@@ -30,7 +31,7 @@ class ArtworkServiceImpl(
     override fun update(artworkId: String, artwork: Artwork): Artwork {
         val artworkFromDB = getById(artworkId)
         val updatedArtwork = artwork.copy(
-            id = artworkId,
+            id = artworkId.toObjectId(),
             status = artworkFromDB.status,
             artist = artworkFromDB.artist
         )
@@ -42,7 +43,8 @@ class ArtworkServiceImpl(
         return artworkRepository.save(artworkFromDB.copy(status = status))
     }
 
-    override fun existsById(id: String) = artworkRepository.existsById(id)
+    override fun existsById(id: String) = artworkRepository.existsById(id.toObjectId())
 
-    private fun throwArtworkNotFoundException(artworkId: String): Nothing = throw ArtworkNotFoundException(artworkId)
+    private fun throwArtworkNotFoundException(artworkId: String): Nothing =
+        throw ArtworkNotFoundException(artworkId)
 }

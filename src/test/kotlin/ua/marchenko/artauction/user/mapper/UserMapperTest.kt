@@ -13,7 +13,7 @@ class UserMapperTest {
         //GIVEN
         val user = getRandomUser(role = Role.ARTIST)
         val expectedUser =
-            UserResponse(user.id!!, user.name!!, user.lastName!!, user.email!!, user.role!!)
+            UserResponse(user.id!!.toString(), user.name!!, user.lastName!!, user.email!!, user.role!!)
 
         //WHEN
         val result = user.toUserResponse()
@@ -27,7 +27,7 @@ class UserMapperTest {
         //GIVEN
         val user = getRandomUser(role = null)
         val expectedUser =
-            UserResponse(user.id!!, user.name!!, user.lastName!!, user.email!!, Role.UNKNOWN)
+            UserResponse(user.id!!.toString(), user.name!!, user.lastName!!, user.email!!, Role.UNKNOWN)
 
         //WHEN
         val result = user.toUserResponse()

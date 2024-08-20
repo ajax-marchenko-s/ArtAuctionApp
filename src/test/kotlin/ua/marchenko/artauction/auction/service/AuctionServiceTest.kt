@@ -12,10 +12,11 @@ import ua.marchenko.artauction.auction.repository.AuctionRepository
 import artwork.getRandomArtwork
 import auction.getRandomAuction
 import auction.getRandomAuctionRequest
-import getRandomString
+import getRandomObjectId
 import kotlin.test.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import ua.marchenko.artauction.common.mongodb.id.toObjectId
 
 class AuctionServiceTest {
 
@@ -52,10 +53,10 @@ class AuctionServiceTest {
     @Test
     fun `getById should return auction by id if auction with this id exists`() {
         //GIVEN
-        val id = getRandomString()
+        val id = getRandomObjectId().toString()
         val auction = getRandomAuction(id)
 
-        `when`(mockAuctionRepository.findById(id)).thenReturn(auction)
+        `when`(mockAuctionRepository.findById(id.toObjectId())).thenReturn(auction)
 
         //WHEN
         val result = auctionService.getById(id)
@@ -67,8 +68,8 @@ class AuctionServiceTest {
     @Test
     fun `getById should throw AuctionNotFoundException if there is no artwork with this id`() {
         //GIVEN
-        val id = getRandomString()
-        `when`(mockAuctionRepository.findById(id)).thenReturn(null)
+        val id = getRandomObjectId().toString()
+        `when`(mockAuctionRepository.findById(id.toObjectId())).thenReturn(null)
 
         //WHEN-THEN
         assertThrows<AuctionNotFoundException> { auctionService.getById(id) }
@@ -77,9 +78,9 @@ class AuctionServiceTest {
     @Test
     fun `save should change artwork status and save`() {
         //GIVEN
-        val newAuctionId = getRandomString()
+        val newAuctionId = getRandomObjectId()
         val artwork = getRandomArtwork()
-        val auctionRequest = getRandomAuctionRequest(artworkId = artwork.id!!)
+        val auctionRequest = getRandomAuctionRequest(artworkId = artwork.id!!.toString())
         val auction = auctionRequest.toAuction(artwork.copy(status = ArtworkStatus.ON_AUCTION), null)
 
         `when`(mockArtworkService.getById(auctionRequest.artworkId)).thenReturn(artwork)
@@ -102,7 +103,7 @@ class AuctionServiceTest {
     fun `save should throw InvalidAuctionOperationException if artwork doesnt have VIEW status`() {
         //GIVEN
         val artwork = getRandomArtwork(status = ArtworkStatus.ON_AUCTION)
-        val auctionRequest = getRandomAuctionRequest(artworkId = artwork.id!!)
+        val auctionRequest = getRandomAuctionRequest(artworkId = artwork.id!!.toString())
 
         `when`(mockArtworkService.getById(auctionRequest.artworkId)).thenReturn(artwork)
 

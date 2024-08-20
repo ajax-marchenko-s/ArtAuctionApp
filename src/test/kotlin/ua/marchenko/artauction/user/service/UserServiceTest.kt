@@ -11,7 +11,8 @@ import ua.marchenko.artauction.user.model.User
 import ua.marchenko.artauction.user.repository.UserRepository
 import kotlin.test.Test
 import getRandomEmail
-import getRandomString
+import getRandomObjectId
+import ua.marchenko.artauction.common.mongodb.id.toObjectId
 
 class UserServiceTest {
 
@@ -50,10 +51,10 @@ class UserServiceTest {
     @Test
     fun `getById should return user by id if user with this id exists`() {
         //GIVEN
-        val id = getRandomString()
+        val id = getRandomObjectId().toString()
         val user = getRandomUser(id = id)
 
-        `when`(mockUserRepository.findById(id)).thenReturn(user)
+        `when`(mockUserRepository.findById(id.toObjectId())).thenReturn(user)
 
         //WHEN
         val result = userService.getById(id)
@@ -65,8 +66,8 @@ class UserServiceTest {
     @Test
     fun `getById should throw UserNotFoundException if there is no user with this id`() {
         //GIVEN
-        val id = getRandomString()
-        `when`(mockUserRepository.findById(id)).thenReturn(null)
+        val id = getRandomObjectId().toString()
+        `when`(mockUserRepository.findById(id.toObjectId())).thenReturn(null)
 
         //WHEN-THEN
         assertThrows<UserNotFoundException> { userService.getById(id) }

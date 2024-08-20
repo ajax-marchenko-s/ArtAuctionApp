@@ -1,5 +1,6 @@
 package ua.marchenko.artauction.user.controller
 
+import getRandomObjectId
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
@@ -45,7 +46,7 @@ class UserControllerTest {
     @Test
     fun `getUserById should return user with given id if auction with this id exists`() {
         //GIVEN
-        val id = getRandomString()
+        val id = getRandomObjectId().toString()
         val user = getRandomUser(id = id)
 
         `when`(mockUserService.getById(id)).thenReturn(user)

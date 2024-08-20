@@ -4,16 +4,18 @@ import ua.marchenko.artauction.artwork.model.Artwork
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.auction.model.Auction
 import artwork.getRandomArtwork
+import getRandomObjectId
 import getRandomString
 import java.time.LocalDateTime
+import ua.marchenko.artauction.common.mongodb.id.toObjectId
 
 fun getRandomAuction(
-    id: String = getRandomString(10),
+    id: String = getRandomObjectId().toString(),
     artwork: Artwork? = getRandomArtwork(),
     bid: Double? = 100.0,
 ): Auction {
     return Auction(
-        id = id,
+        id = id.toObjectId(),
         artwork = artwork,
         bid = bid,
         startedAt = LocalDateTime.now(),

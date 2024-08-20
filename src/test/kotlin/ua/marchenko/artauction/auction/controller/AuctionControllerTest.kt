@@ -9,6 +9,7 @@ import ua.marchenko.artauction.auction.mapper.toAuctionResponse
 import ua.marchenko.artauction.auction.service.AuctionService
 import auction.getRandomAuction
 import auction.getRandomAuctionRequest
+import getRandomObjectId
 import kotlin.test.Test
 import getRandomString
 
@@ -46,7 +47,7 @@ class AuctionControllerTest {
     @Test
     fun `getAuctionById should return auction with given id if auction with this id exists`() {
         //GIVEN
-        val id = getRandomString()
+        val id = getRandomObjectId().toString()
         val auction = getRandomAuction(id = id)
 
         `when`(mockAuctionService.getById(id)).thenReturn(auction)

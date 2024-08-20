@@ -18,7 +18,7 @@ class ArtworkMapperTest {
         // GIVEN
         val artwork = getRandomArtwork(artist = getRandomUser(role = Role.ARTIST))
         val expectedArtwork = ArtworkResponse(
-            artwork.id!!,
+            artwork.id!!.toString(),
             artwork.title!!,
             artwork.description!!,
             artwork.style!!,
@@ -40,13 +40,13 @@ class ArtworkMapperTest {
         // GIVEN
         val artwork = getRandomArtwork(status = null)
         val expectedArtwork = ArtworkResponse(
-            artwork.id!!,
+            artwork.id!!.toString(),
             artwork.title!!,
             artwork.description!!,
             artwork.style!!,
             artwork.width!!,
             artwork.height!!,
-            ArtworkStatus.UNKNOW,
+            ArtworkStatus.UNKNOWN,
             artwork.artist!!.toUserResponse()
         )
 
