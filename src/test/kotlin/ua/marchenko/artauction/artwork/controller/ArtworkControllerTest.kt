@@ -11,6 +11,8 @@ import getRandomObjectId
 import kotlin.test.Test
 import org.mockito.Mockito.mock
 import getRandomString
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.whenever
 import ua.marchenko.artauction.artwork.controller.dto.CreateArtworkRequest
 import ua.marchenko.artauction.artwork.model.Artwork
@@ -24,7 +26,7 @@ class ArtworkControllerTest {
     fun `getAllArtworks should return a list of ArtworkResponse`() {
         // GIVEN
         val artworks = listOf(Artwork.random())
-        whenever(mockArtworkService.getAll()).thenReturn(artworks)
+        whenever(mockArtworkService.getAll()) doReturn (artworks)
 
         // WHEN
         val result = artworkController.getAllArtworks()
@@ -37,7 +39,7 @@ class ArtworkControllerTest {
     @Test
     fun `getAllArtworks should return an empty list if there are no artworks`() {
         // GIVEN
-        whenever(mockArtworkService.getAll()).thenReturn(listOf())
+        whenever(mockArtworkService.getAll()) doReturn (listOf())
 
         // WHEN
         val result = artworkController.getAllArtworks()
@@ -52,7 +54,7 @@ class ArtworkControllerTest {
         val id = getRandomObjectId().toString()
         val artwork = Artwork.random(id = id)
 
-        whenever(mockArtworkService.getById(id)).thenReturn(artwork)
+        whenever(mockArtworkService.getById(id)) doReturn (artwork)
 
         // WHEN
         val result = artworkController.getArtworkById(id)
@@ -65,7 +67,7 @@ class ArtworkControllerTest {
     fun `getArtworkById should throw ArtworkNotFoundException if there is no artwork with this id`() {
         // GIVEN
         val id = getRandomString()
-        whenever(mockArtworkService.getById(id)).thenThrow(ArtworkNotFoundException(id))
+        whenever(mockArtworkService.getById(id)) doThrow (ArtworkNotFoundException(id))
 
         // WHEN-THEN
         assertThrows<ArtworkNotFoundException> { artworkController.getArtworkById(id) }
@@ -77,7 +79,7 @@ class ArtworkControllerTest {
         val artworkRequest = CreateArtworkRequest.random()
         val artwork = Artwork.random()
 
-        whenever(mockArtworkService.save(artworkRequest.toArtwork())).thenReturn(artwork)
+        whenever(mockArtworkService.save(artworkRequest.toArtwork())) doReturn (artwork)
 
         // WHEN
         val result = artworkController.addArtwork(artworkRequest)

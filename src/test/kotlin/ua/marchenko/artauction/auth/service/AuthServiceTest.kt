@@ -19,6 +19,8 @@ import ua.marchenko.artauction.user.repository.UserRepository
 import kotlin.test.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.whenever
 import ua.marchenko.artauction.auth.controller.dto.AuthenticationRequest
 import ua.marchenko.artauction.auth.controller.dto.RegistrationRequest
@@ -48,8 +50,8 @@ class AuthServiceTest {
         val userDetails = CustomUserDetails(getRandomString(), getRandomString(), Role.ARTIST)
         val expectedResponse = AuthenticationResponse(getRandomString())
 
-        whenever(mockUserDetailsService.loadUserByUsername(authenticationRequest.email)).thenReturn(userDetails)
-        whenever(mockJwtService.generate(userDetails)).thenReturn(expectedResponse.accessToken)
+        whenever(mockUserDetailsService.loadUserByUsername(authenticationRequest.email)) doReturn (userDetails)
+        whenever(mockJwtService.generate(userDetails)) doReturn (expectedResponse.accessToken)
 
         //WHEN
         val result = authenticationService.authentication(authenticationRequest)
@@ -66,8 +68,7 @@ class AuthServiceTest {
         val usernamePasswordAuthenticationToken =
             UsernamePasswordAuthenticationToken(authenticationRequest.email, authenticationRequest.password)
 
-        whenever(mockAuthManager.authenticate(usernamePasswordAuthenticationToken))
-            .thenThrow(RuntimeException("Unauthorized"))
+        whenever(mockAuthManager.authenticate(usernamePasswordAuthenticationToken)) doThrow (RuntimeException("Unauthorized"))
 
         //WHEN-THEN
         assertThrows<RuntimeException> { authenticationService.authentication(authenticationRequest) }
@@ -84,11 +85,11 @@ class AuthServiceTest {
             CustomUserDetails(registrationRequest.email, registrationRequest.password, registrationRequest.role)
         val expectedResponse = AuthenticationResponse(getRandomString())
 
-        whenever(mockUserRepository.existsByEmail(registrationRequest.email)).thenReturn(false)
-        whenever(mockPasswordEncoder.encode(registrationRequest.password)).thenReturn(encodedPassword)
-        whenever(mockUserRepository.save(savedUser.copy(id = null))).thenReturn(savedUser)
-        whenever(mockUserDetailsService.loadUserByUsername(registrationRequest.email)).thenReturn(userDetails)
-        whenever(mockJwtService.generate(userDetails)).thenReturn(expectedResponse.accessToken)
+        whenever(mockUserRepository.existsByEmail(registrationRequest.email)) doReturn (false)
+        whenever(mockPasswordEncoder.encode(registrationRequest.password)) doReturn (encodedPassword)
+        whenever(mockUserRepository.save(savedUser.copy(id = null))) doReturn (savedUser)
+        whenever(mockUserDetailsService.loadUserByUsername(registrationRequest.email)) doReturn (userDetails)
+        whenever(mockJwtService.generate(userDetails)) doReturn (expectedResponse.accessToken)
 
         //WHEN
         val result = authenticationService.register(registrationRequest)
@@ -101,7 +102,7 @@ class AuthServiceTest {
     fun `register should throw UserAlreadyExistsException if user with email is exist`() {
         //GIVEN
         val registrationRequest = RegistrationRequest.random()
-        whenever(mockUserRepository.existsByEmail(registrationRequest.email)).thenReturn(true)
+        whenever(mockUserRepository.existsByEmail(registrationRequest.email)) doReturn (true)
 
         //WHEN-THEN
         assertThrows<UserAlreadyExistsException> { authenticationService.register(registrationRequest) }

@@ -9,6 +9,7 @@ import ua.marchenko.artauction.auth.mapper.toUserDetails
 import ua.marchenko.artauction.user.repository.UserRepository
 import kotlin.test.Test
 import getRandomEmail
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.whenever
 import ua.marchenko.artauction.user.model.User
 import user.random
@@ -25,7 +26,7 @@ class CustomUserDetailsServiceTest {
         val email = getRandomEmail()
         val user = User.random(email = email)
 
-        whenever(mockUserRepository.findByEmail(email)).thenReturn(user)
+        whenever(mockUserRepository.findByEmail(email)) doReturn (user)
 
         //WHEN
         val result = userDetailsService.loadUserByUsername(email)
@@ -38,7 +39,7 @@ class CustomUserDetailsServiceTest {
     fun `loadUserByUsername should throw UsernameNotFoundException if there is no user with this email`() {
         //GIVEN
         val email = getRandomEmail()
-        whenever(mockUserRepository.findByEmail(email)).thenReturn(null)
+        whenever(mockUserRepository.findByEmail(email)) doReturn (null)
 
         //WHEN-THEN
         assertThrows<UsernameNotFoundException> { userDetailsService.loadUserByUsername(email) }
