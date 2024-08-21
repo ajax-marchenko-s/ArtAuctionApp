@@ -16,7 +16,6 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
 import getRandomEmail
 import getRandomObjectId
 import org.mockito.kotlin.whenever
@@ -36,7 +35,7 @@ class ArtworkServiceTest {
     fun `getAll should return a list of artworks if there are present`() {
         // GIVEN
         val artworks = listOf(Artwork.random())
-        `when`(mockArtworkRepository.findAll()).thenReturn(artworks)
+        whenever(mockArtworkRepository.findAll()).thenReturn(artworks)
 
         //WHEN
         val result = artworkService.getAll()
@@ -49,7 +48,7 @@ class ArtworkServiceTest {
     @Test
     fun `getAll should return an empty list of artworks if there are no artworks`() {
         // GIVEN
-        `when`(mockArtworkRepository.findAll()).thenReturn(listOf<Artwork>())
+        whenever(mockArtworkRepository.findAll()).thenReturn(listOf<Artwork>())
 
         //WHEN
         val result = artworkService.getAll()
@@ -64,7 +63,7 @@ class ArtworkServiceTest {
         val id = getRandomObjectId().toString()
         val artwork = Artwork.random(id = id)
 
-        `when`(mockArtworkRepository.findById(id)).thenReturn(artwork)
+        whenever(mockArtworkRepository.findById(id)).thenReturn(artwork)
 
         //WHEN
         val result = artworkService.getById(id)
@@ -77,7 +76,7 @@ class ArtworkServiceTest {
     fun `getById should throw ArtworkNotFoundException if there is no artwork with this id`() {
         //GIVEN
         val id = getRandomObjectId().toString()
-        `when`(mockArtworkRepository.findById(id)).thenReturn(null)
+        whenever(mockArtworkRepository.findById(id)).thenReturn(null)
 
         //WHEN-THEN
         assertThrows<ArtworkNotFoundException> { artworkService.getById(id) }
