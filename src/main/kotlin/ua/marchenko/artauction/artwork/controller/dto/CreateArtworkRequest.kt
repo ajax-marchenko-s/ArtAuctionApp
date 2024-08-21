@@ -8,4 +8,6 @@ data class CreateArtworkRequest(
     val style: ArtworkStyle,
     val width: Int,
     val height: Int,
-)
+) {
+    companion object
+}

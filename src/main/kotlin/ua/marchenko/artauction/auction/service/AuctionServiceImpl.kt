@@ -10,7 +10,6 @@ import ua.marchenko.artauction.auction.exception.AuctionNotFoundException
 import ua.marchenko.artauction.auction.exception.InvalidAuctionOperationException
 import ua.marchenko.artauction.auction.mapper.toAuction
 import ua.marchenko.artauction.auction.mapper.toAuctionResponse
-import ua.marchenko.artauction.common.mongodb.id.toObjectId
 
 @Service
 class AuctionServiceImpl(
@@ -20,7 +19,7 @@ class AuctionServiceImpl(
 
     override fun getAll() = auctionRepository.findAll()
 
-    override fun getById(id: String) = auctionRepository.findById(id.toObjectId()) ?: throw AuctionNotFoundException(id)
+    override fun getById(id: String) = auctionRepository.findById(id) ?: throw AuctionNotFoundException(id)
 
     override fun save(auction: CreateAuctionRequest): AuctionResponse {
         val artwork = artworkService.getById(auction.artworkId)

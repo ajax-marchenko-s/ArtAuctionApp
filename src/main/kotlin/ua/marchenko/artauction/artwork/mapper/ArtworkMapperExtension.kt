@@ -9,7 +9,7 @@ import ua.marchenko.artauction.user.mapper.toUserResponse
 import ua.marchenko.artauction.user.model.User
 
 fun Artwork.toArtworkResponse() = ArtworkResponse(
-    id?.toString() ?: "unknown",
+    id!!.toHexString(),
     title ?: "unknown",
     description ?: "unknown",
     style ?: ArtworkStyle.UNKNOWN,

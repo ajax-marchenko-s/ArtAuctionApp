@@ -18,11 +18,6 @@ class JwtAuthenticationFilter(
     private val jwtService: JwtService,
 ) : OncePerRequestFilter() {
 
-    companion object {
-        const val HEADER_AUTHORIZATION = "Authorization"
-        const val HEADER_BEARER_PREFIX = "Bearer "
-    }
-
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -43,13 +38,18 @@ class JwtAuthenticationFilter(
         }
     }
 
-    private fun String?.doesNotContainBearerToken() = this == null || !this.startsWith(HEADER_BEARER_PREFIX)
+    private fun String?.doesNotContainBearerToken() = this == null || !startsWith(HEADER_BEARER_PREFIX)
 
-    private fun String.extractTokenValue() = this.substringAfter(HEADER_BEARER_PREFIX)
+    private fun String.extractTokenValue() = substringAfter(HEADER_BEARER_PREFIX)
 
     private fun updateContext(foundUser: UserDetails, request: HttpServletRequest) {
         val authToken = UsernamePasswordAuthenticationToken(foundUser, null, foundUser.authorities)
         authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
         SecurityContextHolder.getContext().authentication = authToken
+    }
+
+    companion object {
+        const val HEADER_AUTHORIZATION = "Authorization"
+        const val HEADER_BEARER_PREFIX = "Bearer "
     }
 }

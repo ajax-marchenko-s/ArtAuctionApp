@@ -1,7 +1,6 @@
 package ua.marchenko.artauction.user.service
 
 import org.springframework.stereotype.Service
-import ua.marchenko.artauction.common.mongodb.id.toObjectId
 import ua.marchenko.artauction.user.exception.UserNotFoundException
 import ua.marchenko.artauction.user.repository.UserRepository
 
@@ -11,13 +10,9 @@ class UserServiceImpl(private val userRepository: UserRepository) : UserService 
     override fun getAll() = userRepository.findAll()
 
     override fun getById(id: String) =
-        userRepository.findById(id.toObjectId()) ?: throwUserNotFoundException(value = id)
+        userRepository.findById(id) ?: throw UserNotFoundException(value = id)
 
     override fun getByEmail(email: String) =
-        userRepository.findByEmail(email) ?: throwUserNotFoundException(value = email, field = "email")
+        userRepository.findByEmail(email) ?: throw UserNotFoundException(value = email, field = "email")
 
-    private fun throwUserNotFoundException(value: String, field: String): Nothing =
-        throw UserNotFoundException(value, field)
-
-    private fun throwUserNotFoundException(value: String): Nothing = throw UserNotFoundException(value)
 }

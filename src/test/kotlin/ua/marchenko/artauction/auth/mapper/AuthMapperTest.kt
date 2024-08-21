@@ -3,18 +3,19 @@ package ua.marchenko.artauction.auth.mapper
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.springframework.security.core.userdetails.UserDetails
 import ua.marchenko.artauction.auth.data.CustomUserDetails
-import auth.getRandomRegistrationRequest
-import user.getRandomUser
+import auth.random
 import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.model.User
 import kotlin.test.Test
+import ua.marchenko.artauction.auth.controller.dto.RegistrationRequest
+import user.random
 
 class AuthMapperTest {
 
     @Test
     fun `RegistrationRequestToUser should return User`() {
         //GIVEN
-        val user = getRandomRegistrationRequest()
+        val user = RegistrationRequest.random()
         val expectedUser = User(null, user.name, user.lastname, user.email, user.password, user.role)
 
         //WHEN
@@ -27,7 +28,7 @@ class AuthMapperTest {
     @Test
     fun `UserToUserDetails should return UserDetails if User has right properties`() {
         //GIVEN
-        val user = getRandomUser(role = Role.ARTIST)
+        val user = User.random(role = Role.ARTIST)
         val expectedUserDetails: UserDetails =
             CustomUserDetails(user.email!!, user.password!!, user.role!!)
 
@@ -41,7 +42,7 @@ class AuthMapperTest {
     @Test
     fun `UserToUserDetails should set default values if User has null properties (except fields from bl)`() {
         //GIVEN
-        val user = getRandomUser(role = null)
+        val user = User.random(role = null)
         val expectedUserDetails: UserDetails =
             CustomUserDetails(user.email!!, user.password!!, Role.UNKNOWN)
 

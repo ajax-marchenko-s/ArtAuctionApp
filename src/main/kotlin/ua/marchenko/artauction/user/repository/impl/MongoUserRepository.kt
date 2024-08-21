@@ -1,6 +1,5 @@
 package ua.marchenko.artauction.user.repository.impl
 
-import org.bson.types.ObjectId
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
@@ -14,7 +13,7 @@ class MongoUserRepository(private val mongoTemplate: MongoTemplate) : UserReposi
 
     override fun save(user: User) = mongoTemplate.save(user)
 
-    override fun findById(id: ObjectId): User? {
+    override fun findById(id: String): User? {
         val query = Query.query(Criteria.where("id").isEqualTo(id))
         return mongoTemplate.findOne(query, User::class.java)
     }

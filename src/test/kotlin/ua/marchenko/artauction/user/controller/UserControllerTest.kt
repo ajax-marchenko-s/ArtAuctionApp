@@ -4,13 +4,14 @@ import getRandomObjectId
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
-import user.getRandomUser
 import ua.marchenko.artauction.user.exception.UserNotFoundException
 import ua.marchenko.artauction.user.mapper.toUserResponse
 import ua.marchenko.artauction.user.service.UserService
 import kotlin.test.Test
 import getRandomString
+import org.mockito.kotlin.whenever
+import ua.marchenko.artauction.user.model.User
+import user.random
 
 class UserControllerTest {
 
@@ -20,8 +21,8 @@ class UserControllerTest {
     @Test
     fun `getAllUsers should return a list of UserResponse`() {
         //GIVEN
-        val users = listOf(getRandomUser())
-        `when`(mockUserService.getAll()).thenReturn(users)
+        val users = listOf(User.random())
+        whenever(mockUserService.getAll()).thenReturn(users)
 
         //WHEN
         val result = userController.getAllUsers()
@@ -34,7 +35,7 @@ class UserControllerTest {
     @Test
     fun `getAllUsers should return an empty list if there are no user`() {
         //GIVEN
-        `when`(mockUserService.getAll()).thenReturn(listOf())
+        whenever(mockUserService.getAll()).thenReturn(listOf())
 
         //WHEN
         val result = userController.getAllUsers()
@@ -47,9 +48,9 @@ class UserControllerTest {
     fun `getUserById should return user with given id if auction with this id exists`() {
         //GIVEN
         val id = getRandomObjectId().toString()
-        val user = getRandomUser(id = id)
+        val user = User.random(id = id)
 
-        `when`(mockUserService.getById(id)).thenReturn(user)
+        whenever(mockUserService.getById(id)).thenReturn(user)
 
         //WHEN
         val result = userController.getUserById(id)
@@ -62,7 +63,7 @@ class UserControllerTest {
     fun `getUserById should throw UserNotFoundException if there is no user with this id`() {
         //GIVEN
         val id = getRandomString()
-        `when`(mockUserService.getById(id)).thenThrow(UserNotFoundException(id))
+        whenever(mockUserService.getById(id)).thenThrow(UserNotFoundException(id))
 
         //WHEN-THEN
         assertThrows<UserNotFoundException> { userController.getUserById(id) }

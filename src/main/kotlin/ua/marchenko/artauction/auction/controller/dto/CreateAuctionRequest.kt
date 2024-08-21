@@ -8,4 +8,6 @@ data class CreateAuctionRequest(
     val buyerId: String?,
     val startedAt: LocalDateTime,
     val finishedAt: LocalDateTime,
-)
+) {
+    companion object
+}

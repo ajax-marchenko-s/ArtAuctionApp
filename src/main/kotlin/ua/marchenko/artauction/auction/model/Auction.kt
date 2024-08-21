@@ -19,4 +19,6 @@ data class Auction(
     val buyer: User? = null,
     val startedAt: LocalDateTime? = null,
     val finishedAt: LocalDateTime? = null,
-)
+) {
+    companion object
+}

@@ -8,4 +8,6 @@ data class RegistrationRequest(
     val email: String,
     val password: String,
     val role: Role,
-)
+) {
+    companion object
+}

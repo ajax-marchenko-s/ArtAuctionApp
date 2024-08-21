@@ -20,4 +20,6 @@ data class Artwork(
     val status: ArtworkStatus? = null,
     @DBRef
     val artist: User? = null,
-)
+) {
+    companion object
+}
