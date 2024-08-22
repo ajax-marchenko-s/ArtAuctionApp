@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class ArtauctionApplication
 
 fun main(args: Array<String>) {
-	runApplication<ArtauctionApplication>(*args)
+    runApplication<ArtauctionApplication>(*args)
 }
