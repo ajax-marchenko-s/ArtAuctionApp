@@ -14,18 +14,15 @@ import getRandomString
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
-import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.exception.UserAlreadyExistsException
 import ua.marchenko.artauction.user.repository.UserRepository
 import kotlin.test.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import ua.marchenko.artauction.auth.controller.dto.AuthenticationRequest
 import ua.marchenko.artauction.auth.controller.dto.RegistrationRequest
 import ua.marchenko.artauction.auth.jwt.JwtServiceImpl
 
-@ExtendWith(MockKExtension::class)
 class AuthServiceTest {
 
     @MockK

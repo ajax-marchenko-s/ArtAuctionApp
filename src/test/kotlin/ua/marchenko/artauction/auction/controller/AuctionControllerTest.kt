@@ -12,12 +12,9 @@ import getRandomString
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
-import io.mockk.junit5.MockKExtension
-import org.junit.jupiter.api.extension.ExtendWith
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.auction.model.Auction
 
-@ExtendWith(MockKExtension::class)
 class AuctionControllerTest {
 
     @MockK

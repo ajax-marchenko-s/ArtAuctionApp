@@ -15,14 +15,11 @@ import getRandomObjectId
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
-import io.mockk.junit5.MockKExtension
 import kotlin.test.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import ua.marchenko.artauction.artwork.model.Artwork
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.auction.model.Auction
 
-@ExtendWith(MockKExtension::class)
 class AuctionServiceTest {
 
     @MockK

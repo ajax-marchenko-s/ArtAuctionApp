@@ -12,11 +12,8 @@ import getRandomObjectId
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
-import io.mockk.junit5.MockKExtension
-import org.junit.jupiter.api.extension.ExtendWith
 import user.random
 
-@ExtendWith(MockKExtension::class)
 class UserServiceTest {
 
     @MockK

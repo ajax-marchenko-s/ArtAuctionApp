@@ -4,18 +4,15 @@ import getRandomEmail
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
-import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import ua.marchenko.artauction.auth.mapper.toUserDetails
 import ua.marchenko.artauction.user.repository.UserRepository
 import kotlin.test.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import ua.marchenko.artauction.user.model.User
 import user.random
 
-@ExtendWith(MockKExtension::class)
 class CustomUserDetailsServiceTest {
 
     @MockK
