@@ -46,4 +46,5 @@ kotlin {
 tasks.withType<Test> {
     useJUnitPlatform()
     testLogging { showStandardStreams = true }
+    systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 }

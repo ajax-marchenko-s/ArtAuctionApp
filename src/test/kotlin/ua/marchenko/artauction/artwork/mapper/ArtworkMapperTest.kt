@@ -19,7 +19,7 @@ class ArtworkMapperTest {
         // GIVEN
         val artwork = Artwork.random(artist = User.random(role = Role.ARTIST))
         val expectedArtwork = ArtworkResponse(
-            artwork.id!!.toString(),
+            artwork.id!!.toHexString(),
             artwork.title!!,
             artwork.description!!,
             artwork.style!!,
@@ -41,7 +41,7 @@ class ArtworkMapperTest {
         // GIVEN
         val artwork = Artwork.random(status = null)
         val expectedArtwork = ArtworkResponse(
-            artwork.id!!.toString(),
+            artwork.id!!.toHexString(),
             artwork.title!!,
             artwork.description!!,
             artwork.style!!,

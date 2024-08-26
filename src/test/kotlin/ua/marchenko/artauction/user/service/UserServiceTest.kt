@@ -9,13 +9,14 @@ import ua.marchenko.artauction.user.repository.UserRepository
 import kotlin.test.Test
 import getRandomEmail
 import getRandomObjectId
-import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
-import org.junit.jupiter.api.BeforeEach
+import io.mockk.junit5.MockKExtension
+import org.junit.jupiter.api.extension.ExtendWith
 import user.random
 
+@ExtendWith(MockKExtension::class)
 class UserServiceTest {
 
     @MockK
@@ -24,16 +25,11 @@ class UserServiceTest {
     @InjectMockKs
     private lateinit var userService: UserServiceImpl
 
-    @BeforeEach
-    fun setUp() {
-        MockKAnnotations.init(this)
-    }
-
     @Test
     fun `should return a list of users when users are exist`() {
         //GIVEN
         val users = listOf(User.random(role = Role.ARTIST), User.random(role = Role.BUYER))
-        every { mockUserRepository.findAll() } returns (users)
+        every { mockUserRepository.findAll() } returns users
 
         //WHEN
         val result = userService.getAll()
@@ -50,7 +46,7 @@ class UserServiceTest {
         val users = listOf<User>()
         every {
             mockUserRepository.findAll()
-        } returns (users)
+        } returns users
 
         //WHEN
         val result = userService.getAll()
@@ -62,10 +58,10 @@ class UserServiceTest {
     @Test
     fun `should return user by id when user with this id exists`() {
         //GIVEN
-        val id = getRandomObjectId().toString()
+        val id = getRandomObjectId().toHexString()
         val user = User.random(id = id)
 
-        every { mockUserRepository.findById(id) } returns (user)
+        every { mockUserRepository.findById(id) } returns user
 
         //WHEN
         val result = userService.getById(id)
@@ -77,8 +73,8 @@ class UserServiceTest {
     @Test
     fun `should throw UserNotFoundException when there is no user with this id`() {
         //GIVEN
-        val id = getRandomObjectId().toString()
-        every { mockUserRepository.findById(id) } returns (null)
+        val id = getRandomObjectId().toHexString()
+        every { mockUserRepository.findById(id) } returns null
 
         //WHEN //THEN
         assertThrows<UserNotFoundException> { userService.getById(id) }
@@ -90,7 +86,7 @@ class UserServiceTest {
         val email = getRandomEmail()
         val user = User.random(email = email)
 
-        every { mockUserRepository.findByEmail(email) } returns (user)
+        every { mockUserRepository.findByEmail(email) } returns user
 
         //WHEN
         val result = userService.getByEmail(email)
@@ -103,7 +99,7 @@ class UserServiceTest {
     fun `should throw UserNotFoundException when there is no user with this email`() {
         //GIVEN
         val email = getRandomEmail()
-        every { mockUserRepository.findByEmail(email) } returns (null)
+        every { mockUserRepository.findByEmail(email) } returns null
 
         //WHEN //THEN
         assertThrows<UserNotFoundException> { userService.getByEmail(email) }

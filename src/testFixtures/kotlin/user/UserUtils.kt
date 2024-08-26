@@ -7,7 +7,7 @@ import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.model.User
 
 fun User.Companion.random(
-    id: String = getRandomObjectId().toString(),
+    id: String = getRandomObjectId().toHexString(),
     role: Role? = Role.ARTIST,
     email: String? = getRandomString(10),
 ) = User(

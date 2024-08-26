@@ -18,7 +18,7 @@ class AuctionMapperTest {
         //GIVEN
         val auction = Auction.random()
         val expectedAuction = AuctionResponse(
-            auction.id!!.toString(),
+            auction.id!!.toHexString(),
             auction.artwork!!.toArtworkResponse(),
             auction.bid!!,
             auction.buyer?.toUserResponse(),
@@ -38,7 +38,7 @@ class AuctionMapperTest {
         // GIVEN
         val auction = Auction.random(bid = null)
         val expectedAuction = AuctionResponse(
-            auction.id!!.toString(),
+            auction.id!!.toHexString(),
             auction.artwork!!.toArtworkResponse(),
             BID,
             auction.buyer?.toUserResponse(),

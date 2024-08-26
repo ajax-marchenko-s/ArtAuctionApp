@@ -12,17 +12,17 @@ import ua.marchenko.artauction.auction.repository.AuctionRepository
 import artwork.random
 import auction.random
 import getRandomObjectId
-import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
-import org.junit.jupiter.api.BeforeEach
+import io.mockk.junit5.MockKExtension
 import kotlin.test.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import ua.marchenko.artauction.artwork.model.Artwork
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.auction.model.Auction
 
-
+@ExtendWith(MockKExtension::class)
 class AuctionServiceTest {
 
     @MockK
@@ -34,16 +34,11 @@ class AuctionServiceTest {
     @InjectMockKs
     private lateinit var auctionService: AuctionServiceImpl
 
-    @BeforeEach
-    fun setUp() {
-        MockKAnnotations.init(this)
-    }
-
     @Test
     fun `should return a list of auctions when auctions are present`() {
         //GIVEN
         val auctions = listOf(Auction.random())
-        every { mockAuctionRepository.findAll() } returns (auctions)
+        every { mockAuctionRepository.findAll() } returns auctions
 
         //WHEN
         val result = auctionService.getAll()
@@ -56,7 +51,7 @@ class AuctionServiceTest {
     @Test
     fun `should return an empty list of auctions when there are no auctions`() {
         //GIVEN
-        every { mockAuctionRepository.findAll() } returns (listOf())
+        every { mockAuctionRepository.findAll() } returns emptyList()
 
         //WHEN
         val result = auctionService.getAll()
@@ -68,10 +63,10 @@ class AuctionServiceTest {
     @Test
     fun `should return auction by id when auction with this id exists`() {
         //GIVEN
-        val id = getRandomObjectId().toString()
+        val id = getRandomObjectId().toHexString()
         val auction = Auction.random(id = id)
 
-        every { mockAuctionRepository.findById(id) } returns (auction)
+        every { mockAuctionRepository.findById(id) } returns auction
 
         //WHEN
         val result = auctionService.getById(id)
@@ -83,8 +78,8 @@ class AuctionServiceTest {
     @Test
     fun `should throw AuctionNotFoundException when there is no artwork with this id`() {
         //GIVEN
-        val id = getRandomObjectId().toString()
-        every { mockAuctionRepository.findById(id) } returns (null)
+        val id = getRandomObjectId().toHexString()
+        every { mockAuctionRepository.findById(id) } returns null
 
         //WHEN //THEN
         assertThrows<AuctionNotFoundException> { auctionService.getById(id) }
@@ -95,17 +90,17 @@ class AuctionServiceTest {
         //GIVEN
         val newAuctionId = getRandomObjectId()
         val artwork = Artwork.random(status = ArtworkStatus.VIEW)
-        val auctionRequest = CreateAuctionRequest.random(artworkId = artwork.id!!.toString())
+        val auctionRequest = CreateAuctionRequest.random(artworkId = artwork.id!!.toHexString())
         val auction = auctionRequest.toAuction(artwork.copy(status = ArtworkStatus.ON_AUCTION), null)
 
-        every { mockArtworkService.getById(auctionRequest.artworkId) } returns (artwork)
+        every { mockArtworkService.getById(auctionRequest.artworkId) } returns artwork
         every {
             mockArtworkService.updateStatus(
                 auctionRequest.artworkId,
                 ArtworkStatus.ON_AUCTION
             )
-        } returns (artwork.copy(status = ArtworkStatus.ON_AUCTION))
-        every { mockAuctionRepository.save(auction) } returns (auction.copy(id = newAuctionId))
+        } returns artwork.copy(status = ArtworkStatus.ON_AUCTION)
+        every { mockAuctionRepository.save(auction) } returns auction.copy(id = newAuctionId)
 
         //WHEN
         val result = auctionService.save(auctionRequest)
@@ -118,9 +113,9 @@ class AuctionServiceTest {
     fun `should throw InvalidAuctionOperationException when artwork doesnt have VIEW status`() {
         //GIVEN
         val artwork = Artwork.random(status = ArtworkStatus.ON_AUCTION)
-        val auctionRequest = CreateAuctionRequest.random(artworkId = artwork.id!!.toString())
+        val auctionRequest = CreateAuctionRequest.random(artworkId = artwork.id!!.toHexString())
 
-        every { mockArtworkService.getById(auctionRequest.artworkId) } returns (artwork)
+        every { mockArtworkService.getById(auctionRequest.artworkId) } returns artwork
 
         //WHEN //THEN
         assertThrows<InvalidAuctionOperationException> { auctionService.save(auctionRequest) }

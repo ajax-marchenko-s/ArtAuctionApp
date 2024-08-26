@@ -5,12 +5,11 @@ import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.auction.model.Auction
 import artwork.random
 import getRandomObjectId
-import getRandomString
 import java.time.LocalDateTime
 import ua.marchenko.artauction.common.mongodb.id.toObjectId
 
 fun Auction.Companion.random(
-    id: String = getRandomObjectId().toString(),
+    id: String = getRandomObjectId().toHexString(),
     artwork: Artwork? = Artwork.random(),
     bid: Double? = 100.0,
 ) = Auction(
@@ -21,7 +20,7 @@ fun Auction.Companion.random(
     finishedAt = LocalDateTime.now(),
 )
 
-fun CreateAuctionRequest.Companion.random(artworkId: String = getRandomString()) =
+fun CreateAuctionRequest.Companion.random(artworkId: String = getRandomObjectId().toHexString()) =
     CreateAuctionRequest(
         artworkId = artworkId,
         bid = 100.0,
