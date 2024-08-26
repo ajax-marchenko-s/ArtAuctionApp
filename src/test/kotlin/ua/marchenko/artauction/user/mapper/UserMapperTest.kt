@@ -10,7 +10,7 @@ import user.random
 class UserMapperTest {
 
     @Test
-    fun `UserToUserResponse should return UserResponse if User has not null properties (except fields from bl)`() {
+    fun `should return UserResponse if User has not null properties (except fields from bl)`() {
         //GIVEN
         val user = User.random(role = Role.ARTIST)
         val expectedUser =
@@ -24,7 +24,7 @@ class UserMapperTest {
     }
 
     @Test
-    fun `UserToUserResponse should set default values if User has null properties (except fields from bl)`() {
+    fun `should set default values if User has null properties (except fields from bl)`() {
         //GIVEN
         val user = User.random(role = null)
         val expectedUser =

@@ -15,28 +15,43 @@ import ua.marchenko.artauction.user.service.UserService
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import org.mockito.Mockito.mock
 import getRandomEmail
 import getRandomObjectId
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
+import io.mockk.MockKAnnotations
+import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
+import org.junit.jupiter.api.BeforeEach
 import ua.marchenko.artauction.user.model.User
 import user.random
 
 class ArtworkServiceTest {
 
-    private val mockArtworkRepository = mock(ArtworkRepository::class.java)
-    private val mockUserService: UserService = mock(UserService::class.java)
-    private val mockAuthentication: Authentication = mock()
-    private val mockSecurityContext: SecurityContext = mock()
+    @MockK
+    private lateinit var mockArtworkRepository: ArtworkRepository
 
-    private val artworkService: ArtworkService = ArtworkServiceImpl(mockArtworkRepository, mockUserService)
+    @MockK
+    private lateinit var mockUserService: UserService
+
+    @MockK
+    private lateinit var mockAuthentication: Authentication
+
+    @MockK
+    private lateinit var mockSecurityContext: SecurityContext
+
+    @InjectMockKs
+    private lateinit var artworkService: ArtworkServiceImpl
+
+    @BeforeEach
+    fun setUp() {
+        MockKAnnotations.init(this)
+    }
 
     @Test
-    fun `getAll should return a list of artworks if there are present`() {
+    fun `should return a list of artworks when artworks are present`() {
         // GIVEN
         val artworks = listOf(Artwork.random())
-        whenever(mockArtworkRepository.findAll()) doReturn (artworks)
+        every { mockArtworkRepository.findAll() } returns (artworks)
 
         //WHEN
         val result = artworkService.getAll()
@@ -47,9 +62,9 @@ class ArtworkServiceTest {
     }
 
     @Test
-    fun `getAll should return an empty list of artworks if there are no artworks`() {
+    fun `should return an empty list of artworks when there are no artworks`() {
         // GIVEN
-        whenever(mockArtworkRepository.findAll()) doReturn (listOf())
+        every { mockArtworkRepository.findAll() } returns (listOf())
 
         //WHEN
         val result = artworkService.getAll()
@@ -59,12 +74,12 @@ class ArtworkServiceTest {
     }
 
     @Test
-    fun `getById should return artwork by id if artwork with this id exists`() {
+    fun `should return artwork by id when artwork with this id exists`() {
         // GIVEN
         val id = getRandomObjectId().toString()
         val artwork = Artwork.random(id = id)
 
-        whenever(mockArtworkRepository.findById(id)) doReturn (artwork)
+        every { mockArtworkRepository.findById(id) } returns (artwork)
 
         //WHEN
         val result = artworkService.getById(id)
@@ -74,34 +89,34 @@ class ArtworkServiceTest {
     }
 
     @Test
-    fun `getById should throw ArtworkNotFoundException if there is no artwork with this id`() {
+    fun `should throw ArtworkNotFoundException when there is no artwork with this id`() {
         //GIVEN
         val id = getRandomObjectId().toString()
-        whenever(mockArtworkRepository.findById(id)) doReturn (null)
+        every { mockArtworkRepository.findById(id) } returns (null)
 
-        //WHEN-THEN
+        //WHEN //THEN
         assertThrows<ArtworkNotFoundException> { artworkService.getById(id) }
     }
 
     @Test
-    fun `save should set status and artist before calling repository method`() {
+    fun `should set status and artist before calling repository method`() {
         //GIVEN
         val email = getRandomEmail()
         val user = User.random(email = email, role = Role.ARTIST)
         val artworkToSave = Artwork.random(status = null, artist = null)
 
         SecurityContextHolder.setContext(mockSecurityContext)
-        whenever(mockSecurityContext.authentication) doReturn (mockAuthentication)
-        whenever(mockAuthentication.name) doReturn (email)
-        whenever(mockUserService.getByEmail(email)) doReturn (user)
-        whenever(
+        every { mockSecurityContext.authentication } returns (mockAuthentication)
+        every { mockAuthentication.name } returns (email)
+        every { mockUserService.getByEmail(email) } returns (user)
+        every {
             mockArtworkRepository.save(
                 artworkToSave.copy(
                     status = ArtworkStatus.VIEW,
                     artist = user
                 )
             )
-        ) doReturn (artworkToSave.copy(status = ArtworkStatus.VIEW, artist = user))
+        } returns (artworkToSave.copy(status = ArtworkStatus.VIEW, artist = user))
 
         //WHEN
         val result = artworkService.save(artworkToSave)
@@ -111,10 +126,10 @@ class ArtworkServiceTest {
     }
 
     @Test
-    fun `existsById should return false if there are no artworks`() {
+    fun `should return false when there is no artwork with given id`() {
         //GIVEN
         val id = getRandomObjectId().toString()
-        whenever(mockArtworkRepository.existsById(id)) doReturn (false)
+        every { mockArtworkRepository.existsById(id) } returns (false)
 
         //WHEN
         val result = artworkService.existsById(id)
@@ -124,10 +139,10 @@ class ArtworkServiceTest {
     }
 
     @Test
-    fun `existsById should return true if artwork with this id exists`() {
+    fun `should return true when artwork with this id exists`() {
         //GIVEN
         val id = getRandomObjectId().toString()
-        whenever(mockArtworkRepository.existsById(id)) doReturn (true)
+        every { mockArtworkRepository.existsById(id) } returns (true)
 
         //WHEN
         val result = artworkService.existsById(id)

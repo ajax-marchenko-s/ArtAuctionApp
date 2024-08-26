@@ -13,7 +13,7 @@ import user.random
 class AuthMapperTest {
 
     @Test
-    fun `RegistrationRequestToUser should return User`() {
+    fun `should return User`() {
         //GIVEN
         val user = RegistrationRequest.random()
         val expectedUser = User(null, user.name, user.lastname, user.email, user.password, user.role)
@@ -26,7 +26,7 @@ class AuthMapperTest {
     }
 
     @Test
-    fun `UserToUserDetails should return UserDetails if User has right properties`() {
+    fun `should return UserDetails when User has right properties`() {
         //GIVEN
         val user = User.random(role = Role.ARTIST)
         val expectedUserDetails: UserDetails =
@@ -40,7 +40,7 @@ class AuthMapperTest {
     }
 
     @Test
-    fun `UserToUserDetails should set default values if User has null properties (except fields from bl)`() {
+    fun `should set default values when User has null properties (except fields from bl)`() {
         //GIVEN
         val user = User.random(role = null)
         val expectedUserDetails: UserDetails =
