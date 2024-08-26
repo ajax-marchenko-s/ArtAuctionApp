@@ -3,28 +3,30 @@ package ua.marchenko.artauction.user.controller
 import getRandomObjectId
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito.mock
 import ua.marchenko.artauction.user.exception.UserNotFoundException
 import ua.marchenko.artauction.user.mapper.toUserResponse
 import ua.marchenko.artauction.user.service.UserService
 import kotlin.test.Test
 import getRandomString
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.doThrow
-import org.mockito.kotlin.whenever
+import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
 import ua.marchenko.artauction.user.model.User
 import user.random
 
 class UserControllerTest {
 
-    private val mockUserService: UserService = mock(UserService::class.java)
-    private val userController: UserController = UserController(mockUserService)
+    @MockK
+    lateinit var mockUserService: UserService
+
+    @InjectMockKs
+    private lateinit var userController: UserController
 
     @Test
-    fun `getAllUsers should return a list of UserResponse`() {
+    fun `should return a list of UserResponse`() {
         //GIVEN
         val users = listOf(User.random())
-        whenever(mockUserService.getAll()) doReturn (users)
+        every { mockUserService.getAll() } returns users
 
         //WHEN
         val result = userController.getAllUsers()
@@ -35,9 +37,9 @@ class UserControllerTest {
     }
 
     @Test
-    fun `getAllUsers should return an empty list if there are no user`() {
+    fun `should return an empty list when there are no user`() {
         //GIVEN
-        whenever(mockUserService.getAll()) doReturn (listOf())
+        every { mockUserService.getAll() } returns emptyList()
 
         //WHEN
         val result = userController.getAllUsers()
@@ -47,12 +49,12 @@ class UserControllerTest {
     }
 
     @Test
-    fun `getUserById should return user with given id if auction with this id exists`() {
+    fun `should return user with given id when auction with this id exists`() {
         //GIVEN
-        val id = getRandomObjectId().toString()
+        val id = getRandomObjectId().toHexString()
         val user = User.random(id = id)
 
-        whenever(mockUserService.getById(id)) doReturn (user)
+        every { mockUserService.getById(id) } returns user
 
         //WHEN
         val result = userController.getUserById(id)
@@ -62,12 +64,12 @@ class UserControllerTest {
     }
 
     @Test
-    fun `getUserById should throw UserNotFoundException if there is no user with this id`() {
+    fun `should throw UserNotFoundException when there is no user with this id`() {
         //GIVEN
         val id = getRandomString()
-        whenever(mockUserService.getById(id)) doThrow (UserNotFoundException(id))
+        every { mockUserService.getById(id) } throws UserNotFoundException(id)
 
-        //WHEN-THEN
+        //WHEN //THEN
         assertThrows<UserNotFoundException> { userController.getUserById(id) }
     }
 }

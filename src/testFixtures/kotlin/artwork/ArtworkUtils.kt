@@ -12,7 +12,7 @@ import ua.marchenko.artauction.user.model.User
 import user.random
 
 fun Artwork.Companion.random(
-    id: String = getRandomObjectId().toString(),
+    id: String = getRandomObjectId().toHexString(),
     status: ArtworkStatus? = ArtworkStatus.VIEW,
     artist: User? = User.random(role = Role.ARTIST),
 ) = Artwork(

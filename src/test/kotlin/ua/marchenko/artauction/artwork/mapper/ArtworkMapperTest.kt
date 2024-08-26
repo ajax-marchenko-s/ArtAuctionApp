@@ -15,11 +15,11 @@ import user.random
 class ArtworkMapperTest {
 
     @Test
-    fun `ArtworkToArtworkResponse should return ArtworkResponse if Artwork has not null properties (except fields from business logic)`() {
+    fun `should return ArtworkResponse when Artwork has not null properties (except fields from business logic)`() {
         // GIVEN
         val artwork = Artwork.random(artist = User.random(role = Role.ARTIST))
         val expectedArtwork = ArtworkResponse(
-            artwork.id!!.toString(),
+            artwork.id!!.toHexString(),
             artwork.title!!,
             artwork.description!!,
             artwork.style!!,
@@ -37,11 +37,11 @@ class ArtworkMapperTest {
     }
 
     @Test
-    fun `ArtworkToArtworkResponse should set default values if Artwork has null properties (except fields from bl)`() {
+    fun `should return ArtworkResponse with default values when Artwork has null properties (except fields from bl)`() {
         // GIVEN
         val artwork = Artwork.random(status = null)
         val expectedArtwork = ArtworkResponse(
-            artwork.id!!.toString(),
+            artwork.id!!.toHexString(),
             artwork.title!!,
             artwork.description!!,
             artwork.style!!,
@@ -59,7 +59,7 @@ class ArtworkMapperTest {
     }
 
     @Test
-    fun `ArtworkRequestToArtwork should return Artwork`() {
+    fun `should return Artwork`() {
         // GIVEN
         val artwork = CreateArtworkRequest.random()
         val expectedArtwork =

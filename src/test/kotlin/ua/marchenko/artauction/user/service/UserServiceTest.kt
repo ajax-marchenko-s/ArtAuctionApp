@@ -2,7 +2,6 @@ package ua.marchenko.artauction.user.service
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito.mock
 import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.exception.UserNotFoundException
 import ua.marchenko.artauction.user.model.User
@@ -10,21 +9,24 @@ import ua.marchenko.artauction.user.repository.UserRepository
 import kotlin.test.Test
 import getRandomEmail
 import getRandomObjectId
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
+import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
 import user.random
 
 class UserServiceTest {
 
-    private val mockUserRepository = mock(UserRepository::class.java)
+    @MockK
+    private lateinit var mockUserRepository: UserRepository
 
-    private val userService: UserService = UserServiceImpl(mockUserRepository)
+    @InjectMockKs
+    private lateinit var userService: UserServiceImpl
 
     @Test
-    fun `getAll should return a list of users if there are users`() {
+    fun `should return a list of users when users are exist`() {
         //GIVEN
         val users = listOf(User.random(role = Role.ARTIST), User.random(role = Role.BUYER))
-        whenever(mockUserRepository.findAll()) doReturn (users)
+        every { mockUserRepository.findAll() } returns users
 
         //WHEN
         val result = userService.getAll()
@@ -36,10 +38,9 @@ class UserServiceTest {
     }
 
     @Test
-    fun `getAll should return an empty list of users if there are no users`() {
+    fun `should return an empty list of users when there are no users`() {
         //GIVEN
-        val users = listOf<User>()
-        whenever(mockUserRepository.findAll()) doReturn (users)
+        every { mockUserRepository.findAll() } returns emptyList()
 
         //WHEN
         val result = userService.getAll()
@@ -49,12 +50,12 @@ class UserServiceTest {
     }
 
     @Test
-    fun `getById should return user by id if user with this id exists`() {
+    fun `should return user by id when user with this id exists`() {
         //GIVEN
-        val id = getRandomObjectId().toString()
+        val id = getRandomObjectId().toHexString()
         val user = User.random(id = id)
 
-        whenever(mockUserRepository.findById(id)) doReturn (user)
+        every { mockUserRepository.findById(id) } returns user
 
         //WHEN
         val result = userService.getById(id)
@@ -64,22 +65,22 @@ class UserServiceTest {
     }
 
     @Test
-    fun `getById should throw UserNotFoundException if there is no user with this id`() {
+    fun `should throw UserNotFoundException when there is no user with this id`() {
         //GIVEN
-        val id = getRandomObjectId().toString()
-        whenever(mockUserRepository.findById(id)) doReturn (null)
+        val id = getRandomObjectId().toHexString()
+        every { mockUserRepository.findById(id) } returns null
 
-        //WHEN-THEN
+        //WHEN //THEN
         assertThrows<UserNotFoundException> { userService.getById(id) }
     }
 
     @Test
-    fun `getByEmail should return user by email if user with this email exists`() {
+    fun `should return user by email when user with this email exists`() {
         //GIVEN
         val email = getRandomEmail()
         val user = User.random(email = email)
 
-        whenever(mockUserRepository.findByEmail(email)) doReturn (user)
+        every { mockUserRepository.findByEmail(email) } returns user
 
         //WHEN
         val result = userService.getByEmail(email)
@@ -89,12 +90,12 @@ class UserServiceTest {
     }
 
     @Test
-    fun `getByEmail should throw UserNotFoundException if there is no user with this email`() {
+    fun `should throw UserNotFoundException when there is no user with this email`() {
         //GIVEN
         val email = getRandomEmail()
-        whenever(mockUserRepository.findByEmail(email)) doReturn (null)
+        every { mockUserRepository.findByEmail(email) } returns null
 
-        //WHEN-THEN
+        //WHEN //THEN
         assertThrows<UserNotFoundException> { userService.getByEmail(email) }
     }
 }

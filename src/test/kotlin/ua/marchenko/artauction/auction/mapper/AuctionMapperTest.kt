@@ -14,11 +14,11 @@ import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 class AuctionMapperTest {
 
     @Test
-    fun `AuctionToAuctionResponse should return AuctionResponse if Auction has not null properties (except fields from business logic)`() {
+    fun `should return AuctionResponse when Auction has not null properties (except fields from business logic)`() {
         //GIVEN
         val auction = Auction.random()
         val expectedAuction = AuctionResponse(
-            auction.id!!.toString(),
+            auction.id!!.toHexString(),
             auction.artwork!!.toArtworkResponse(),
             auction.bid!!,
             auction.buyer?.toUserResponse(),
@@ -34,11 +34,11 @@ class AuctionMapperTest {
     }
 
     @Test
-    fun `AuctionToAuctionResponse should set default values if Auction has null properties (except fields from bl)`() {
+    fun `should set default values when Auction has null properties (except fields from bl)`() {
         // GIVEN
         val auction = Auction.random(bid = null)
         val expectedAuction = AuctionResponse(
-            auction.id!!.toString(),
+            auction.id!!.toHexString(),
             auction.artwork!!.toArtworkResponse(),
             BID,
             auction.buyer?.toUserResponse(),
@@ -54,7 +54,7 @@ class AuctionMapperTest {
     }
 
     @Test
-    fun `AuctionRequestToAuction should return Auction`() {
+    fun `should return Auction`() {
         //GIVEN
         val auction = CreateAuctionRequest.random()
         val artwork = Artwork.random()

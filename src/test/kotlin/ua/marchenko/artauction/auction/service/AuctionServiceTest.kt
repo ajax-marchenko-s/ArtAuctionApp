@@ -12,25 +12,30 @@ import ua.marchenko.artauction.auction.repository.AuctionRepository
 import artwork.random
 import auction.random
 import getRandomObjectId
+import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
 import kotlin.test.Test
-import org.mockito.Mockito.mock
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
 import ua.marchenko.artauction.artwork.model.Artwork
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.auction.model.Auction
 
 class AuctionServiceTest {
 
-    private val mockAuctionRepository = mock(AuctionRepository::class.java)
-    private val mockArtworkService: ArtworkService = mock(ArtworkService::class.java)
-    private val auctionService: AuctionService = AuctionServiceImpl(mockAuctionRepository, mockArtworkService)
+    @MockK
+    private lateinit var mockAuctionRepository: AuctionRepository
+
+    @MockK
+    private lateinit var mockArtworkService: ArtworkService
+
+    @InjectMockKs
+    private lateinit var auctionService: AuctionServiceImpl
 
     @Test
-    fun `getAll should return a list of auctions if there are present`() {
+    fun `should return a list of auctions when auctions are present`() {
         //GIVEN
         val auctions = listOf(Auction.random())
-        whenever(mockAuctionRepository.findAll()) doReturn (auctions)
+        every { mockAuctionRepository.findAll() } returns auctions
 
         //WHEN
         val result = auctionService.getAll()
@@ -41,9 +46,9 @@ class AuctionServiceTest {
     }
 
     @Test
-    fun `getAll should return an empty list of auctions if there are no auctions`() {
+    fun `should return an empty list of auctions when there are no auctions`() {
         //GIVEN
-        whenever(mockAuctionRepository.findAll()) doReturn (listOf())
+        every { mockAuctionRepository.findAll() } returns emptyList()
 
         //WHEN
         val result = auctionService.getAll()
@@ -53,12 +58,12 @@ class AuctionServiceTest {
     }
 
     @Test
-    fun `getById should return auction by id if auction with this id exists`() {
+    fun `should return auction by id when auction with this id exists`() {
         //GIVEN
-        val id = getRandomObjectId().toString()
+        val id = getRandomObjectId().toHexString()
         val auction = Auction.random(id = id)
 
-        whenever(mockAuctionRepository.findById(id)) doReturn (auction)
+        every { mockAuctionRepository.findById(id) } returns auction
 
         //WHEN
         val result = auctionService.getById(id)
@@ -68,31 +73,31 @@ class AuctionServiceTest {
     }
 
     @Test
-    fun `getById should throw AuctionNotFoundException if there is no artwork with this id`() {
+    fun `should throw AuctionNotFoundException when there is no artwork with this id`() {
         //GIVEN
-        val id = getRandomObjectId().toString()
-        whenever(mockAuctionRepository.findById(id)) doReturn (null)
+        val id = getRandomObjectId().toHexString()
+        every { mockAuctionRepository.findById(id) } returns null
 
-        //WHEN-THEN
+        //WHEN //THEN
         assertThrows<AuctionNotFoundException> { auctionService.getById(id) }
     }
 
     @Test
-    fun `save should change artwork status and save`() {
+    fun `should change artwork status and save when artwork exist and artwork status is view`() {
         //GIVEN
         val newAuctionId = getRandomObjectId()
-        val artwork = Artwork.random()
-        val auctionRequest = CreateAuctionRequest.random(artworkId = artwork.id!!.toString())
+        val artwork = Artwork.random(status = ArtworkStatus.VIEW)
+        val auctionRequest = CreateAuctionRequest.random(artworkId = artwork.id!!.toHexString())
         val auction = auctionRequest.toAuction(artwork.copy(status = ArtworkStatus.ON_AUCTION), null)
 
-        whenever(mockArtworkService.getById(auctionRequest.artworkId)) doReturn (artwork)
-        whenever(
+        every { mockArtworkService.getById(auctionRequest.artworkId) } returns artwork
+        every {
             mockArtworkService.updateStatus(
                 auctionRequest.artworkId,
                 ArtworkStatus.ON_AUCTION
             )
-        ) doReturn (artwork.copy(status = ArtworkStatus.ON_AUCTION))
-        whenever(mockAuctionRepository.save(auction)) doReturn (auction.copy(id = newAuctionId))
+        } returns artwork.copy(status = ArtworkStatus.ON_AUCTION)
+        every { mockAuctionRepository.save(auction) } returns auction.copy(id = newAuctionId)
 
         //WHEN
         val result = auctionService.save(auctionRequest)
@@ -102,14 +107,14 @@ class AuctionServiceTest {
     }
 
     @Test
-    fun `save should throw InvalidAuctionOperationException if artwork doesnt have VIEW status`() {
+    fun `should throw InvalidAuctionOperationException when artwork doesnt have VIEW status`() {
         //GIVEN
         val artwork = Artwork.random(status = ArtworkStatus.ON_AUCTION)
-        val auctionRequest = CreateAuctionRequest.random(artworkId = artwork.id!!.toString())
+        val auctionRequest = CreateAuctionRequest.random(artworkId = artwork.id!!.toHexString())
 
-        whenever(mockArtworkService.getById(auctionRequest.artworkId)) doReturn (artwork)
+        every { mockArtworkService.getById(auctionRequest.artworkId) } returns artwork
 
-        //WHEN-THEN
+        //WHEN //THEN
         assertThrows<InvalidAuctionOperationException> { auctionService.save(auctionRequest) }
     }
 }

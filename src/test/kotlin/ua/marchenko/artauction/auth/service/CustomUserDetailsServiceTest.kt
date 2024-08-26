@@ -1,32 +1,33 @@
 package ua.marchenko.artauction.auth.service
 
+import getRandomEmail
+import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito.mock
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import ua.marchenko.artauction.auth.mapper.toUserDetails
 import ua.marchenko.artauction.user.repository.UserRepository
 import kotlin.test.Test
-import getRandomEmail
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
 import ua.marchenko.artauction.user.model.User
 import user.random
 
 class CustomUserDetailsServiceTest {
 
-    private val mockUserRepository = mock(UserRepository::class.java)
+    @MockK
+    private lateinit var mockUserRepository: UserRepository
 
-    private val userDetailsService: UserDetailsService = CustomUserDetailsServiceImpl(mockUserRepository)
+    @InjectMockKs
+    private lateinit var userDetailsService: CustomUserDetailsServiceImpl
 
     @Test
-    fun `loadUserByUsername should return UserDetails by username if user with this email exists`() {
+    fun `should return UserDetails by username when user with this email exists`() {
         //GIVEN
         val email = getRandomEmail()
         val user = User.random(email = email)
 
-        whenever(mockUserRepository.findByEmail(email)) doReturn (user)
+        every { mockUserRepository.findByEmail(email) } returns user
 
         //WHEN
         val result = userDetailsService.loadUserByUsername(email)
@@ -36,12 +37,12 @@ class CustomUserDetailsServiceTest {
     }
 
     @Test
-    fun `loadUserByUsername should throw UsernameNotFoundException if there is no user with this email`() {
+    fun `should throw UsernameNotFoundException when there is no user with this email`() {
         //GIVEN
         val email = getRandomEmail()
-        whenever(mockUserRepository.findByEmail(email)) doReturn (null)
+        every { mockUserRepository.findByEmail(email) } returns null
 
-        //WHEN-THEN
+        //WHEN //THEN
         assertThrows<UsernameNotFoundException> { userDetailsService.loadUserByUsername(email) }
     }
 }

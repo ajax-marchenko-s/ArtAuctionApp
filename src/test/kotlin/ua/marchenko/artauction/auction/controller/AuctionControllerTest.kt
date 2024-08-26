@@ -3,29 +3,31 @@ package ua.marchenko.artauction.auction.controller
 import auction.random
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito.mock
 import ua.marchenko.artauction.auction.exception.AuctionNotFoundException
 import ua.marchenko.artauction.auction.mapper.toAuctionResponse
 import ua.marchenko.artauction.auction.service.AuctionService
 import getRandomObjectId
 import kotlin.test.Test
 import getRandomString
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.doThrow
-import org.mockito.kotlin.whenever
+import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.auction.model.Auction
 
 class AuctionControllerTest {
 
-    private val mockAuctionService: AuctionService = mock(AuctionService::class.java)
-    private val auctionController: AuctionController = AuctionController(mockAuctionService)
+    @MockK
+    lateinit var mockAuctionService: AuctionService
+
+    @InjectMockKs
+    private lateinit var auctionController: AuctionController
 
     @Test
-    fun `getAllAuctions should return a list of AuctionResponse`() {
+    fun `should return a list of AuctionResponse when there are some auctions`() {
         //GIVEN
         val auctions = listOf(Auction.random())
-        whenever(mockAuctionService.getAll()) doReturn (auctions)
+        every { mockAuctionService.getAll() } returns auctions
 
         //WHEN
         val result = auctionController.getAllAuctions()
@@ -36,9 +38,9 @@ class AuctionControllerTest {
     }
 
     @Test
-    fun `getAllAuctions should return an empty list if there are no auction`() {
+    fun `should return an empty list when there are no auction`() {
         //GIVEN
-        whenever(mockAuctionService.getAll()) doReturn (listOf())
+        every { mockAuctionService.getAll() } returns emptyList()
 
         //WHEN
         val result = auctionController.getAllAuctions()
@@ -48,12 +50,12 @@ class AuctionControllerTest {
     }
 
     @Test
-    fun `getAuctionById should return auction with given id if auction with this id exists`() {
+    fun `should return auction with given id when auction with this id exists`() {
         //GIVEN
-        val id = getRandomObjectId().toString()
+        val id = getRandomObjectId().toHexString()
         val auction = Auction.random(id = id)
 
-        whenever(mockAuctionService.getById(id)) doReturn (auction)
+        every { mockAuctionService.getById(id) } returns auction
 
         //WHEN
         val result = auctionController.getAuctionById(id)
@@ -63,22 +65,22 @@ class AuctionControllerTest {
     }
 
     @Test
-    fun `getAuctionById should throw AuctionNotFoundException if there is no auction with this id`() {
+    fun `should throw AuctionNotFoundException when there is no auction with this id`() {
         //GIVEN
         val id = getRandomString()
-        whenever(mockAuctionService.getById(id)) doThrow (AuctionNotFoundException(id))
+        every { mockAuctionService.getById(id) } throws AuctionNotFoundException(id)
 
-        //WHEN-THEN
+        //WHEN //THEN
         assertThrows<AuctionNotFoundException> { auctionController.getAuctionById(id) }
     }
 
     @Test
-    fun `save should return AuctionResponse`() {
+    fun `should return AuctionResponse`() {
         //GIVEN
         val auctionRequest = CreateAuctionRequest.random()
         val auction = Auction.random()
 
-        whenever(mockAuctionService.save(auctionRequest)) doReturn (auction.toAuctionResponse())
+        every { mockAuctionService.save(auctionRequest) } returns auction.toAuctionResponse()
 
         //WHEN
         val result = auctionController.addAuction(auctionRequest)
