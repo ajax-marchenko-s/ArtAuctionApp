@@ -40,10 +40,7 @@ class UserServiceTest {
     @Test
     fun `should return an empty list of users when there are no users`() {
         //GIVEN
-        val users = listOf<User>()
-        every {
-            mockUserRepository.findAll()
-        } returns users
+        every { mockUserRepository.findAll() } returns emptyList()
 
         //WHEN
         val result = userService.getAll()
