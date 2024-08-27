@@ -12,7 +12,7 @@ import ua.marchenko.artauction.common.annotation.scheduled.beanPostProcessor.Cus
 @Component
 class CustomProfilingAnnotationBeanPostProcessor : BeanPostProcessor {
 
-    private val annotatedMethods: MutableMap<String, Map<Method, TimeUnit>> = mutableMapOf()
+    private val annotatedMethods: MutableMap<String, List<Method>> = mutableMapOf()
 
     override fun postProcessBeforeInitialization(bean: Any, beanName: String): Any? {
         val annotatedBeanClass = bean.javaClass
@@ -20,10 +20,7 @@ class CustomProfilingAnnotationBeanPostProcessor : BeanPostProcessor {
             annotatedBeanClass.methods.filter { it.isAnnotationPresent(CustomProfiling::class.java) }
 
         if (annotatedBeanClassMethods.isNotEmpty()) {
-            val methodsWithTimeUnits = annotatedBeanClassMethods.associateWith { method ->
-                method.getAnnotation(CustomProfiling::class.java).timeUnit
-            }
-            annotatedMethods[beanName] = methodsWithTimeUnits
+            annotatedMethods[beanName] = annotatedBeanClassMethods
         }
         return bean
     }
@@ -31,21 +28,25 @@ class CustomProfilingAnnotationBeanPostProcessor : BeanPostProcessor {
     override fun postProcessAfterInitialization(bean: Any, beanName: String): Any? {
         val methods = annotatedMethods[beanName] ?: return bean
         return Proxy.newProxyInstance(bean.javaClass.classLoader, bean.javaClass.interfaces) { _, method, args ->
-            methods.keys.find { it.name == method.name && it.parameters.contentEquals(method.parameters) }
+            methods.find { it.name == method.name && it.parameters.contentEquals(method.parameters) }
                 ?.let { methodToProfile ->
-                    val annotationTimeUnit = methods[methodToProfile] ?: TimeUnit.NANOSECONDS
-                    val beforeTime = System.nanoTime()
-
-                    @Suppress("SpreadOperator")
-                    val result = method.invoke(bean, *(args ?: emptyArray()))
-                    val methodTime = annotationTimeUnit.convert((System.nanoTime() - beforeTime), TimeUnit.NANOSECONDS)
-                    log.info("Method {} was executing for {} {}", method.name, methodTime, annotationTimeUnit)
-                    result
+                    profileMethodInvocation(bean, method, methodToProfile, args)
                 } ?: run {
                 @Suppress("SpreadOperator")
                 method.invoke(bean, *(args ?: emptyArray()))
             }
         }
+    }
+
+    private fun profileMethodInvocation(bean: Any, method: Method, methodToProfile: Method, args: Array<Any>?): Any? {
+        val timeUnit = methodToProfile.getAnnotation(CustomProfiling::class.java).timeUnit
+        val beforeTime = System.nanoTime()
+
+        @Suppress("SpreadOperator")
+        val result = method.invoke(bean, *(args ?: emptyArray()))
+        val methodTime = timeUnit.convert((System.nanoTime() - beforeTime), TimeUnit.NANOSECONDS)
+        log.info("Method {} was executing for {} {}", method.name, methodTime, timeUnit)
+        return result
     }
 
     companion object {
