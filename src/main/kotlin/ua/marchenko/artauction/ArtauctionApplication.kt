@@ -7,5 +7,6 @@ import org.springframework.boot.runApplication
 class ArtauctionApplication
 
 fun main(args: Array<String>) {
+    @Suppress("SpreadOperator")
     runApplication<ArtauctionApplication>(*args)
 }

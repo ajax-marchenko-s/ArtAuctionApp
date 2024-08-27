@@ -71,7 +71,10 @@ class AuthServiceTest {
         val usernamePasswordAuthenticationToken =
             UsernamePasswordAuthenticationToken(authenticationRequest.email, authenticationRequest.password)
 
-        every { mockAuthManager.authenticate(usernamePasswordAuthenticationToken) } throws RuntimeException("Unauthorized")
+        every {
+            mockAuthManager.authenticate(usernamePasswordAuthenticationToken)
+        } throws RuntimeException("Unauthorized")
+
 
         //WHEN //THEN
         assertThrows<RuntimeException> { authenticationService.authentication(authenticationRequest) }
