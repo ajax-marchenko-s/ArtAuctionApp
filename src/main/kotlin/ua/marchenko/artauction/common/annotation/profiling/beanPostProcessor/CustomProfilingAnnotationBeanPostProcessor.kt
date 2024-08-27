@@ -30,11 +30,9 @@ class CustomProfilingAnnotationBeanPostProcessor : BeanPostProcessor {
 
     override fun postProcessAfterInitialization(bean: Any, beanName: String): Any? {
         val methods = annotatedMethods[beanName] ?: return bean
-        val proxy =
-            Proxy.newProxyInstance(bean.javaClass.classLoader, bean.javaClass.interfaces) { _, method, args ->
-                val methodToProfile =
-                    methods.keys.find { it.name == method.name && it.parameters.contentEquals(method.parameters) }
-                if (methodToProfile != null) {
+        return Proxy.newProxyInstance(bean.javaClass.classLoader, bean.javaClass.interfaces) { _, method, args ->
+            methods.keys.find { it.name == method.name && it.parameters.contentEquals(method.parameters) }
+                ?.let { methodToProfile ->
                     val annotationTimeUnit = methods[methodToProfile] ?: TimeUnit.NANOSECONDS
                     val beforeTime = System.nanoTime()
 
@@ -43,12 +41,11 @@ class CustomProfilingAnnotationBeanPostProcessor : BeanPostProcessor {
                     val methodTime = annotationTimeUnit.convert((System.nanoTime() - beforeTime), TimeUnit.NANOSECONDS)
                     log.info("Method {} was executing for {} {}", method.name, methodTime, annotationTimeUnit)
                     result
-                } else {
-                    @Suppress("SpreadOperator")
-                    method.invoke(bean, *(args ?: emptyArray()))
-                }
+                } ?: run {
+                @Suppress("SpreadOperator")
+                method.invoke(bean, *(args ?: emptyArray()))
             }
-        return proxy
+        }
     }
 
     companion object {
