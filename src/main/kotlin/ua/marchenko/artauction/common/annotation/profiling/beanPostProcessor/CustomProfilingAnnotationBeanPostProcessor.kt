@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.stereotype.Component
 import ua.marchenko.artauction.common.annotation.profiling.annotation.CustomProfiling
-import ua.marchenko.artauction.common.annotation.scheduled.beanPostProcessor.CustomScheduledAnnotationBeanPostProcessor
 
 @Component
 class CustomProfilingAnnotationBeanPostProcessor : BeanPostProcessor {
@@ -29,8 +28,8 @@ class CustomProfilingAnnotationBeanPostProcessor : BeanPostProcessor {
         val methods = annotatedMethods[beanName] ?: return bean
         return Proxy.newProxyInstance(bean.javaClass.classLoader, bean.javaClass.interfaces) { _, method, args ->
             methods.find { it.name == method.name && it.parameters.contentEquals(method.parameters) }
-                ?.let { methodToProfile ->
-                    profileMethodInvocation(bean, method, methodToProfile, args)
+                ?.let { originalMethod ->
+                    profileMethodInvocation(bean, method, originalMethod, args)
                 } ?: run {
                 @Suppress("SpreadOperator")
                 method.invoke(bean, *(args ?: emptyArray()))
@@ -38,18 +37,24 @@ class CustomProfilingAnnotationBeanPostProcessor : BeanPostProcessor {
         }
     }
 
-    private fun profileMethodInvocation(bean: Any, method: Method, methodToProfile: Method, args: Array<Any>?): Any? {
-        val timeUnit = methodToProfile.getAnnotation(CustomProfiling::class.java).timeUnit
+    private fun profileMethodInvocation(
+        bean: Any,
+        methodToCall: Method,
+        originalMethod: Method,
+        args: Array<Any>?
+    ): Any? {
+        val timeUnit = originalMethod.getAnnotation(CustomProfiling::class.java).timeUnit
         val beforeTime = System.nanoTime()
-
-        @Suppress("SpreadOperator")
-        val result = method.invoke(bean, *(args ?: emptyArray()))
-        val methodTime = timeUnit.convert((System.nanoTime() - beforeTime), TimeUnit.NANOSECONDS)
-        log.info("Method {} was executing for {} {}", method.name, methodTime, timeUnit)
-        return result
+        try {
+            @Suppress("SpreadOperator")
+            return methodToCall.invoke(bean, *(args ?: emptyArray()))
+        } finally {
+            val methodTime = timeUnit.convert((System.nanoTime() - beforeTime), TimeUnit.NANOSECONDS)
+            log.info("Method {} was executing for {} {}", methodToCall.name, methodTime, timeUnit)
+        }
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(CustomScheduledAnnotationBeanPostProcessor::class.java)
+        private val log = LoggerFactory.getLogger(CustomProfilingAnnotationBeanPostProcessor::class.java)
     }
 }
