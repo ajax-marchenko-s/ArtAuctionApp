@@ -6,6 +6,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.DisposableBean
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.context.ApplicationListener
 import org.springframework.context.event.ContextRefreshedEvent
@@ -17,11 +18,11 @@ import ua.marchenko.artauction.common.annotation.scheduled.scheduledDetails.DayT
 @Component
 @Order
 class CustomScheduledInvokerContextListener(private val beanFactory: ConfigurableListableBeanFactory) :
-    ApplicationListener<ContextRefreshedEvent> {
+    ApplicationListener<ContextRefreshedEvent>, DisposableBean {
+
+    val scheduledService: ScheduledExecutorService = Executors.newScheduledThreadPool(CORE_POOL_SIZE)
 
     override fun onApplicationEvent(event: ContextRefreshedEvent) {
-
-        val scheduledService: ScheduledExecutorService = Executors.newScheduledThreadPool(CORE_POOL_SIZE)
 
         val context = event.applicationContext
         val beanNames = context.beanDefinitionNames
@@ -32,7 +33,7 @@ class CustomScheduledInvokerContextListener(private val beanFactory: Configurabl
             for (originalMethod in originalClass.methods) {
                 if (originalMethod.isAnnotationPresent(CustomScheduled::class.java)) {
                     val currentBean = context.getBean(beanName)
-                    scheduledMethodInvocation(currentBean, originalMethod, scheduledService)
+                    scheduledMethodInvocation(currentBean, originalMethod)
                 }
             }
         }
@@ -40,8 +41,7 @@ class CustomScheduledInvokerContextListener(private val beanFactory: Configurabl
 
     private fun scheduledMethodInvocation(
         bean: Any,
-        originalMethod: Method,
-        scheduledService: ScheduledExecutorService
+        originalMethod: Method
     ) {
         @Suppress("SpreadOperator")
         val currentMethod = bean.javaClass.getMethod(originalMethod.name, *originalMethod.parameterTypes)
@@ -51,6 +51,11 @@ class CustomScheduledInvokerContextListener(private val beanFactory: Configurabl
         val delay = dayTime.calculateDurationBetween().seconds
         scheduledService.scheduleWithFixedDelay({ currentMethod.invoke(bean) }, initialDelay, delay, TimeUnit.SECONDS)
         log.info("Method {} has added to ScheduledExecutorService with delay {} s", currentMethod.name, delay)
+    }
+
+    override fun destroy() {
+        log.info("Shutting down CustomScheduledInvokerContextListener")
+        scheduledService.shutdown()
     }
 
     companion object {
