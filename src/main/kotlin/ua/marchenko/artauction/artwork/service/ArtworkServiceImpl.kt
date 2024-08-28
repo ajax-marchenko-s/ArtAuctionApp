@@ -1,5 +1,6 @@
 package ua.marchenko.artauction.artwork.service
 
+import java.util.concurrent.TimeUnit
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
@@ -7,6 +8,7 @@ import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.exception.ArtworkNotFoundException
 import ua.marchenko.artauction.artwork.model.Artwork
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
+import ua.marchenko.artauction.common.annotation.profiling.annotation.CustomProfiling
 import ua.marchenko.artauction.common.mongodb.id.toObjectId
 import ua.marchenko.artauction.user.model.User
 import ua.marchenko.artauction.user.service.UserService
@@ -17,6 +19,7 @@ class ArtworkServiceImpl(
     private val userService: UserService,
 ) : ArtworkService {
 
+    @CustomProfiling(timeUnit = TimeUnit.MICROSECONDS)
     override fun getAll() = artworkRepository.findAll()
 
     override fun getById(id: String) = artworkRepository.findById(id) ?: throw ArtworkNotFoundException(id)
