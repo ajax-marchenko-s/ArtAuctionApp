@@ -41,4 +41,3 @@ data class DayTimeDetails(
         private const val WEEK_LENGTH = 7
     }
 }
-
