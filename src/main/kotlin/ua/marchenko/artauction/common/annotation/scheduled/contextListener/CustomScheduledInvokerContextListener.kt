@@ -29,10 +29,10 @@ class CustomScheduledInvokerContextListener(private val beanFactory: Configurabl
             val beanDefinition = beanFactory.getBeanDefinition(beanName)
             val originalClassName = beanDefinition.beanClassName ?: continue
             val originalClass = Class.forName(originalClassName)
-            for (method in originalClass.methods) {
-                if (method.isAnnotationPresent(CustomScheduled::class.java)) {
+            for (originalMethod in originalClass.methods) {
+                if (originalMethod.isAnnotationPresent(CustomScheduled::class.java)) {
                     val currentBean = context.getBean(beanName)
-                    scheduledMethodInvocation(currentBean, method, scheduledService)
+                    scheduledMethodInvocation(currentBean, originalMethod, scheduledService)
                 }
             }
         }
@@ -40,14 +40,13 @@ class CustomScheduledInvokerContextListener(private val beanFactory: Configurabl
 
     private fun scheduledMethodInvocation(
         bean: Any,
-        methodToSchedule: Method,
+        originalMethod: Method,
         scheduledService: ScheduledExecutorService
     ) {
         @Suppress("SpreadOperator")
-        val currentMethod = bean.javaClass.getMethod(methodToSchedule.name, *methodToSchedule.parameterTypes)
-        val annotation = methodToSchedule.getAnnotation(CustomScheduled::class.java)
-        val dayTime =
-            DayTimeDetails(annotation.day, annotation.hours, annotation.minutes, annotation.seconds)
+        val currentMethod = bean.javaClass.getMethod(originalMethod.name, *originalMethod.parameterTypes)
+        val annotation = originalMethod.getAnnotation(CustomScheduled::class.java)
+        val dayTime = DayTimeDetails(annotation.day, annotation.hours, annotation.minutes, annotation.seconds)
         val initialDelay = dayTime.calculateTimeDifference(LocalDateTime.now()).seconds
         val delay = dayTime.calculateDurationBetween().seconds
         scheduledService.scheduleWithFixedDelay({ currentMethod.invoke(bean) }, initialDelay, delay, TimeUnit.SECONDS)
