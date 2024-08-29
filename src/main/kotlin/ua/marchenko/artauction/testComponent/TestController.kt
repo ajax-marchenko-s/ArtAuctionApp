@@ -1,4 +1,4 @@
-package ua.marchenko.artauction.common.annotation
+package ua.marchenko.artauction.testComponent
 
 import java.util.concurrent.TimeUnit
 import org.springframework.stereotype.Service
