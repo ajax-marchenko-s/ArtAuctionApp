@@ -10,13 +10,14 @@ import org.springframework.beans.factory.DisposableBean
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.context.ApplicationListener
 import org.springframework.context.event.ContextRefreshedEvent
+import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 import ua.marchenko.artauction.common.annotation.scheduled.annotation.CustomScheduled
 import ua.marchenko.artauction.common.annotation.scheduled.scheduledDetails.DayTimeDetails
 
 @Component
-@Order
+@Order(Ordered.LOWEST_PRECEDENCE)
 class CustomScheduledInvokerContextListener(private val beanFactory: ConfigurableListableBeanFactory) :
     ApplicationListener<ContextRefreshedEvent>, DisposableBean {
 
