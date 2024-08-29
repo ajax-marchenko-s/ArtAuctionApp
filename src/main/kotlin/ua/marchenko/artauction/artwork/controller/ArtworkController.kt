@@ -1,5 +1,6 @@
 package ua.marchenko.artauction.artwork.controller
 
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -27,6 +28,6 @@ class ArtworkController(private val artworkService: ArtworkService) {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun addArtwork(@RequestBody artwork: CreateArtworkRequest) =
+    fun addArtwork(@Valid @RequestBody artwork: CreateArtworkRequest) =
         artworkService.save(artwork.toArtwork()).toArtworkResponse()
 }

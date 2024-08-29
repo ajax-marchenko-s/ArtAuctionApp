@@ -10,6 +10,8 @@ import ua.marchenko.artauction.common.exception.type.general.AlreadyExistExcepti
 import ua.marchenko.artauction.common.exception.type.general.NotFoundException
 import java.time.LocalDateTime
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.validation.FieldError
+import org.springframework.web.bind.MethodArgumentNotValidException
 
 @ControllerAdvice
 class ExceptionController {
@@ -40,6 +42,17 @@ class ExceptionController {
     fun handleAlreadyExistExceptionException(ex: AlreadyExistException) =
         ResponseEntity(createErrorMessageModel(HttpStatus.CONFLICT.value(), ex.message), HttpStatus.CONFLICT)
 
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleMethodArgumentNotValidExceptionException(ex: MethodArgumentNotValidException): ResponseEntity<ErrorMessageModel> {
+        val message = ex.bindingResult.allErrors.joinToString("; ") { error ->
+            "field ${(error as FieldError).field}: ${error.defaultMessage}"
+        }
+        return ResponseEntity(
+            createErrorMessageModel(HttpStatus.BAD_REQUEST.value(), message),
+            HttpStatus.BAD_REQUEST
+        )
+    }
+
     @ExceptionHandler(IllegalStateException::class)
     fun handleIllegalStateException(ex: IllegalStateException) = ResponseEntity(
         createErrorMessageModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.message),
@@ -52,6 +65,6 @@ class ExceptionController {
         HttpStatus.INTERNAL_SERVER_ERROR
     )
 
-    fun createErrorMessageModel(status: Int?, message: String?) =
+    private fun createErrorMessageModel(status: Int?, message: String?) =
         ErrorMessageModel(status, message, LocalDateTime.now())
 }
