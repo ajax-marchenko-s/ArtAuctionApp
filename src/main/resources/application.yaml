@@ -1,6 +1,8 @@
 spring:
   application:
     name: artauction
+  profiles:
+    active: test
 
   data:
     mongodb:

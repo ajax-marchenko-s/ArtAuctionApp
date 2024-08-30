@@ -1,6 +1,7 @@
 package ua.marchenko.artauction.testComponent
 
 import java.util.concurrent.TimeUnit
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -12,6 +13,7 @@ import ua.marchenko.artauction.common.annotation.scheduled.scheduledDetails.enum
 //NOTE: this is controller to test annotation due to methods from bl are not implemented yet
 @RestController
 @RequestMapping("/api/v1/test")
+@Profile("test")
 class TestController(val testService: TestService) {
 
     @GetMapping
