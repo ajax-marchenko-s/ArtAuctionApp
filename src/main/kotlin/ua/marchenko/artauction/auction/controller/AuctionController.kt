@@ -1,5 +1,6 @@
 package ua.marchenko.artauction.auction.controller
 
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -26,5 +27,5 @@ class AuctionController(private val auctionService: AuctionService) {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun addAuction(@RequestBody auction: CreateAuctionRequest) = auctionService.save(auction)
+    fun addAuction(@Valid @RequestBody auction: CreateAuctionRequest) = auctionService.save(auction)
 }

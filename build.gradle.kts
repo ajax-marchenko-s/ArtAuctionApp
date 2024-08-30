@@ -30,6 +30,7 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:0.12.3")
     implementation("io.jsonwebtoken:jjwt-impl:0.12.3")
     implementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
+    implementation("org.springframework.boot:spring-boot-starter-validation:3.3.3")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

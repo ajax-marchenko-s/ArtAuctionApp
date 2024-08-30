@@ -1,5 +1,6 @@
 package ua.marchenko.artauction.auth.controller
 
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -18,11 +19,11 @@ class AuthController(
 
     @PostMapping("/authenticate")
     @ResponseStatus(HttpStatus.OK)
-    fun authenticate(@RequestBody authRequest: AuthenticationRequest) =
+    fun authenticate(@Valid @RequestBody authRequest: AuthenticationRequest) =
         authenticationService.authentication(authRequest)
 
     @PostMapping("/registration")
     @ResponseStatus(HttpStatus.CREATED)
-    fun registerUser(@RequestBody registrationRequest: RegistrationRequest) =
+    fun registerUser(@Valid @RequestBody registrationRequest: RegistrationRequest) =
         authenticationService.register(registrationRequest)
 }
