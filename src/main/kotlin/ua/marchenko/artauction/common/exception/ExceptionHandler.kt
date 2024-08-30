@@ -16,33 +16,33 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 @ControllerAdvice
 class ExceptionController {
 
-    @ExceptionHandler(ExpiredJwtException::class)
+    @ExceptionHandler
     fun handleExpiredJwtException(ex: ExpiredJwtException) = ResponseEntity(
         createErrorMessageModel(HttpStatus.UNAUTHORIZED.value(), "The token has expired."),
         HttpStatus.UNAUTHORIZED
     )
 
-    @ExceptionHandler(AuthenticationException::class)
+    @ExceptionHandler
     fun handleAuthenticationException(ex: AuthenticationException) = ResponseEntity(
         createErrorMessageModel(HttpStatus.UNAUTHORIZED.value(), ex.message ?: "Authentication failed"),
         HttpStatus.UNAUTHORIZED
     )
 
-    @ExceptionHandler(HttpMessageNotReadableException::class)
+    @ExceptionHandler
     fun handleJsonParseException(ex: HttpMessageNotReadableException) = ResponseEntity(
         createErrorMessageModel(HttpStatus.BAD_REQUEST.value(), "JSON parse error: ${ex.message}"),
         HttpStatus.BAD_REQUEST
     )
 
-    @ExceptionHandler(NotFoundException::class)
+    @ExceptionHandler
     fun handleNotFoundException(ex: NotFoundException) =
         ResponseEntity(createErrorMessageModel(HttpStatus.NOT_FOUND.value(), ex.message), HttpStatus.NOT_FOUND)
 
-    @ExceptionHandler(AlreadyExistException::class)
+    @ExceptionHandler
     fun handleAlreadyExistExceptionException(ex: AlreadyExistException) =
         ResponseEntity(createErrorMessageModel(HttpStatus.CONFLICT.value(), ex.message), HttpStatus.CONFLICT)
 
-    @ExceptionHandler(MethodArgumentNotValidException::class)
+    @ExceptionHandler
     fun handleMethodArgumentNotValidExceptionException(ex: MethodArgumentNotValidException): ResponseEntity<ErrorMessageModel> {
         val message = ex.bindingResult.allErrors.joinToString("; ") { error ->
             "field ${(error as FieldError).field}: ${error.defaultMessage}"
@@ -53,13 +53,13 @@ class ExceptionController {
         )
     }
 
-    @ExceptionHandler(IllegalStateException::class)
+    @ExceptionHandler
     fun handleIllegalStateException(ex: IllegalStateException) = ResponseEntity(
         createErrorMessageModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.message),
         HttpStatus.INTERNAL_SERVER_ERROR
     )
 
-    @ExceptionHandler(Exception::class)
+    @ExceptionHandler
     fun handleException(ex: Exception) = ResponseEntity(
         createErrorMessageModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.message),
         HttpStatus.INTERNAL_SERVER_ERROR
