@@ -2,7 +2,6 @@ package ua.marchenko.artauction.auth.controller.dto
 
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
 import ua.marchenko.artauction.user.enums.Role
 
 data class RegistrationRequest(
@@ -19,7 +18,6 @@ data class RegistrationRequest(
     @field:NotBlank(message = "Password cannot be blank")
     val password: String,
 
-    @field:NotNull(message = "Role cannot be null")
     val role: Role,
 ) {
     companion object
