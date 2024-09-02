@@ -1,5 +1,6 @@
 package ua.marchenko.artauction.config.annotation
 
+import ch.qos.logback.classic.Level
 import config.annotation.customProfiling.CustomProfilingTestServiceWithAnnotationImpl
 import config.annotation.customProfiling.CustomProfilingTestServiceWithoutAnnotationImpl
 import getRandomString
@@ -12,6 +13,7 @@ import io.mockk.impl.annotations.InjectMockKs
 import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
@@ -44,8 +46,7 @@ class CustomProfilingAnnotationBeanPostProcessorTest {
 
         // THEN
         assertTrue(
-            Proxy.isProxyClass(proxy?.javaClass),
-            "Bean post processor should return proxy instead of original bean"
+            Proxy.isProxyClass(proxy?.javaClass), "Bean post processor should return proxy instead of original bean"
         )
     }
 
@@ -76,7 +77,13 @@ class CustomProfilingAnnotationBeanPostProcessorTest {
         proxy.test(getRandomString())
 
         // THEN
-        assertEquals(1, testLogAppender.list.size, "Log event must contain 1 log")
+        assertTrue(testLogAppender.list.isNotEmpty(), "Log event must contain logs")
+        assertNotNull(testLogAppender.list.find { it.message.contains(PROFILING_PART_LOG_MESSAGE_TEMPLATE) })
+        assertEquals(
+            Level.INFO, testLogAppender.list.find {
+                it.message.contains(PROFILING_PART_LOG_MESSAGE_TEMPLATE)
+            }?.level
+        )
     }
 
     @Test
@@ -89,7 +96,11 @@ class CustomProfilingAnnotationBeanPostProcessorTest {
 
         // WHEN-THEN
         assertThrows<Exception> { proxy.errorTest(getRandomString()) }
-        assertEquals(1, testLogAppender.list.size, "Log event must contain 1 log")
+        assertTrue(testLogAppender.list.isNotEmpty(), "Log event must contain logs")
+        assertNotNull(testLogAppender.list.find { it.message.contains(PROFILING_PART_LOG_MESSAGE_TEMPLATE) })
+        assertEquals(Level.INFO, testLogAppender.list.find {
+            it.message.contains(PROFILING_PART_LOG_MESSAGE_TEMPLATE)
+        }?.level)
     }
 
     @Test
@@ -125,5 +136,9 @@ class CustomProfilingAnnotationBeanPostProcessorTest {
     private fun createProxy(bean: Any, beanName: String): Any? {
         beanPostProcessor.postProcessBeforeInitialization(bean, beanName)
         return beanPostProcessor.postProcessAfterInitialization(bean, beanName)
+    }
+
+    companion object {
+        private const val PROFILING_PART_LOG_MESSAGE_TEMPLATE = "was executing for"
     }
 }
