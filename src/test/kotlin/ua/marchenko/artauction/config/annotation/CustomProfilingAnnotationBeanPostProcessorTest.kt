@@ -79,11 +79,9 @@ class CustomProfilingAnnotationBeanPostProcessorTest {
         // THEN
         assertTrue(testLogAppender.list.isNotEmpty(), "Log event must contain logs")
         assertNotNull(testLogAppender.list.find { it.message.contains(PROFILING_PART_LOG_MESSAGE_TEMPLATE) })
-        assertEquals(
-            Level.INFO, testLogAppender.list.find {
-                it.message.contains(PROFILING_PART_LOG_MESSAGE_TEMPLATE)
-            }?.level
-        )
+        assertEquals(Level.INFO, testLogAppender.list.find {
+            it.message.contains(PROFILING_PART_LOG_MESSAGE_TEMPLATE)
+        }?.level)
     }
 
     @Test
