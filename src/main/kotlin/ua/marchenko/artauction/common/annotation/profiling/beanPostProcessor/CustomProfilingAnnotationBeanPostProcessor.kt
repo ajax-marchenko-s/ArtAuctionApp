@@ -27,10 +27,11 @@ class CustomProfilingAnnotationBeanPostProcessor : BeanPostProcessor {
     override fun postProcessAfterInitialization(bean: Any, beanName: String): Any? {
         val methods = annotatedMethods[beanName] ?: return bean
         return Proxy.newProxyInstance(bean.javaClass.classLoader, bean.javaClass.interfaces) { _, method, args ->
-            methods.find { it.name == method.name && it.parameters.contentEquals(method.parameters) }
-                ?.let { originalMethod ->
-                    profileMethodInvocation(bean, method, originalMethod, args)
-                } ?: run {
+            methods.find { originalMethod ->
+                areMethodsEquivalent(originalMethod, method)
+            }?.let { originalMethod ->
+                profileMethodInvocation(bean, method, originalMethod, args)
+            } ?: run {
                 @Suppress("SpreadOperator")
                 method.invoke(bean, *(args ?: emptyArray()))
             }
@@ -52,6 +53,12 @@ class CustomProfilingAnnotationBeanPostProcessor : BeanPostProcessor {
             val methodTime = timeUnit.convert((System.nanoTime() - beforeTime), TimeUnit.NANOSECONDS)
             log.info("Method {} was executing for {} {}", methodToCall.name, methodTime, timeUnit)
         }
+    }
+
+    private fun areMethodsEquivalent(method1: Method, method2: Method): Boolean {
+        return method1.name == method2.name &&
+                method1.parameters.map { it.type } == method2.parameters.map { it.type } &&
+                method1.parameters.map { it.name } == method2.parameters.map { it.name }
     }
 
     companion object {
