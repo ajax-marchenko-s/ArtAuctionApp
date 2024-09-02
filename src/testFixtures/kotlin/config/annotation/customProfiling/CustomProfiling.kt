@@ -1,7 +1,5 @@
 package config.annotation.customProfiling
 
-import ch.qos.logback.classic.spi.ILoggingEvent
-import ch.qos.logback.core.AppenderBase
 import java.util.concurrent.TimeUnit
 import ua.marchenko.artauction.common.annotation.profiling.annotation.CustomProfiling
 
@@ -39,13 +37,5 @@ class CustomProfilingTestServiceWithAnnotationImpl : CustomProfilingTestService 
     @CustomProfiling
     override fun errorTest(s: String) {
         throw RuntimeException("I have annotation and throw an exception")
-    }
-}
-
-class MockLogger : AppenderBase<ILoggingEvent>() {
-    val logs = mutableListOf<ILoggingEvent>()
-
-    override fun append(event: ILoggingEvent) {
-        logs.add(event)
     }
 }

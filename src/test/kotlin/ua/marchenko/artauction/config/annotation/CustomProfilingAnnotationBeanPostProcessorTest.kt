@@ -5,8 +5,9 @@ import config.annotation.customProfiling.CustomProfilingTestServiceWithoutAnnota
 import getRandomString
 import java.lang.reflect.Proxy
 import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.read.ListAppender
 import config.annotation.customProfiling.CustomProfilingTestService
-import config.annotation.customProfiling.MockLogger
 import io.mockk.impl.annotations.InjectMockKs
 import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.test.Test
@@ -22,14 +23,14 @@ class CustomProfilingAnnotationBeanPostProcessorTest {
     @InjectMockKs
     private lateinit var beanPostProcessor: CustomProfilingAnnotationBeanPostProcessor
 
-    private lateinit var testLogger: MockLogger
+    private lateinit var testLogAppender: ListAppender<ILoggingEvent>
 
     @BeforeEach
     fun setup() {
-        testLogger = MockLogger()
-        testLogger.start()
         val logger = LoggerFactory.getLogger(CustomProfilingAnnotationBeanPostProcessor::class.java) as Logger
-        logger.addAppender(testLogger)
+        testLogAppender = ListAppender()
+        testLogAppender.start()
+        logger.addAppender(testLogAppender)
     }
 
     @Test
@@ -75,7 +76,7 @@ class CustomProfilingAnnotationBeanPostProcessorTest {
         proxy.test(getRandomString())
 
         // THEN
-        assertEquals(1, testLogger.logs.size, "Log event must contain 1 log")
+        assertEquals(1, testLogAppender.list.size, "Log event must contain 1 log")
     }
 
     @Test
@@ -88,7 +89,7 @@ class CustomProfilingAnnotationBeanPostProcessorTest {
 
         // WHEN-THEN
         assertThrows<Exception> { proxy.errorTest(getRandomString()) }
-        assertEquals(1, testLogger.logs.size, "Log event must contain 1 log")
+        assertEquals(1, testLogAppender.list.size, "Log event must contain 1 log")
     }
 
     @Test
@@ -103,7 +104,7 @@ class CustomProfilingAnnotationBeanPostProcessorTest {
         proxy.test(getRandomString())
 
         // THEN
-        assertTrue(testLogger.logs.isEmpty(), "Log event found in NOT annotated method")
+        assertTrue(testLogAppender.list.isEmpty(), "Log event found in NOT annotated method")
     }
 
     @Test
@@ -118,7 +119,7 @@ class CustomProfilingAnnotationBeanPostProcessorTest {
         proxy.test(100)
 
         // THEN
-        assertTrue(testLogger.logs.isEmpty(), "Log event found in NOT annotated method")
+        assertTrue(testLogAppender.list.isEmpty(), "Log event found in NOT annotated method")
     }
 
     private fun createProxy(bean: Any, beanName: String): Any? {
