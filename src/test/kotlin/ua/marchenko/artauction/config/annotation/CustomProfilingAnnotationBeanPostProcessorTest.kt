@@ -42,7 +42,10 @@ class CustomProfilingAnnotationBeanPostProcessorTest {
         val proxy = createProxy(annotatedBean, annotatedBeanName)
 
         // THEN
-        assertTrue(Proxy.isProxyClass(proxy?.javaClass), "Bean post processor should return proxy instead of original bean")
+        assertTrue(
+            Proxy.isProxyClass(proxy?.javaClass),
+            "Bean post processor should return proxy instead of original bean"
+        )
     }
 
     @Test
@@ -55,7 +58,9 @@ class CustomProfilingAnnotationBeanPostProcessorTest {
         val proxy = createProxy(notAnnotatedBean, notAnnotatedBeanName)
 
         // THEN
-        assertFalse(Proxy.isProxyClass(proxy?.javaClass), "Bean post processor should return original bean instaed of proxy")
+        assertFalse(
+            Proxy.isProxyClass(proxy?.javaClass), "Bean post processor should return original bean instaed of proxy"
+        )
     }
 
     @Test
@@ -87,7 +92,7 @@ class CustomProfilingAnnotationBeanPostProcessorTest {
     }
 
     @Test
-    fun `should not log method execution time when method is not annotated and class doesnt have annotated method too`() {
+    fun `should not log when method is not annotated and class doesnt have annotated method too`() {
         // GIVEN
         val notAnnotatedBean = CustomProfilingTestServiceWithoutAnnotationImpl()
         val notAnnotatedBeanName = getRandomString()

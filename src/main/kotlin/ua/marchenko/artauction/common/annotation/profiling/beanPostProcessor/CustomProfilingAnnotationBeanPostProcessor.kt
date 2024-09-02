@@ -62,6 +62,6 @@ class CustomProfilingAnnotationBeanPostProcessor : BeanPostProcessor {
     }
 
     companion object {
-        val log = LoggerFactory.getLogger(CustomProfilingAnnotationBeanPostProcessor::class.java)
+        private val log = LoggerFactory.getLogger(CustomProfilingAnnotationBeanPostProcessor::class.java)
     }
 }
