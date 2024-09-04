@@ -1,3 +1,5 @@
+import io.github.surpsg.deltacoverage.gradle.DeltaCoverageConfiguration
+
 plugins {
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.spring") version "1.9.23"
@@ -5,7 +7,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.6"
     id("io.gitlab.arturbosch.detekt") version "1.23.6"
     `java-test-fixtures`
-    jacoco
+    id("jacoco")
     id("io.github.surpsg.delta-coverage") version "2.4.0"
 }
 
@@ -51,7 +53,7 @@ tasks.withType<Test> {
     systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 }
 
-configure<io.github.surpsg.deltacoverage.gradle.DeltaCoverageConfiguration> {
+configure<DeltaCoverageConfiguration> {
     val targetBranch = project.properties["diffBase"]?.toString() ?: "refs/remotes/origin/master"
     diffSource.byGit {
         compareWith(targetBranch)
@@ -63,6 +65,6 @@ configure<io.github.surpsg.deltacoverage.gradle.DeltaCoverageConfiguration> {
     }
 }
 
-tasks.check {
-    dependsOn(tasks.deltaCoverage)
+tasks.named("check") {
+    dependsOn("deltaCoverage")
 }
