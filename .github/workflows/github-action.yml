@@ -26,4 +26,4 @@ jobs:
         run: chmod +x gradlew
         
       - name: Run gradle build
-        run: ./gradlew build -x deltaCoverage
+        run: ./gradlew build
