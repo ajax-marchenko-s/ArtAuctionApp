@@ -11,6 +11,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    permissions:
+      issues: read
+      pull-requests: write
+      contents: read
+      checks: write
+
     steps:
 
       - name: Checkout
