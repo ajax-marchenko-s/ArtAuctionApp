@@ -30,7 +30,7 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/master' }}
 
       - name: Run gradle build
-        run: ./gradlew build
+        run: ./gradlew build --parallel
 
       - name: Run Delta Coverage check
         if: ${{ github.event_name == 'pull_request' && ( success() || failure() ) }}
