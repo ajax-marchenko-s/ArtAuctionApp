@@ -39,3 +39,11 @@ jobs:
         uses: gw-kit/delta-coverage-plugin/actions/delta-coverage-report@2.4.0
         with:
           delta-coverage-report: build/reports/coverage-reports/delta-coverage/report.md
+
+      - name: Add Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2.15.1
+        if: ${{ github.event_name == 'pull_request' && ( success() || failure() ) }}
+        continue-on-error: true
+        with:
+          check_name: 'General Tests Report'
+          files: '**/build/test-results/*/TEST-*.xml'
