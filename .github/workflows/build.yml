@@ -3,7 +3,7 @@ name: Build
 on:
   push:
     branches:
-     - 'master'
+      - 'master'
   pull_request:
     branches:
       - '**'
@@ -32,3 +32,10 @@ jobs:
         if: ${{ github.event_name == 'pull_request' && ( success() || failure() ) }}
         continue-on-error: ${{ contains(github.event.pull_request.labels.*.name, 'suppress-delta-coverage') }}
         run: ./gradlew deltaCoverage -PdiffBase="refs/remotes/origin/$GITHUB_BASE_REF"
+
+      - name: Add Delta Coverage report
+        if: ${{ github.event_name == 'pull_request' && ( success() || failure() ) }}
+        continue-on-error: true
+        uses: gw-kit/delta-coverage-plugin/actions/delta-coverage-report@2.4.0
+        with:
+          delta-coverage-report: build/reports/coverage-reports/delta-coverage/report.md
