@@ -14,10 +14,10 @@ import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
 
 @ControllerAdvice
-class ExceptionController {
+class ExceptionHandler {
 
     @ExceptionHandler
-    fun handleExpiredJwtException(ex: ExpiredJwtException) = ResponseEntity(
+    fun handleExpiredJwtException(@Suppress("UnusedParameter") ex: ExpiredJwtException) = ResponseEntity(
         createErrorMessageModel(HttpStatus.UNAUTHORIZED.value(), "The token has expired."),
         HttpStatus.UNAUTHORIZED
     )
@@ -43,7 +43,8 @@ class ExceptionController {
         ResponseEntity(createErrorMessageModel(HttpStatus.CONFLICT.value(), ex.message), HttpStatus.CONFLICT)
 
     @ExceptionHandler
-    fun handleMethodArgumentNotValidExceptionException(ex: MethodArgumentNotValidException): ResponseEntity<ErrorMessageModel> {
+    fun handleMethodArgumentNotValidExceptionException(ex: MethodArgumentNotValidException):
+            ResponseEntity<ErrorMessageModel> {
         val message = ex.bindingResult.allErrors.joinToString("; ") { error ->
             "field ${(error as FieldError).field}: ${error.defaultMessage}"
         }
