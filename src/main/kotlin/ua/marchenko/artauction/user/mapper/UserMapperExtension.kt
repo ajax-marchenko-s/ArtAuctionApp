@@ -5,6 +5,7 @@ import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.model.User
 
 fun User.toUserResponse() = UserResponse(
+    @Suppress("UnsafeCallOnNullableType")
     id!!.toHexString(),
     name ?: "unknown",
     lastName ?: "unknown",

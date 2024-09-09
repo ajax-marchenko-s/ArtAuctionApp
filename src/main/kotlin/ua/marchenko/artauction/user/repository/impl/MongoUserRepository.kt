@@ -11,7 +11,7 @@ import ua.marchenko.artauction.user.repository.UserRepository
 @Repository
 class MongoUserRepository(private val mongoTemplate: MongoTemplate) : UserRepository {
 
-    override fun save(user: User) = mongoTemplate.save(user)
+    override fun save(user: User): User = mongoTemplate.save(user)
 
     override fun findById(id: String): User? {
         val query = Query.query(Criteria.where("id").isEqualTo(id))

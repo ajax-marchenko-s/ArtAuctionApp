@@ -11,7 +11,7 @@ import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 @Repository
 class MongoArtworkRepository(private val mongoTemplate: MongoTemplate) : ArtworkRepository {
 
-    override fun save(auction: Artwork) = mongoTemplate.save(auction)
+    override fun save(auction: Artwork): Artwork = mongoTemplate.save(auction)
 
     override fun findById(id: String): Artwork? {
         val query = Query.query(Criteria.where("id").isEqualTo(id))

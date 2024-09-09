@@ -33,7 +33,7 @@ class CustomProfilingAnnotationBeanPostProcessor : BeanPostProcessor {
                 profileMethodInvocation(bean, method, originalMethod, args)
             } ?: run {
                 @Suppress("SpreadOperator")
-                method.invoke(bean, *(args ?: emptyArray()))
+                method.invoke(bean, *(args.orEmpty()))
             }
         }
     }
@@ -48,7 +48,7 @@ class CustomProfilingAnnotationBeanPostProcessor : BeanPostProcessor {
         val beforeTime = System.nanoTime()
         try {
             @Suppress("SpreadOperator")
-            return methodToCall.invoke(bean, *(args ?: emptyArray()))
+            return methodToCall.invoke(bean, *(args.orEmpty()))
         } finally {
             val methodTime = timeUnit.convert((System.nanoTime() - beforeTime), TimeUnit.NANOSECONDS)
             log.info("Method {} was executing for {} {}", methodToCall.name, methodTime, timeUnit)
