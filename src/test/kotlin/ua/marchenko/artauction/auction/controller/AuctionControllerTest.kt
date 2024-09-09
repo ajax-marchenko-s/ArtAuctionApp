@@ -1,3 +1,4 @@
+@file:Suppress("VarCouldBeVal")
 package ua.marchenko.artauction.auction.controller
 
 import auction.random
@@ -18,7 +19,7 @@ import ua.marchenko.artauction.auction.model.Auction
 class AuctionControllerTest {
 
     @MockK
-    lateinit var mockAuctionService: AuctionService
+    private lateinit var mockAuctionService: AuctionService
 
     @InjectMockKs
     private lateinit var auctionController: AuctionController
