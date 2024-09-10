@@ -9,11 +9,11 @@ import java.time.LocalDateTime
 import ua.marchenko.artauction.common.mongodb.id.toObjectId
 
 fun Auction.Companion.random(
-    id: String = getRandomObjectId().toHexString(),
+    id: String? = getRandomObjectId().toHexString(),
     artwork: Artwork? = Artwork.random(),
     bid: Double? = 100.0,
 ) = Auction(
-    id = id.toObjectId(),
+    id = id?.toObjectId(),
     artwork = artwork,
     bid = bid,
     startedAt = LocalDateTime.now(),
