@@ -67,12 +67,6 @@ class JwtAuthenticationFilterTest {
     @Test
     fun `should not authenticate when Authorization header does not start with Bearer`() {
         // GIVEN
-
-//        val mockSecurityContext = mockk<SecurityContext>()
-//        every { mockSecurityContext.authentication } returns null
-//        every { SecurityContextHolder.getContext() } returns mockSecurityContext
-
-
         every { request.getHeader(HEADER_AUTHORIZATION) } returns getRandomString()
         every { filterChain.doFilter(request, response) } just Runs
 
