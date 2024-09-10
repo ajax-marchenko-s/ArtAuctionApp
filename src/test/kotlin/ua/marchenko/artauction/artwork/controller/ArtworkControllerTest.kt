@@ -1,4 +1,3 @@
-@file:Suppress("VarCouldBeVal")
 package ua.marchenko.artauction.artwork.controller
 
 import org.junit.jupiter.api.Assertions.assertEquals

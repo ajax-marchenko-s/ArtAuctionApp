@@ -1,5 +1,3 @@
-@file:Suppress("VarCouldBeVal")
-
 package ua.marchenko.artauction.config.annotation
 
 import ch.qos.logback.classic.Level

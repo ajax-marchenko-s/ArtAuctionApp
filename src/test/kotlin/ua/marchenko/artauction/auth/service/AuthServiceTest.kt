@@ -1,4 +1,3 @@
-@file:Suppress("VarCouldBeVal")
 package ua.marchenko.artauction.auth.service
 
 import auth.random

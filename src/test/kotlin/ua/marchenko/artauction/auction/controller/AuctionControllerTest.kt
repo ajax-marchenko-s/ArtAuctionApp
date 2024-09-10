@@ -1,4 +1,3 @@
-@file:Suppress("VarCouldBeVal")
 package ua.marchenko.artauction.auction.controller
 
 import auction.random
