@@ -46,7 +46,7 @@ class JwtAuthenticationFilter(
     }
 
     companion object {
-        const val HEADER_AUTHORIZATION = "Authorization"
-        const val HEADER_BEARER_PREFIX = "Bearer "
+        private const val HEADER_AUTHORIZATION = "Authorization"
+        private const val HEADER_BEARER_PREFIX = "Bearer "
     }
 }
