@@ -9,7 +9,7 @@ import ua.marchenko.artauction.artwork.model.Artwork
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 
 @Repository
-class MongoArtworkRepository(private val mongoTemplate: MongoTemplate) : ArtworkRepository {
+internal class MongoArtworkRepository(private val mongoTemplate: MongoTemplate) : ArtworkRepository {
 
     override fun save(auction: Artwork): Artwork = mongoTemplate.save(auction)
 

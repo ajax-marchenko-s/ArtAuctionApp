@@ -9,8 +9,7 @@ import ua.marchenko.artauction.user.mapper.toUserResponse
 import ua.marchenko.artauction.user.model.User
 
 fun Artwork.toArtworkResponse() = ArtworkResponse(
-    @Suppress("UnsafeCallOnNullableType")
-    id!!.toHexString(),
+    requireNotNull(id) { "artwork id cannot be null" }.toHexString(),
     title ?: "unknown",
     description ?: "unknown",
     style ?: ArtworkStyle.UNKNOWN,

@@ -10,8 +10,7 @@ import ua.marchenko.artauction.user.mapper.toUserResponse
 import ua.marchenko.artauction.user.model.User
 
 fun Auction.toAuctionResponse() = AuctionResponse(
-    @Suppress("UnsafeCallOnNullableType")
-    id!!.toHexString(),
+    requireNotNull(id) { "auction id cannot be null" }.toHexString(),
     artwork?.toArtworkResponse() ?: Artwork().toArtworkResponse(),
     bid ?: 0.0,
     buyer?.toUserResponse(),
