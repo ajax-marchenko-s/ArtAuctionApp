@@ -101,15 +101,11 @@ class JwtAuthenticationFilterTest {
         // GIVEN
         val token = getRandomString()
         val email = getRandomEmail()
-        val remoteAddr = "127.0.0.1"
 
         every { request.getHeader(HEADER_AUTHORIZATION) } returns "$HEADER_BEARER_PREFIX$token"
         every { jwtService.extractEmail(token) } returns email
         every { userDetailsService.loadUserByUsername(email) } returns userDetails
         every { jwtService.isValid(token, userDetails) } returns false
-        every { userDetails.authorities } returns listOf()
-        every { WebAuthenticationDetailsSource().buildDetails(request) } returns null
-        every { request.remoteAddr } returns remoteAddr
         every { filterChain.doFilter(request, response) } just Runs
 
         // WHEN
