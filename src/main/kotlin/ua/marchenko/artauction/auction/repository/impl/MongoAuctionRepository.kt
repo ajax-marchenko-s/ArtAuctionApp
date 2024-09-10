@@ -9,7 +9,7 @@ import ua.marchenko.artauction.auction.model.Auction
 import ua.marchenko.artauction.auction.repository.AuctionRepository
 
 @Repository
-class MongoAuctionRepository(private val mongoTemplate: MongoTemplate) : AuctionRepository {
+internal class MongoAuctionRepository(private val mongoTemplate: MongoTemplate) : AuctionRepository {
 
     override fun save(auction: Auction): Auction = mongoTemplate.save(auction)
 

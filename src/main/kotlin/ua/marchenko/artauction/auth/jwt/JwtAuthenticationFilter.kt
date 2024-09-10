@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import ua.marchenko.artauction.auth.service.CustomUserDetailsServiceImpl
 
-
 @Component
 class JwtAuthenticationFilter(
     private val userDetailsService: CustomUserDetailsServiceImpl,
@@ -24,11 +23,11 @@ class JwtAuthenticationFilter(
         filterChain: FilterChain
     ) {
         val authHeader: String? = request.getHeader(HEADER_AUTHORIZATION)
-        if (authHeader.doesNotContainBearerToken()) {
+        if (authHeader == null || !authHeader.startsWith(HEADER_BEARER_PREFIX)) {
             filterChain.doFilter(request, response)
             return
         }
-        val jwtToken = authHeader!!.extractTokenValue()
+        val jwtToken = authHeader.extractTokenValue()
         val email = jwtService.extractEmail(jwtToken)
         if (email != null && SecurityContextHolder.getContext().authentication == null) {
             val foundUser = userDetailsService.loadUserByUsername(email)
@@ -37,8 +36,6 @@ class JwtAuthenticationFilter(
             filterChain.doFilter(request, response)
         }
     }
-
-    private fun String?.doesNotContainBearerToken() = this == null || !startsWith(HEADER_BEARER_PREFIX)
 
     private fun String.extractTokenValue() = substringAfter(HEADER_BEARER_PREFIX)
 
@@ -49,7 +46,7 @@ class JwtAuthenticationFilter(
     }
 
     companion object {
-        const val HEADER_AUTHORIZATION = "Authorization"
-        const val HEADER_BEARER_PREFIX = "Bearer "
+        private const val HEADER_AUTHORIZATION = "Authorization"
+        private const val HEADER_BEARER_PREFIX = "Bearer "
     }
 }

@@ -47,6 +47,11 @@ kotlin {
     }
 }
 
+detekt {
+    buildUponDefaultConfig = true
+    config.from(file("config/detekt.yaml"))
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
     testLogging { showStandardStreams = true }
@@ -64,4 +69,9 @@ configure<DeltaCoverageConfiguration> {
         html = true
         markdown = true
     }
+}
+
+tasks.check{
+    dependsOn("detektMain")
+    dependsOn("detektTest")
 }

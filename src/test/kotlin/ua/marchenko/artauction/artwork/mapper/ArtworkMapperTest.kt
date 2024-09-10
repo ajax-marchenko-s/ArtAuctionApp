@@ -7,6 +7,7 @@ import artwork.random
 import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.mapper.toUserResponse
 import kotlin.test.Test
+import org.junit.jupiter.api.assertThrows
 import ua.marchenko.artauction.artwork.controller.dto.CreateArtworkRequest
 import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.user.model.User
@@ -56,6 +57,18 @@ class ArtworkMapperTest {
 
         //THEN
         assertEquals(expectedArtwork, result)
+    }
+
+    @Test
+    fun `should throw exception when Artwork id is null`() {
+        // GIVEN
+        val artwork = Artwork.random(id = null)
+
+        // WHEN THEN
+        val exception = assertThrows<IllegalArgumentException> {
+            artwork.toArtworkResponse()
+        }
+        assertEquals("artwork id cannot be null", exception.message)
     }
 
     @Test

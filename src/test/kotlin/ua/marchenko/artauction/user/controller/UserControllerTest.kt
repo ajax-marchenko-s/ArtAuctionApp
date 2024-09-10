@@ -17,7 +17,7 @@ import user.random
 class UserControllerTest {
 
     @MockK
-    lateinit var mockUserService: UserService
+    private lateinit var mockUserService: UserService
 
     @InjectMockKs
     private lateinit var userController: UserController
