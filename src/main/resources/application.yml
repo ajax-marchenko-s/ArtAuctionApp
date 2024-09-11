@@ -6,11 +6,7 @@ spring:
 
   data:
     mongodb:
-      host: localhost
-      port: 27017
-      username: root
-      password: password
-      database: admin
+      uri: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/${DB_NAME}?authSource=admin
 
 security:
   jwt:
