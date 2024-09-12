@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: artauction-configmap
 data:
-  db-name: "admin"
+  db-name: "art"
   port: "27017"
   host: "mongodb-service"
