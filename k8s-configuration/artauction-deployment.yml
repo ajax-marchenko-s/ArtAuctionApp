@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  labels:
+    app: app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      name: app
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: app
+          image: artauction-app:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-username
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-password
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: artauction-configmap
+                  key: db-name
+            - name: MONGO_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: artauction-configmap
+                  key: host
+            - name: MONGO_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: artauction-configmap
+                  key: port
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-service
+spec:
+  selector:
+    app: app
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
