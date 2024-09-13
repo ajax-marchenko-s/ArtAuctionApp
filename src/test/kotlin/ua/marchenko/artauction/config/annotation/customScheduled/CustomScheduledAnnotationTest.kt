@@ -1,6 +1,5 @@
 package ua.marchenko.artauction.config.annotation.customScheduled
 
-import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
@@ -10,7 +9,9 @@ import getRandomString
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
+import io.mockk.slot
 import io.mockk.verify
+import java.time.Duration
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.config.BeanDefinition
@@ -24,7 +25,6 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.slf4j.LoggerFactory
 
@@ -66,6 +66,7 @@ class CustomScheduledAnnotationTest {
         val beanName = getRandomString()
         val beanNames = arrayOf(beanName)
         val testBean = CustomScheduledTestServiceWithAnnotationImpl()
+        val delaySlot = slot<Long>()
 
         every { context.beanDefinitionNames } returns beanNames
         every { beanFactory.getBeanDefinition(beanName) } returns beanDefinition
@@ -78,13 +79,10 @@ class CustomScheduledAnnotationTest {
 
         // THEN
         verify(exactly = 1) {
-            scheduledExecutorService.scheduleWithFixedDelay(any(), any(), any(), TimeUnit.SECONDS)
+            scheduledExecutorService.scheduleWithFixedDelay(any(), any(), capture(delaySlot), TimeUnit.SECONDS)
         }
-        assertTrue(testLogAppender.list.isNotEmpty(), "Log event must contain logs")
-        assertNotNull(testLogAppender.list.find { it.message.contains(SCHEDULED_PART_LOG_MESSAGE_TEMPLATE) })
-        assertEquals(Level.INFO, testLogAppender.list.find {
-            it.message.contains(SCHEDULED_PART_LOG_MESSAGE_TEMPLATE)
-        }?.level)
+        assertEquals(1, testLogAppender.list.count { it.message.contains(SCHEDULED_PART_LOG_MESSAGE_TEMPLATE) })
+        assertEquals(ANNOTATED_METHOD_DELAY, delaySlot.captured)
     }
 
 
@@ -105,11 +103,15 @@ class CustomScheduledAnnotationTest {
 
         // THEN
         verify(exactly = 0) { scheduledExecutorService.scheduleWithFixedDelay(any(), any(), any(), TimeUnit.SECONDS) }
-        assertTrue(testLogAppender.list.isEmpty(), "Log event found in NOT annotated method")
+        assertTrue(
+            testLogAppender.list.none { it.message.contains(SCHEDULED_PART_LOG_MESSAGE_TEMPLATE) },
+            "Scheduling log events was found in NOT annotated method"
+        )
     }
 
     companion object {
         private const val SCHEDULED_EXECUTOR_SERVICE_NAME = "scheduledService"
         private const val SCHEDULED_PART_LOG_MESSAGE_TEMPLATE = "has added to ScheduledExecutorService with delay"
+        private val ANNOTATED_METHOD_DELAY = Duration.ofDays(7).seconds
     }
 }
