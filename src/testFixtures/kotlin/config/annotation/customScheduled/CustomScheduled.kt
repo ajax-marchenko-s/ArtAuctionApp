@@ -1,4 +1,4 @@
-package config.annotation.customProfiling
+package config.annotation.customScheduled
 
 import ua.marchenko.artauction.common.annotation.scheduled.annotation.CustomScheduled
 import ua.marchenko.artauction.common.annotation.scheduled.scheduledDetails.enums.Day

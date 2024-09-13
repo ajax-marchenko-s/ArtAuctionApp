@@ -3,8 +3,8 @@ package ua.marchenko.artauction.config.annotation.customScheduled
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
-import config.annotation.customProfiling.CustomScheduledTestServiceWithAnnotationImpl
-import config.annotation.customProfiling.CustomScheduledTestServiceWithoutAnnotationImpl
+import config.annotation.customScheduled.CustomScheduledTestServiceWithAnnotationImpl
+import config.annotation.customScheduled.CustomScheduledTestServiceWithoutAnnotationImpl
 import getRandomString
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
