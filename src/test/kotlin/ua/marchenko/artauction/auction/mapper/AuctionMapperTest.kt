@@ -8,6 +8,7 @@ import artwork.random
 import auction.random
 import ua.marchenko.artauction.user.mapper.toUserResponse
 import kotlin.test.Test
+import org.junit.jupiter.api.assertThrows
 import ua.marchenko.artauction.artwork.model.Artwork
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 
@@ -51,6 +52,18 @@ class AuctionMapperTest {
 
         //THEN
         assertEquals(expectedAuction, result)
+    }
+
+    @Test
+    fun `should throw exception when Auction id is null`() {
+        // GIVEN
+        val auction = Auction.random(id = null)
+
+        // WHEN THEN
+        val exception = assertThrows<IllegalArgumentException> {
+            auction.toAuctionResponse()
+        }
+        assertEquals("auction id cannot be null", exception.message)
     }
 
     @Test

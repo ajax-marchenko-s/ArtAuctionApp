@@ -5,7 +5,7 @@ import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.model.User
 
 fun User.toUserResponse() = UserResponse(
-    id!!.toHexString(),
+    requireNotNull(id) { "user id cannot be null" }.toHexString(),
     name ?: "unknown",
     lastName ?: "unknown",
     email ?: "unknown",

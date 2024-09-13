@@ -1,3 +1,5 @@
+import io.github.surpsg.deltacoverage.gradle.DeltaCoverageConfiguration
+
 plugins {
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.spring") version "1.9.23"
@@ -6,6 +8,7 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.23.6"
     `java-test-fixtures`
     jacoco
+    id("io.github.surpsg.delta-coverage") version "2.4.0"
 }
 
 group = "ua.marchenko"
@@ -44,8 +47,31 @@ kotlin {
     }
 }
 
+detekt {
+    buildUponDefaultConfig = true
+    config.from(file("config/detekt.yaml"))
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
     testLogging { showStandardStreams = true }
     systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
+}
+
+configure<DeltaCoverageConfiguration> {
+    val targetBranch = project.properties["diffBase"]?.toString() ?: "refs/remotes/origin/master"
+    diffSource.byGit {
+        compareWith(targetBranch)
+    }
+
+    violationRules.failIfCoverageLessThan(0.6)
+    reports {
+        html = true
+        markdown = true
+    }
+}
+
+tasks.check{
+    dependsOn("detektMain")
+    dependsOn("detektTest")
 }
