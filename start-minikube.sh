@@ -3,7 +3,7 @@ eval $(minikube docker-env)
 minikube addons enable ingress
 
 echo "Building project..."
-./gradlew clean build
+./gradlew clean assemble
 
 echo "Building Docker image..."
 docker build -t artauction-app .
