@@ -1,15 +1,13 @@
 package ua.marchenko.artauction.artwork.model
 
 import org.bson.types.ObjectId
-import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.MongoId
 import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.enums.ArtworkStyle
-import ua.marchenko.artauction.user.model.User
 
 @Document(collection = "artwork")
-data class Artwork(
+data class MongoArtwork(
     @MongoId
     val id: ObjectId? = null,
     val title: String? = null,
@@ -18,8 +16,7 @@ data class Artwork(
     val width: Int? = null,
     val height: Int? = null,
     val status: ArtworkStatus? = null,
-    @DBRef
-    val artist: User? = null,
+    val artistId: ObjectId? = null,
 ) {
     companion object
 }

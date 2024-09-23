@@ -13,7 +13,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
-import ua.marchenko.artauction.auction.model.Auction
+import ua.marchenko.artauction.auction.model.MongoAuction
 
 class AuctionControllerTest {
 
@@ -26,7 +26,7 @@ class AuctionControllerTest {
     @Test
     fun `should return a list of AuctionResponse when there are some auctions`() {
         //GIVEN
-        val auctions = listOf(Auction.random())
+        val auctions = listOf(MongoAuction.random())
         every { mockAuctionService.getAll() } returns auctions
 
         //WHEN
@@ -53,7 +53,7 @@ class AuctionControllerTest {
     fun `should return auction with given id when auction with this id exists`() {
         //GIVEN
         val id = getRandomObjectId().toHexString()
-        val auction = Auction.random(id = id)
+        val auction = MongoAuction.random(id = id)
 
         every { mockAuctionService.getById(id) } returns auction
 
@@ -78,7 +78,7 @@ class AuctionControllerTest {
     fun `should return AuctionResponse`() {
         //GIVEN
         val auctionRequest = CreateAuctionRequest.random()
-        val auction = Auction.random()
+        val auction = MongoAuction.random()
 
         every { mockAuctionService.save(auctionRequest) } returns auction.toAuctionResponse()
 

@@ -19,14 +19,18 @@ class AuctionServiceImpl(
 
     override fun getAll() = auctionRepository.findAll()
 
+    override fun getFullAll() = auctionRepository.findFullAll()
+
     override fun getById(id: String) = auctionRepository.findById(id) ?: throw AuctionNotFoundException(id)
+
+    override fun getFullById(id: String) = auctionRepository.findFullById(id) ?: throw AuctionNotFoundException(id)
 
     override fun save(auction: CreateAuctionRequest): AuctionResponse {
         val artwork = artworkService.getById(auction.artworkId)
         if (artwork.status != ArtworkStatus.VIEW) {
             throw InvalidAuctionOperationException("Trying to create auction with non-VIEW artwork")
         }
-        val updatedArtwork = artworkService.updateStatus(auction.artworkId, ArtworkStatus.ON_AUCTION)
-        return auctionRepository.save(auction.toAuction(updatedArtwork, null)).toAuctionResponse()
+        artworkService.updateStatus(auction.artworkId, ArtworkStatus.ON_AUCTION)
+        return auctionRepository.save(auction.toAuction()).toAuctionResponse()
     }
 }

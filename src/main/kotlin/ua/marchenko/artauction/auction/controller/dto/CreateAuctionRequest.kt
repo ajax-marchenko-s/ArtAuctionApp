@@ -11,10 +11,8 @@ data class CreateAuctionRequest(
     @field:NotBlank(message = "Artwork id cannot be blank")
     val artworkId: String,
 
-    @field:Min(value = 1, message = "Auction bid must be greater than zero")
-    val bid: Double,
-
-    val buyerId: String?,
+    @field:Min(value = 1, message = "Auction start bid must be greater than zero")
+    val startBid: Double,
 
     @field:NotNull(message = "Auction start time cannot be null")
     @field:FutureOrPresent(message = "Auction start time must be in the future or present")
@@ -24,6 +22,6 @@ data class CreateAuctionRequest(
     @field:FutureOrPresent(message = "Auction finish time must be in the future or present")
     val finishedAt: LocalDateTime,
 
-) {
+    ) {
     companion object
 }

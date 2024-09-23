@@ -1,21 +1,21 @@
 package auction
 
-import ua.marchenko.artauction.artwork.model.Artwork
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
-import ua.marchenko.artauction.auction.model.Auction
+import ua.marchenko.artauction.auction.model.MongoAuction
 import artwork.random
 import getRandomObjectId
 import java.time.LocalDateTime
+import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.common.mongodb.id.toObjectId
 
-fun Auction.Companion.random(
+fun MongoAuction.Companion.random(
     id: String? = getRandomObjectId().toHexString(),
-    artwork: Artwork? = Artwork.random(),
-    bid: Double? = 100.0,
-) = Auction(
+    artwork: MongoArtwork? = MongoArtwork.random(),
+    startBid: Double? = 100.0,
+) = MongoAuction(
     id = id?.toObjectId(),
-    artwork = artwork,
-    bid = bid,
+    artworkId = artwork?.id,
+    startBid = startBid,
     startedAt = LocalDateTime.now(),
     finishedAt = LocalDateTime.now(),
 )
@@ -23,8 +23,7 @@ fun Auction.Companion.random(
 fun CreateAuctionRequest.Companion.random(artworkId: String = getRandomObjectId().toHexString()) =
     CreateAuctionRequest(
         artworkId = artworkId,
-        bid = 100.0,
-        buyerId = null,
+        startBid = 100.0,
         startedAt = LocalDateTime.now(),
         finishedAt = LocalDateTime.now(),
     )

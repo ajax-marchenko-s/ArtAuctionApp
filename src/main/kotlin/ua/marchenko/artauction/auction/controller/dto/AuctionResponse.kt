@@ -1,14 +1,17 @@
 package ua.marchenko.artauction.auction.controller.dto
 
-import ua.marchenko.artauction.artwork.controller.dto.ArtworkResponse
-import ua.marchenko.artauction.user.controller.dto.UserResponse
 import java.time.LocalDateTime
 
 data class AuctionResponse(
     val id: String,
-    val artwork: ArtworkResponse,
-    val bid: Double,
-    val buyer: UserResponse?,
+    val artworkId: String,
+    val startBid: Double,
+    val buyers: List<BidResponse>,
     val startedAt: LocalDateTime,
     val finishedAt: LocalDateTime,
-)
+) {
+    data class BidResponse(
+        val buyerId: String,
+        val bid: Double,
+    )
+}
