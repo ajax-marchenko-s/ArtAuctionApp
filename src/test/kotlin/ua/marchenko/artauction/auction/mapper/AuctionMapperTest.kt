@@ -5,8 +5,11 @@ import ua.marchenko.artauction.auction.controller.dto.AuctionResponse
 import auction.random
 import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
+import ua.marchenko.artauction.artwork.mapper.toArtworkFullResponse
+import ua.marchenko.artauction.auction.controller.dto.AuctionFullResponse
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.auction.model.MongoAuction
+import ua.marchenko.artauction.auction.model.projection.AuctionFull
 import ua.marchenko.artauction.common.mongodb.id.toObjectId
 
 class AuctionMapperTest {
@@ -81,6 +84,46 @@ class AuctionMapperTest {
 
         //THEN
         assertEquals(expectedAuction, result)
+    }
+
+    @Test
+    fun `should return AuctionFullResponse when AuctionFull has all non-null properties`() {
+        // GIVEN
+        val auctionFull = AuctionFull.random()
+        val expectedResponse = AuctionFullResponse(
+            auctionFull.id!!.toHexString(),
+            auctionFull.artwork!!.toArtworkFullResponse(),
+            auctionFull.startBid!!,
+            auctionFull.buyers!!.map { it.toBidFullResponse() },
+            auctionFull.startedAt!!,
+            auctionFull.finishedAt!!
+        )
+
+        // WHEN
+        val result = auctionFull.toAuctionFullResponse()
+
+        // THEN
+        assertEquals(expectedResponse, result)
+    }
+
+    @Test
+    fun `should return AuctionFullResponse with default values when AuctionFull has null properties`() {
+        // GIVEN
+        val auctionFull = AuctionFull.random(buyers = null)
+        val expectedResponse = AuctionFullResponse(
+            auctionFull.id!!.toHexString(),
+            auctionFull.artwork!!.toArtworkFullResponse(),
+            auctionFull.startBid!!,
+            emptyList(),
+            auctionFull.startedAt!!,
+            auctionFull.finishedAt!!
+        )
+
+        //WHEN
+        val result = auctionFull.toAuctionFullResponse()
+
+        //THEN
+        assertEquals(expectedResponse, result)
     }
 
     companion object {

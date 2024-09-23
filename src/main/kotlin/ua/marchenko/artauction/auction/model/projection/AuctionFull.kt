@@ -16,5 +16,8 @@ data class AuctionFull(
     data class BidFull(
         val buyer: MongoUser? = null,
         val bid: Double? = null,
-    )
+    ){
+        companion object
+    }
+    companion object
 }

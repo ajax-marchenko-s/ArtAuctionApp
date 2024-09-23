@@ -19,6 +19,8 @@ data class MongoAuction(
     data class Bid(
         val buyerId: ObjectId? = null,
         val bid: Double? = null,
-    )
+    ){
+        companion object
+    }
     companion object
 }
