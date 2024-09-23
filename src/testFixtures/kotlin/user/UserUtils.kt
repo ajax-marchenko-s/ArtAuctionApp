@@ -4,13 +4,13 @@ import getRandomObjectId
 import getRandomString
 import ua.marchenko.artauction.common.mongodb.id.toObjectId
 import ua.marchenko.artauction.user.enums.Role
-import ua.marchenko.artauction.user.model.User
+import ua.marchenko.artauction.user.model.MongoUser
 
-fun User.Companion.random(
+fun MongoUser.Companion.random(
     id: String? = getRandomObjectId().toHexString(),
     role: Role? = Role.ARTIST,
     email: String? = getRandomString(10),
-) = User(
+) = MongoUser(
     id = id?.toObjectId(),
     name = getRandomString(),
     lastName = getRandomString(),

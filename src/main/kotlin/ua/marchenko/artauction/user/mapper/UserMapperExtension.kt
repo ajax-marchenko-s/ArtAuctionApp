@@ -2,9 +2,9 @@ package ua.marchenko.artauction.user.mapper
 
 import ua.marchenko.artauction.user.controller.dto.UserResponse
 import ua.marchenko.artauction.user.enums.Role
-import ua.marchenko.artauction.user.model.User
+import ua.marchenko.artauction.user.model.MongoUser
 
-fun User.toUserResponse() = UserResponse(
+fun MongoUser.toUserResponse() = UserResponse(
     requireNotNull(id) { "user id cannot be null" }.toHexString(),
     name ?: "unknown",
     lastName ?: "unknown",

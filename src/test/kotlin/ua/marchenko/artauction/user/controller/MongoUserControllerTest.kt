@@ -11,7 +11,7 @@ import getRandomString
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
-import ua.marchenko.artauction.user.model.User
+import ua.marchenko.artauction.user.model.MongoUser
 import user.random
 
 class UserControllerTest {
@@ -25,7 +25,7 @@ class UserControllerTest {
     @Test
     fun `should return a list of UserResponse`() {
         //GIVEN
-        val users = listOf(User.random())
+        val users = listOf(MongoUser.random())
         every { mockUserService.getAll() } returns users
 
         //WHEN
@@ -52,7 +52,7 @@ class UserControllerTest {
     fun `should return user with given id when auction with this id exists`() {
         //GIVEN
         val id = getRandomObjectId().toHexString()
-        val user = User.random(id = id)
+        val user = MongoUser.random(id = id)
 
         every { mockUserService.getById(id) } returns user
 
