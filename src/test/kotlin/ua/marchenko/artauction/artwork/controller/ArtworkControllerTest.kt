@@ -14,7 +14,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import ua.marchenko.artauction.artwork.controller.dto.CreateArtworkRequest
-import ua.marchenko.artauction.artwork.model.Artwork
+import ua.marchenko.artauction.artwork.model.MongoArtwork
 
 class ArtworkControllerTest {
 
@@ -27,7 +27,7 @@ class ArtworkControllerTest {
     @Test
     fun `should return a list of ArtworkResponse when there are some artworks`() {
         // GIVEN
-        val artworks = listOf(Artwork.random())
+        val artworks = listOf(MongoArtwork.random())
         every { mockArtworkService.getAll() } returns artworks
 
         // WHEN
@@ -54,7 +54,7 @@ class ArtworkControllerTest {
     fun `should return artwork by id when artwork with this id exists`() {
         // GIVEN
         val id = getRandomObjectId().toHexString()
-        val artwork = Artwork.random(id = id)
+        val artwork = MongoArtwork.random(id = id)
 
         every { mockArtworkService.getById(id) } returns artwork
 
@@ -79,7 +79,7 @@ class ArtworkControllerTest {
     fun `should return ArtworkResponse with data from request`() {
         // GIVEN
         val artworkRequest = CreateArtworkRequest.random()
-        val artwork = Artwork.random()
+        val artwork = MongoArtwork.random()
 
         every { mockArtworkService.save(artworkRequest.toArtwork()) } returns artwork
 

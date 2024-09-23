@@ -8,7 +8,7 @@ import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.exception.ArtworkNotFoundException
-import ua.marchenko.artauction.artwork.model.Artwork
+import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.service.UserService
@@ -20,7 +20,7 @@ import getRandomObjectId
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
-import ua.marchenko.artauction.user.model.User
+import ua.marchenko.artauction.user.model.MongoUser
 import user.random
 
 class ArtworkServiceTest {
@@ -43,7 +43,7 @@ class ArtworkServiceTest {
     @Test
     fun `should return a list of artworks when artworks are present`() {
         // GIVEN
-        val artworks = listOf(Artwork.random())
+        val artworks = listOf(MongoArtwork.random())
         every { mockArtworkRepository.findAll() } returns artworks
 
         //WHEN
@@ -70,7 +70,7 @@ class ArtworkServiceTest {
     fun `should return artwork by id when artwork with this id exists`() {
         // GIVEN
         val id = getRandomObjectId().toHexString()
-        val artwork = Artwork.random(id = id)
+        val artwork = MongoArtwork.random(id = id)
 
         every { mockArtworkRepository.findById(id) } returns artwork
 
@@ -95,8 +95,8 @@ class ArtworkServiceTest {
     fun `should set status and artist before calling repository method`() {
         //GIVEN
         val email = getRandomEmail()
-        val user = User.random(email = email, role = Role.ARTIST)
-        val artworkToSave = Artwork.random(status = null, artist = null)
+        val user = MongoUser.random(email = email, role = Role.ARTIST)
+        val artworkToSave = MongoArtwork.random(status = null, artistId = null)
 
         SecurityContextHolder.setContext(mockSecurityContext)
         every { mockSecurityContext.authentication } returns mockAuthentication
@@ -106,16 +106,16 @@ class ArtworkServiceTest {
             mockArtworkRepository.save(
                 artworkToSave.copy(
                     status = ArtworkStatus.VIEW,
-                    artist = user
+                    artistId = user.id
                 )
             )
-        } returns artworkToSave.copy(status = ArtworkStatus.VIEW, artist = user)
+        } returns artworkToSave.copy(status = ArtworkStatus.VIEW, artistId = user.id)
 
         //WHEN
         val result = artworkService.save(artworkToSave)
 
         //THEN
-        assertEquals(artworkToSave.copy(status = ArtworkStatus.VIEW, artist = user), result)
+        assertEquals(artworkToSave.copy(status = ArtworkStatus.VIEW, artistId = user.id), result)
     }
 
     @Test
