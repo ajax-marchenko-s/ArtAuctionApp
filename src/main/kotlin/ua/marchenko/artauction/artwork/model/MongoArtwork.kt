@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.MongoId
 import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.enums.ArtworkStyle
 
-@Document(collection = "artwork")
+@Document(collection = MongoArtwork.COLLECTION)
 data class MongoArtwork(
     @MongoId
     val id: ObjectId? = null,
@@ -18,5 +18,7 @@ data class MongoArtwork(
     val status: ArtworkStatus? = null,
     val artistId: ObjectId? = null,
 ) {
-    companion object
+    companion object {
+        const val COLLECTION = "artwork"
+    }
 }

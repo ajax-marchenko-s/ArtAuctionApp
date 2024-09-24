@@ -20,6 +20,7 @@ import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.auction.model.MongoAuction
 import ua.marchenko.artauction.auction.model.projection.AuctionFull
 import ua.marchenko.artauction.auction.repository.AuctionRepository
+import ua.marchenko.artauction.user.model.MongoUser
 
 @Repository
 @Suppress("SpreadOperator")
@@ -38,7 +39,7 @@ internal class MongoAuctionRepository(private val mongoTemplate: MongoTemplate) 
             *aggregateFullBuyers().toTypedArray(),
             *aggregateFullArtwork().toTypedArray(),
         )
-        val results = mongoTemplate.aggregate(aggregation, "auction", AuctionFull::class.java)
+        val results = mongoTemplate.aggregate(aggregation, MongoAuction.COLLECTION, AuctionFull::class.java)
         return results.mappedResults.firstOrNull()
     }
 
@@ -49,16 +50,21 @@ internal class MongoAuctionRepository(private val mongoTemplate: MongoTemplate) 
             *aggregateFullBuyers().toTypedArray(),
             *aggregateFullArtwork().toTypedArray(),
         )
-        val results = mongoTemplate.aggregate(aggregation, "auction", AuctionFull::class.java)
+        val results = mongoTemplate.aggregate(aggregation, MongoAuction.COLLECTION, AuctionFull::class.java)
         return results.mappedResults.toList()
     }
 
     private fun aggregateFullArtwork(): List<AggregationOperation> {
         return listOf(
-            lookup("artwork", MongoAuction::artworkId.name, Fields.UNDERSCORE_ID, AuctionFull::artwork.name),
+            lookup(
+                MongoArtwork.COLLECTION,
+                MongoAuction::artworkId.name,
+                Fields.UNDERSCORE_ID,
+                AuctionFull::artwork.name
+            ),
             unwind(AuctionFull::artwork.name),
             lookup(
-                "user",
+                MongoUser.COLLECTION,
                 "${AuctionFull::artwork.name}.${MongoArtwork::artistId.name}",
                 Fields.UNDERSCORE_ID,
                 "${AuctionFull::artwork.name}.${ArtworkFull::artist.name}"
@@ -75,7 +81,7 @@ internal class MongoAuctionRepository(private val mongoTemplate: MongoTemplate) 
         return listOf(
             unwind(MongoAuction::buyers.name),
             lookup(
-                "user",
+                MongoUser.COLLECTION,
                 "${MongoAuction::buyers.name}.${MongoAuction.Bid::buyerId.name}",
                 Fields.UNDERSCORE_ID,
                 "${MongoAuction::buyers.name}.${AuctionFull.BidFull::buyer.name}"

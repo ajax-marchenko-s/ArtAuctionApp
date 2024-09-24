@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
+import ua.marchenko.artauction.user.model.MongoUser
 
 @Repository
 @Suppress("SpreadOperator")
@@ -32,7 +33,7 @@ internal class MongoArtworkRepository(private val mongoTemplate: MongoTemplate) 
             match(Criteria.where(Fields.UNDERSCORE_ID).isEqualTo(id)),
             *aggregateFullArtist().toTypedArray(),
         )
-        val results = mongoTemplate.aggregate(aggregation, "artwork", ArtworkFull::class.java)
+        val results = mongoTemplate.aggregate(aggregation, MongoArtwork.COLLECTION, ArtworkFull::class.java)
         return results.mappedResults.firstOrNull()
     }
 
@@ -42,7 +43,7 @@ internal class MongoArtworkRepository(private val mongoTemplate: MongoTemplate) 
         val aggregation = Aggregation.newAggregation(
             *aggregateFullArtist().toTypedArray(),
         )
-        val results = mongoTemplate.aggregate(aggregation, "artwork", ArtworkFull::class.java)
+        val results = mongoTemplate.aggregate(aggregation, MongoArtwork.COLLECTION, ArtworkFull::class.java)
         return results.mappedResults.toList()
     }
 
@@ -53,7 +54,7 @@ internal class MongoArtworkRepository(private val mongoTemplate: MongoTemplate) 
 
     private fun aggregateFullArtist(): List<AggregationOperation> {
         return listOf(
-            lookup("user", MongoArtwork::artistId.name, Fields.UNDERSCORE_ID, ArtworkFull::artist.name),
+            lookup(MongoUser.COLLECTION, MongoArtwork::artistId.name, Fields.UNDERSCORE_ID, ArtworkFull::artist.name),
             project().andExclude(MongoArtwork::artistId.name),
             unwind(ArtworkFull::artist.name)
         )
