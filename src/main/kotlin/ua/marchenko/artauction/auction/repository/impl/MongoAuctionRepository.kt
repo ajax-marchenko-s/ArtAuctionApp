@@ -1,6 +1,5 @@
 package ua.marchenko.artauction.auction.repository.impl
 
-import org.bson.types.ObjectId
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Aggregation
 import org.springframework.data.mongodb.core.aggregation.Aggregation.group
@@ -9,11 +8,15 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation.match
 import org.springframework.data.mongodb.core.aggregation.Aggregation.project
 import org.springframework.data.mongodb.core.aggregation.Aggregation.replaceRoot
 import org.springframework.data.mongodb.core.aggregation.Aggregation.unwind
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation
+import org.springframework.data.mongodb.core.aggregation.Fields
 import org.springframework.data.mongodb.core.aggregation.ObjectOperators
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.stereotype.Repository
+import ua.marchenko.artauction.artwork.model.MongoArtwork
+import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.auction.model.MongoAuction
 import ua.marchenko.artauction.auction.model.projection.AuctionFull
 import ua.marchenko.artauction.auction.repository.AuctionRepository
@@ -24,30 +27,15 @@ internal class MongoAuctionRepository(private val mongoTemplate: MongoTemplate) 
     override fun save(auction: MongoAuction): MongoAuction = mongoTemplate.save(auction)
 
     override fun findById(id: String): MongoAuction? {
-        val query = Query.query(Criteria.where("id").isEqualTo(id))
+        val query = Query.query(Criteria.where(Fields.UNDERSCORE_ID).isEqualTo(id))
         return mongoTemplate.findOne(query, MongoAuction::class.java)
     }
 
     override fun findFullById(id: String): AuctionFull? {
         val aggregation = Aggregation.newAggregation(
-            match(Criteria.where("_id").`is`(ObjectId(id))),
-            unwind("buyers"),
-            lookup("user", "buyers.buyerId", "_id", "buyers.buyer"),
-            unwind("buyers.buyer"),
-            group("_id")
-                .push("buyers").`as`("buyers")
-                .first(Aggregation.ROOT).`as`("mainData"),
-            replaceRoot().withValueOf(
-                ObjectOperators.valueOf("mainData")
-                    .mergeWith(
-                        mapOf("buyers" to "\$buyers")
-                    )
-            ),
-            lookup("artwork", "artworkId", "_id", "artwork"),
-            unwind("artwork"),
-            lookup("user", "artwork.artistId", "_id", "artwork.artist"),
-            project().andExclude("artwork.artistId", "artworkId", "buyers.buyerId"),
-            unwind("artwork.artist")
+            match(Criteria.where(Fields.UNDERSCORE_ID).isEqualTo(id)),
+            *aggregateFullBuyers().toTypedArray(),
+            *aggregateFullArtwork().toTypedArray(),
         )
         val results = mongoTemplate.aggregate(aggregation, "auction", AuctionFull::class.java)
         return results.mappedResults.firstOrNull()
@@ -57,25 +45,53 @@ internal class MongoAuctionRepository(private val mongoTemplate: MongoTemplate) 
 
     override fun findFullAll(): List<AuctionFull> {
         val aggregation = Aggregation.newAggregation(
-            unwind("buyers"),
-            lookup("user", "buyers.buyerId", "_id", "buyers.buyer"),
-            unwind("buyers.buyer"),
-            group("_id")
-                .push("buyers").`as`("buyers")
+            *aggregateFullBuyers().toTypedArray(),
+            *aggregateFullArtwork().toTypedArray(),
+        )
+        val results = mongoTemplate.aggregate(aggregation, "auction", AuctionFull::class.java)
+        return results.mappedResults.toList()
+    }
+
+    private fun aggregateFullArtwork(): List<AggregationOperation> {
+        return listOf(
+            lookup("artwork", MongoAuction::artworkId.name, Fields.UNDERSCORE_ID, AuctionFull::artwork.name),
+            unwind(AuctionFull::artwork.name),
+            lookup(
+                "user",
+                "${AuctionFull::artwork.name}.${MongoArtwork::artistId.name}",
+                Fields.UNDERSCORE_ID,
+                "${AuctionFull::artwork.name}.${ArtworkFull::artist.name}"
+            ),
+            project().andExclude(
+                "${AuctionFull::artwork.name}.${MongoArtwork::artistId.name}",
+                MongoAuction::artworkId.name,
+            ),
+            unwind("${AuctionFull::artwork.name}.${ArtworkFull::artist.name}")
+        )
+    }
+
+    private fun aggregateFullBuyers(): List<AggregationOperation> {
+        return listOf(
+            unwind(MongoAuction::buyers.name),
+            lookup(
+                "user",
+                "${MongoAuction::buyers.name}.${MongoAuction.Bid::buyerId.name}",
+                Fields.UNDERSCORE_ID,
+                "${MongoAuction::buyers.name}.${AuctionFull.BidFull::buyer.name}"
+            ),
+            unwind("${MongoAuction::buyers.name}.${AuctionFull.BidFull::buyer.name}"),
+            group(Fields.UNDERSCORE_ID)
+                .push(MongoAuction::buyers.name).`as`(MongoAuction::buyers.name)
                 .first(Aggregation.ROOT).`as`("mainData"),
             replaceRoot().withValueOf(
                 ObjectOperators.valueOf("mainData")
                     .mergeWith(
-                        mapOf("buyers" to "\$buyers")
+                        mapOf(MongoAuction::buyers.name to "\$${MongoAuction::buyers.name}")
                     )
             ),
-            lookup("artwork", "artworkId", "_id", "artwork"),
-            unwind("artwork"),
-            lookup("user", "artwork.artistId", "_id", "artwork.artist"),
-            project().andExclude("artwork.artistId", "artworkId", "buyers.buyerId"),
-            unwind("artwork.artist")
+            project().andExclude(
+                "${MongoAuction::buyers.name}.${MongoAuction.Bid::buyerId.name}"
+            ),
         )
-        val results = mongoTemplate.aggregate(aggregation, "auction", AuctionFull::class.java)
-        return results.mappedResults.toList()
     }
 }
