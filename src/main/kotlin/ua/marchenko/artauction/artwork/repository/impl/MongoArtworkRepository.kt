@@ -17,6 +17,7 @@ import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 
 @Repository
+@Suppress("SpreadOperator")
 internal class MongoArtworkRepository(private val mongoTemplate: MongoTemplate) : ArtworkRepository {
 
     override fun save(artwork: MongoArtwork): MongoArtwork = mongoTemplate.save(artwork)

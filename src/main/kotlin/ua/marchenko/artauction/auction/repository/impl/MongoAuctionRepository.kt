@@ -22,6 +22,7 @@ import ua.marchenko.artauction.auction.model.projection.AuctionFull
 import ua.marchenko.artauction.auction.repository.AuctionRepository
 
 @Repository
+@Suppress("SpreadOperator")
 internal class MongoAuctionRepository(private val mongoTemplate: MongoTemplate) : AuctionRepository {
 
     override fun save(auction: MongoAuction): MongoAuction = mongoTemplate.save(auction)
