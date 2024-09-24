@@ -1,25 +1,30 @@
 package ua.marchenko.artauction.common
 
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.util.TestPropertyValues
+import org.springframework.context.ApplicationContextInitializer
+import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.DynamicPropertyRegistry
-import org.springframework.test.context.DynamicPropertySource
+import org.springframework.test.context.ContextConfiguration
 import org.testcontainers.containers.MongoDBContainer
-import org.testcontainers.junit.jupiter.Container
-import org.testcontainers.junit.jupiter.Testcontainers
 
-@Testcontainers
-@ActiveProfiles("test")
 @SpringBootTest
+@ActiveProfiles("test")
+@ContextConfiguration(initializers = [AbstractBaseIntegrationTest.TestContainerInitializer::class])
 interface AbstractBaseIntegrationTest {
 
     companion object {
-        @Container
         val mongoDBContainer = MongoDBContainer("mongo:latest")
+            .apply { start() }
+    }
 
-        @DynamicPropertySource
-        fun setMongoDbProperties(registry: DynamicPropertyRegistry) {
-            registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl)
+    class TestContainerInitializer: ApplicationContextInitializer<ConfigurableApplicationContext> {
+        override fun initialize(configurableApplicationContext: ConfigurableApplicationContext) {
+            mongoDBContainer.start()
+            val testPropertyValues = TestPropertyValues.of(
+                "spring.data.mongodb.uri=${mongoDBContainer.replicaSetUrl}"
+            )
+            testPropertyValues.applyTo(configurableApplicationContext.environment)
         }
     }
 }
