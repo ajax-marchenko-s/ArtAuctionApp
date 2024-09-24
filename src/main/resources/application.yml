@@ -2,11 +2,7 @@ spring:
   application:
     name: artauction
   profiles:
-    active: test
-
-  data:
-    mongodb:
-      uri: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${DB_NAME}?authSource=admin
+    active: local
 
 security:
   jwt:

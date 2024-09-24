@@ -34,11 +34,16 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-impl:0.12.3")
     implementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
     implementation("org.springframework.boot:spring-boot-starter-validation:3.3.3")
+    implementation("io.mongock:mongock-springboot-v3:5.4.4")
+    implementation("io.mongock:mongodb-springdata-v4-driver:5.4.4")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:mongodb")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("io.mockk:mockk:1.13.12")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 kotlin {
@@ -71,7 +76,7 @@ configure<DeltaCoverageConfiguration> {
     }
 }
 
-tasks.check{
+tasks.check {
     dependsOn("detektMain")
     dependsOn("detektTest")
 }

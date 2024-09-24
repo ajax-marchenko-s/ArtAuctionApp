@@ -126,6 +126,32 @@ class AuctionMapperTest {
         assertEquals(expectedResponse, result)
     }
 
+    @Test
+    fun `should return BidResponse when Bid has all non-null properties`() {
+        // GIVEN
+        val bid = MongoAuction.Bid.random()
+        val expectedResponse = AuctionResponse.BidResponse(bid.buyerId!!.toHexString(), bid.bid!!)
+
+        // WHEN
+        val result = bid.toBidResponse()
+
+        // THEN
+        assertEquals(expectedResponse, result)
+    }
+
+    @Test
+    fun `should return BidResponse with default values when Bid has all null properties`() {
+        // GIVEN
+        val bid = MongoAuction.Bid.random(buyerId = null, bid = null)
+        val expectedResponse = AuctionResponse.BidResponse("", 0.0)
+
+        // WHEN
+        val result = bid.toBidResponse()
+
+        // THEN
+        assertEquals(expectedResponse, result)
+    }
+
     companion object {
         const val BID = 0.0
     }

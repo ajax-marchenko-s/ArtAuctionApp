@@ -19,6 +19,7 @@ import kotlin.test.Test
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.auction.model.MongoAuction
+import ua.marchenko.artauction.auction.model.projection.AuctionFull
 
 class AuctionServiceTest {
 
@@ -80,6 +81,45 @@ class AuctionServiceTest {
 
         //WHEN //THEN
         assertThrows<AuctionNotFoundException> { auctionService.getById(id) }
+    }
+
+    @Test
+    fun `should return full auction by id when auction with this id exists`() {
+        // GIVEN
+        val id = getRandomObjectId().toHexString()
+        val auction = AuctionFull.random(id = id)
+
+        every { mockAuctionRepository.findFullById(id) } returns auction
+
+        //WHEN
+        val result = auctionService.getFullById(id)
+
+        //THEN
+        assertEquals(auction, result)
+    }
+
+    @Test
+    fun `should throw AuctionNotFoundException when there is no full auction with this id`() {
+        //GIVEN
+        val id = getRandomObjectId().toHexString()
+        every { mockAuctionRepository.findFullById(id) } returns null
+
+        //WHEN //THEN
+        assertThrows<AuctionNotFoundException> { auctionService.getFullById(id) }
+    }
+
+    @Test
+    fun `should return a list of full auctions when auctions are present`() {
+        // GIVEN
+        val auctions = listOf(AuctionFull.random())
+        every { mockAuctionRepository.findFullAll() } returns auctions
+
+        //WHEN
+        val result = auctionService.getFullAll()
+
+        //THEN
+        assertEquals(1, result.size)
+        assertEquals(auctions[0].artwork, result[0].artwork)
     }
 
     @Test

@@ -25,9 +25,9 @@ fun MongoAuction.Companion.random(
     finishedAt = LocalDateTime.now().plusDays(1),
 )
 
-fun MongoAuction.Bid.Companion.random() = MongoAuction.Bid(
-    buyerId = getRandomObjectId(),
-    bid = 100.0,
+fun MongoAuction.Bid.Companion.random(buyerId: String? = getRandomObjectId().toHexString(), bid: Double? = 100.0) = MongoAuction.Bid(
+    buyerId = buyerId?.toObjectId(),
+    bid = bid,
 )
 
 fun CreateAuctionRequest.Companion.random(artworkId: String = getRandomObjectId().toHexString()) =
@@ -38,8 +38,11 @@ fun CreateAuctionRequest.Companion.random(artworkId: String = getRandomObjectId(
         finishedAt = LocalDateTime.now(),
     )
 
-fun AuctionFull.Companion.random(buyers: List<BidFull>? = listOf(BidFull.random(), BidFull.random())) = AuctionFull(
-    id = getRandomObjectId(),
+fun AuctionFull.Companion.random(
+    id: String? = getRandomObjectId().toHexString(),
+    buyers: List<BidFull>? = listOf(BidFull.random(), BidFull.random())
+) = AuctionFull(
+    id = id?.toObjectId(),
     artwork = ArtworkFull.random(),
     startBid = 100.0,
     buyers = buyers,

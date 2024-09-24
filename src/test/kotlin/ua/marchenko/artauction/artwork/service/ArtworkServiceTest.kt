@@ -20,6 +20,7 @@ import getRandomObjectId
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
+import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.user.model.MongoUser
 import user.random
 
@@ -89,6 +90,45 @@ class ArtworkServiceTest {
 
         //WHEN //THEN
         assertThrows<ArtworkNotFoundException> { artworkService.getById(id) }
+    }
+
+    @Test
+    fun `should return full artwork by id when artwork with this id exists`() {
+        // GIVEN
+        val id = getRandomObjectId().toHexString()
+        val artwork = ArtworkFull.random(id = id)
+
+        every { mockArtworkRepository.findFullById(id) } returns artwork
+
+        // WHEN
+        val result = artworkService.getFullById(id)
+
+        // THEN
+        assertEquals(artwork, result)
+    }
+
+    @Test
+    fun `should throw ArtworkNotFoundException when there is no full artwork with this id`() {
+        //GIVEN
+        val id = getRandomObjectId().toHexString()
+        every { mockArtworkRepository.findFullById(id) } returns null
+
+        //WHEN //THEN
+        assertThrows<ArtworkNotFoundException> { artworkService.getFullById(id) }
+    }
+
+    @Test
+    fun `should return a list of full artworks when artworks are present`() {
+        // GIVEN
+        val artworks = listOf(ArtworkFull.random())
+        every { mockArtworkRepository.findFullAll() } returns artworks
+
+        // WHEN
+        val result = artworkService.getFullAll()
+
+        // THEN
+        assertEquals(1, result.size)
+        assertEquals(artworks[0].title, result[0].title)
     }
 
     @Test

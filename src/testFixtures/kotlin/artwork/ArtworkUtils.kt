@@ -35,8 +35,11 @@ fun CreateArtworkRequest.Companion.random() =
         height = 100,
     )
 
-fun ArtworkFull.Companion.random( status: ArtworkStatus? = ArtworkStatus.VIEW) = ArtworkFull(
-    id = getRandomObjectId(),
+fun ArtworkFull.Companion.random(
+    id: String? = getRandomObjectId().toHexString(),
+    status: ArtworkStatus? = ArtworkStatus.VIEW
+) = ArtworkFull(
+    id = id?.toObjectId(),
     title = getRandomString(),
     description = getRandomString(),
     style = ArtworkStyle.POP_ART,
