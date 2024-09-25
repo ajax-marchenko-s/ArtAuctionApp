@@ -18,7 +18,7 @@ class UserMapperTest {
             UserResponse(user.id!!.toHexString(), user.name!!, user.lastName!!, user.email!!, user.role!!)
 
         //WHEN
-        val result = user.toUserResponse()
+        val result = user.toResponse()
 
         //THEN
         assertEquals(expectedUser, result)
@@ -32,7 +32,7 @@ class UserMapperTest {
             UserResponse(user.id!!.toHexString(), user.name!!, user.lastName!!, user.email!!, Role.UNKNOWN)
 
         //WHEN
-        val result = user.toUserResponse()
+        val result = user.toResponse()
 
         //THEN
         assertEquals(expectedUser, result)
@@ -45,7 +45,7 @@ class UserMapperTest {
 
         // WHEN THEN
         val exception = assertThrows<IllegalArgumentException> {
-            user.toUserResponse()
+            user.toResponse()
         }
         assertEquals("user id cannot be null", exception.message)
     }

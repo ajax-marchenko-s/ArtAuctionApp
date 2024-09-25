@@ -11,7 +11,7 @@ import ua.marchenko.artauction.artwork.controller.dto.ArtworkFullResponse
 import ua.marchenko.artauction.artwork.controller.dto.CreateArtworkRequest
 import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
-import ua.marchenko.artauction.user.mapper.toUserResponse
+import ua.marchenko.artauction.user.mapper.toResponse
 
 class ArtworkMapperTest {
 
@@ -31,7 +31,7 @@ class ArtworkMapperTest {
         )
 
         //WHEN
-        val result = mongoArtwork.toArtworkResponse()
+        val result = mongoArtwork.toResponse()
 
         //THEN
         assertEquals(expectedArtwork, result)
@@ -53,7 +53,7 @@ class ArtworkMapperTest {
         )
 
         //WHEN
-        val result = mongoArtwork.toArtworkResponse()
+        val result = mongoArtwork.toResponse()
 
         //THEN
         assertEquals(expectedArtwork, result)
@@ -66,7 +66,7 @@ class ArtworkMapperTest {
 
         // WHEN THEN
         val exception = assertThrows<IllegalArgumentException> {
-            mongoArtwork.toArtworkResponse()
+            mongoArtwork.toResponse()
         }
         assertEquals("artwork id cannot be null", exception.message)
     }
@@ -88,7 +88,7 @@ class ArtworkMapperTest {
             )
 
         //WHEN
-        val result = artwork.toArtwork()
+        val result = artwork.toMongo()
 
         //THEN
         assertEquals(expectedMongoArtwork, result)
@@ -106,11 +106,11 @@ class ArtworkMapperTest {
             artworkFull.width!!,
             artworkFull.height!!,
             artworkFull.status!!,
-            artworkFull.artist!!.toUserResponse()
+            artworkFull.artist!!.toResponse()
         )
 
         // WHEN
-        val result = artworkFull.toArtworkFullResponse()
+        val result = artworkFull.toFullResponse()
 
         // THEN
         assertEquals(expectedResponse, result)
@@ -128,11 +128,11 @@ class ArtworkMapperTest {
             artworkFull.width!!,
             artworkFull.height!!,
             ArtworkStatus.UNKNOWN,
-            artworkFull.artist!!.toUserResponse()
+            artworkFull.artist!!.toResponse()
         )
 
         // WHEN
-        val result = artworkFull.toArtworkFullResponse()
+        val result = artworkFull.toFullResponse()
 
         // THEN
         assertEquals(expectedResponse, result)

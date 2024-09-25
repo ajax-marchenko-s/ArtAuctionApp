@@ -4,7 +4,6 @@ import auction.random
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
 import ua.marchenko.artauction.auction.exception.AuctionNotFoundException
-import ua.marchenko.artauction.auction.mapper.toAuctionResponse
 import ua.marchenko.artauction.auction.service.AuctionService
 import kotlin.test.Test
 import getRandomString
@@ -13,6 +12,7 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import org.bson.types.ObjectId
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
+import ua.marchenko.artauction.auction.mapper.toResponse
 import ua.marchenko.artauction.auction.model.MongoAuction
 
 class AuctionControllerTest {
@@ -34,7 +34,7 @@ class AuctionControllerTest {
 
         //THEN
         assertEquals(1, result.size)
-        assertEquals(auctions[0].toAuctionResponse(), result[0])
+        assertEquals(auctions[0].toResponse(), result[0])
     }
 
     @Test
@@ -61,7 +61,7 @@ class AuctionControllerTest {
         val result = auctionController.getAuctionById(id)
 
         //THEN
-        assertEquals(auction.toAuctionResponse(), result)
+        assertEquals(auction.toResponse(), result)
     }
 
     @Test
@@ -80,12 +80,12 @@ class AuctionControllerTest {
         val auctionRequest = CreateAuctionRequest.random()
         val auction = MongoAuction.random()
 
-        every { mockAuctionService.save(auctionRequest) } returns auction.toAuctionResponse()
+        every { mockAuctionService.save(auctionRequest) } returns auction.toResponse()
 
         //WHEN
         val result = auctionController.addAuction(auctionRequest)
 
         //THEN
-        assertEquals(auction.toAuctionResponse(), result)
+        assertEquals(auction.toResponse(), result)
     }
 }

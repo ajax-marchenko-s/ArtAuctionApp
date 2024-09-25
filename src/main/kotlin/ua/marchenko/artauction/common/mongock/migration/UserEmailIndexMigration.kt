@@ -1,25 +1,25 @@
 package ua.marchenko.artauction.common.mongock.migration
 
+import com.mongodb.client.MongoDatabase
 import io.mongock.api.annotations.ChangeUnit
 import io.mongock.api.annotations.Execution
 import io.mongock.api.annotations.RollbackExecution
+import org.bson.Document
 import org.slf4j.LoggerFactory
-import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoTemplate
-import org.springframework.data.mongodb.core.index.Index
 import org.springframework.data.mongodb.core.index.IndexOperations
 import ua.marchenko.artauction.user.model.MongoUser
 
-@ChangeUnit(id = "ArtAuctionMigrationChangeUnit", order = "001", author = "svitlana marchenko", systemVersion = "1")
-class ArtAuctionMigrationChangeUnit {
+
+@ChangeUnit(id = "UserEmailIndexMigration", order = "001", author = "Svitlana Marchenko", systemVersion = "1")
+class UserEmailIndexMigration {
 
     @Execution
-    fun createIndex(mongoTemplate: MongoTemplate) {
-        val indexOps: IndexOperations = mongoTemplate.indexOps(MongoUser.COLLECTION)
-        indexOps.ensureIndex(
-            Index().on(MongoUser::email.name, Sort.Direction.ASC).unique()
+    fun createHashedIndex(db: MongoDatabase) {
+        db.getCollection(MongoUser.COLLECTION).createIndex(
+            Document(MongoUser::email.name, "hashed")
         )
-        log.info("Index for {} collection for {} field was created", MongoUser.COLLECTION, MongoUser::email.name)
+        log.info("Hashed Index for {} collection for {} field was created", MongoUser.COLLECTION, MongoUser::email.name)
     }
 
     @RollbackExecution
@@ -36,6 +36,6 @@ class ArtAuctionMigrationChangeUnit {
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(ArtAuctionMigrationChangeUnit::class.java)
+        private val log = LoggerFactory.getLogger(UserEmailIndexMigration::class.java)
     }
 }

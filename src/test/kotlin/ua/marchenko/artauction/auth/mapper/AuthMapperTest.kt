@@ -19,7 +19,7 @@ class AuthMapperTest {
         val expectedUser = MongoUser(null, user.name, user.lastname, user.email, user.password, user.role)
 
         //WHEN
-        val result = user.toUser()
+        val result = user.toMongo()
 
         //THEN
         assertEquals(expectedUser, result)

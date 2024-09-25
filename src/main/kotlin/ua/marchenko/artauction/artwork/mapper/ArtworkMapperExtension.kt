@@ -7,10 +7,10 @@ import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.enums.ArtworkStyle
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
-import ua.marchenko.artauction.user.mapper.toUserResponse
+import ua.marchenko.artauction.user.mapper.toResponse
 import ua.marchenko.artauction.user.model.MongoUser
 
-fun MongoArtwork.toArtworkResponse() = ArtworkResponse(
+fun MongoArtwork.toResponse() = ArtworkResponse(
     requireNotNull(id) { "artwork id cannot be null" }.toHexString(),
     title ?: "unknown",
     description ?: "unknown",
@@ -21,7 +21,7 @@ fun MongoArtwork.toArtworkResponse() = ArtworkResponse(
     artistId?.toHexString() ?: "unknown",
 )
 
-fun ArtworkFull.toArtworkFullResponse() = ArtworkFullResponse(
+fun ArtworkFull.toFullResponse() = ArtworkFullResponse(
     requireNotNull(id) { "artwork id cannot be null" }.toHexString(),
     title ?: "unknown",
     description ?: "unknown",
@@ -29,7 +29,7 @@ fun ArtworkFull.toArtworkFullResponse() = ArtworkFullResponse(
     width ?: 0,
     height ?: 0,
     status ?: ArtworkStatus.UNKNOWN,
-    artist?.toUserResponse() ?: MongoUser().toUserResponse()
+    artist?.toResponse() ?: MongoUser().toResponse()
 )
 
-fun CreateArtworkRequest.toArtwork() = MongoArtwork(null, title, description, style, width, height, null, null)
+fun CreateArtworkRequest.toMongo() = MongoArtwork(null, title, description, style, width, height, null, null)

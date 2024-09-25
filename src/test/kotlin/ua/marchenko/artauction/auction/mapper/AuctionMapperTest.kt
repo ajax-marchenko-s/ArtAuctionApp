@@ -6,7 +6,7 @@ import auction.random
 import java.math.BigDecimal
 import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
-import ua.marchenko.artauction.artwork.mapper.toArtworkFullResponse
+import ua.marchenko.artauction.artwork.mapper.toFullResponse
 import ua.marchenko.artauction.auction.controller.dto.AuctionFullResponse
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.auction.model.MongoAuction
@@ -23,13 +23,13 @@ class AuctionMapperTest {
             auction.id!!.toHexString(),
             auction.artworkId!!.toHexString(),
             auction.startBid!!,
-            auction.buyers!!.map { it.toBidResponse() },
+            auction.buyers!!.map { it.toResponse() },
             auction.startedAt!!,
             auction.finishedAt!!
         )
 
         //WHEN
-        val result = auction.toAuctionResponse()
+        val result = auction.toResponse()
 
         //THEN
         assertEquals(expectedAuction, result)
@@ -43,13 +43,13 @@ class AuctionMapperTest {
             auction.id!!.toHexString(),
             auction.artworkId!!.toHexString(),
             BigDecimal(0.0),
-            auction.buyers!!.map { it.toBidResponse() },
+            auction.buyers!!.map { it.toResponse() },
             auction.startedAt!!,
             auction.finishedAt!!
         )
 
         //WHEN
-        val result = auction.toAuctionResponse()
+        val result = auction.toResponse()
 
         //THEN
         assertEquals(expectedAuction, result)
@@ -62,7 +62,7 @@ class AuctionMapperTest {
 
         // WHEN THEN
         val exception = assertThrows<IllegalArgumentException> {
-            auction.toAuctionResponse()
+            auction.toResponse()
         }
         assertEquals("auction id cannot be null", exception.message)
     }
@@ -81,7 +81,7 @@ class AuctionMapperTest {
         )
 
         //WHEN
-        val result = auction.toAuction()
+        val result = auction.toMongo()
 
         //THEN
         assertEquals(expectedAuction, result)
@@ -93,15 +93,15 @@ class AuctionMapperTest {
         val auctionFull = AuctionFull.random()
         val expectedResponse = AuctionFullResponse(
             auctionFull.id!!.toHexString(),
-            auctionFull.artwork!!.toArtworkFullResponse(),
+            auctionFull.artwork!!.toFullResponse(),
             auctionFull.startBid!!,
-            auctionFull.buyers!!.map { it.toBidFullResponse() },
+            auctionFull.buyers!!.map { it.toFullResponse() },
             auctionFull.startedAt!!,
             auctionFull.finishedAt!!
         )
 
         // WHEN
-        val result = auctionFull.toAuctionFullResponse()
+        val result = auctionFull.toFullResponse()
 
         // THEN
         assertEquals(expectedResponse, result)
@@ -113,7 +113,7 @@ class AuctionMapperTest {
         val auctionFull = AuctionFull.random(buyers = null)
         val expectedResponse = AuctionFullResponse(
             auctionFull.id!!.toHexString(),
-            auctionFull.artwork!!.toArtworkFullResponse(),
+            auctionFull.artwork!!.toFullResponse(),
             auctionFull.startBid!!,
             emptyList(),
             auctionFull.startedAt!!,
@@ -121,7 +121,7 @@ class AuctionMapperTest {
         )
 
         //WHEN
-        val result = auctionFull.toAuctionFullResponse()
+        val result = auctionFull.toFullResponse()
 
         //THEN
         assertEquals(expectedResponse, result)
@@ -134,7 +134,7 @@ class AuctionMapperTest {
         val expectedResponse = AuctionResponse.BidResponse(bid.buyerId!!.toHexString(), bid.bid!!)
 
         // WHEN
-        val result = bid.toBidResponse()
+        val result = bid.toResponse()
 
         // THEN
         assertEquals(expectedResponse, result)
@@ -147,7 +147,7 @@ class AuctionMapperTest {
         val expectedResponse = AuctionResponse.BidResponse("", BigDecimal(0.0))
 
         // WHEN
-        val result = bid.toBidResponse()
+        val result = bid.toResponse()
 
         // THEN
         assertEquals(expectedResponse, result)

@@ -3,8 +3,6 @@ package ua.marchenko.artauction.artwork.controller
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
 import ua.marchenko.artauction.artwork.exception.ArtworkNotFoundException
-import ua.marchenko.artauction.artwork.mapper.toArtwork
-import ua.marchenko.artauction.artwork.mapper.toArtworkResponse
 import ua.marchenko.artauction.artwork.service.ArtworkService
 import artwork.random
 import kotlin.test.Test
@@ -14,6 +12,8 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import org.bson.types.ObjectId
 import ua.marchenko.artauction.artwork.controller.dto.CreateArtworkRequest
+import ua.marchenko.artauction.artwork.mapper.toMongo
+import ua.marchenko.artauction.artwork.mapper.toResponse
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 
 class ArtworkControllerTest {
@@ -35,7 +35,7 @@ class ArtworkControllerTest {
 
         //THEN
         assertEquals(1, result.size)
-        assertEquals(artworks[0].toArtworkResponse(), result[0])
+        assertEquals(artworks[0].toResponse(), result[0])
     }
 
     @Test
@@ -62,7 +62,7 @@ class ArtworkControllerTest {
         val result = artworkController.getArtworkById(id)
 
         //THEN
-        assertEquals(artwork.toArtworkResponse(), result)
+        assertEquals(artwork.toResponse(), result)
     }
 
     @Test
@@ -81,12 +81,12 @@ class ArtworkControllerTest {
         val artworkRequest = CreateArtworkRequest.random()
         val artwork = MongoArtwork.random()
 
-        every { mockArtworkService.save(artworkRequest.toArtwork()) } returns artwork
+        every { mockArtworkService.save(artworkRequest.toMongo()) } returns artwork
 
         // WHEN
         val result = artworkController.addArtwork(artworkRequest)
 
         //THEN
-        assertEquals(artwork.toArtworkResponse(), result)
+        assertEquals(artwork.toResponse(), result)
     }
 }

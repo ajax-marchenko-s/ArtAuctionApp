@@ -3,7 +3,6 @@ package ua.marchenko.artauction.user.controller
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
 import ua.marchenko.artauction.user.exception.UserNotFoundException
-import ua.marchenko.artauction.user.mapper.toUserResponse
 import ua.marchenko.artauction.user.service.UserService
 import kotlin.test.Test
 import getRandomString
@@ -11,6 +10,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import org.bson.types.ObjectId
+import ua.marchenko.artauction.user.mapper.toResponse
 import ua.marchenko.artauction.user.model.MongoUser
 import user.random
 
@@ -33,7 +33,7 @@ class UserControllerTest {
 
         //THEN
         assertEquals(1, result.size)
-        assertEquals(users[0].toUserResponse(), result[0])
+        assertEquals(users[0].toResponse(), result[0])
     }
 
     @Test
@@ -60,7 +60,7 @@ class UserControllerTest {
         val result = userController.getUserById(id)
 
         //THEN
-        assertEquals(user.toUserResponse(), result)
+        assertEquals(user.toResponse(), result)
     }
 
     @Test

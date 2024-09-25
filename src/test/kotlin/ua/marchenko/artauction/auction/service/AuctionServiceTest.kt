@@ -6,8 +6,6 @@ import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.service.ArtworkService
 import ua.marchenko.artauction.auction.exception.AuctionNotFoundException
 import ua.marchenko.artauction.auction.exception.InvalidAuctionOperationException
-import ua.marchenko.artauction.auction.mapper.toAuction
-import ua.marchenko.artauction.auction.mapper.toAuctionResponse
 import ua.marchenko.artauction.auction.repository.AuctionRepository
 import artwork.random
 import auction.random
@@ -18,6 +16,8 @@ import kotlin.test.Test
 import org.bson.types.ObjectId
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
+import ua.marchenko.artauction.auction.mapper.toMongo
+import ua.marchenko.artauction.auction.mapper.toResponse
 import ua.marchenko.artauction.auction.model.MongoAuction
 import ua.marchenko.artauction.auction.model.projection.AuctionFull
 
@@ -126,7 +126,7 @@ class AuctionServiceTest {
         val newAuctionId = ObjectId()
         val artwork = MongoArtwork.random(status = ArtworkStatus.VIEW)
         val auctionRequest = CreateAuctionRequest.random(artworkId = artwork.id!!.toHexString())
-        val auction = auctionRequest.toAuction()
+        val auction = auctionRequest.toMongo()
 
         every { mockArtworkService.getById(auctionRequest.artworkId) } returns artwork
         every {
@@ -141,7 +141,7 @@ class AuctionServiceTest {
         val result = auctionService.save(auctionRequest)
 
         //THEN
-        assertEquals(auction.copy(id = newAuctionId).toAuctionResponse(), result)
+        assertEquals(auction.copy(id = newAuctionId).toResponse(), result)
     }
 
     @Test
