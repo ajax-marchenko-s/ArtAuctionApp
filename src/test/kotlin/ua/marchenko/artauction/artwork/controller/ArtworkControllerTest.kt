@@ -31,7 +31,7 @@ class ArtworkControllerTest {
         every { mockArtworkService.getAll() } returns artworks
 
         // WHEN
-        val result = artworkController.getAllArtworks(1, 10)
+        val result = artworkController.getAllArtworks(0, 10)
 
         //THEN
         assertEquals(1, result.size)
@@ -44,7 +44,7 @@ class ArtworkControllerTest {
         every { mockArtworkService.getAll() } returns emptyList()
 
         // WHEN
-        val result = artworkController.getAllArtworks(1, 10)
+        val result = artworkController.getAllArtworks(0, 10)
 
         //THEN
         assertEquals(0, result.size)

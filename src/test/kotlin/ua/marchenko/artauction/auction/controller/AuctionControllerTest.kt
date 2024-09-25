@@ -30,7 +30,7 @@ class AuctionControllerTest {
         every { mockAuctionService.getAll() } returns auctions
 
         //WHEN
-        val result = auctionController.getAllAuctions(1, 10)
+        val result = auctionController.getAllAuctions(0, 10)
 
         //THEN
         assertEquals(1, result.size)
@@ -43,7 +43,7 @@ class AuctionControllerTest {
         every { mockAuctionService.getAll() } returns emptyList()
 
         //WHEN
-        val result = auctionController.getAllAuctions(1, 10)
+        val result = auctionController.getAllAuctions(0, 10)
 
         //THEN
         assertEquals(0, result.size)

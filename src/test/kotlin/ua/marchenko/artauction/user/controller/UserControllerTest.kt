@@ -29,7 +29,7 @@ class UserControllerTest {
         every { mockUserService.getAll() } returns users
 
         //WHEN
-        val result = userController.getAllUsers(1, 10)
+        val result = userController.getAllUsers(0, 10)
 
         //THEN
         assertEquals(1, result.size)
@@ -42,7 +42,7 @@ class UserControllerTest {
         every { mockUserService.getAll() } returns emptyList()
 
         //WHEN
-        val result = userController.getAllUsers(1, 10)
+        val result = userController.getAllUsers(0, 10)
 
         //THEN
         assertEquals(0, result.size)
