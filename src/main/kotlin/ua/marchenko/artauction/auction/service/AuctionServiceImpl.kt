@@ -10,6 +10,8 @@ import ua.marchenko.artauction.auction.exception.AuctionNotFoundException
 import ua.marchenko.artauction.auction.exception.InvalidAuctionOperationException
 import ua.marchenko.artauction.auction.mapper.toAuction
 import ua.marchenko.artauction.auction.mapper.toAuctionResponse
+import ua.marchenko.artauction.auction.model.MongoAuction
+import ua.marchenko.artauction.auction.model.projection.AuctionFull
 
 @Service
 class AuctionServiceImpl(
@@ -17,9 +19,9 @@ class AuctionServiceImpl(
     private val artworkService: ArtworkService,
 ) : AuctionService {
 
-    override fun getAll() = auctionRepository.findAll()
+    override fun getAll(page: Int, limit: Int): List<MongoAuction> = auctionRepository.findAll(page, limit)
 
-    override fun getFullAll() = auctionRepository.findFullAll()
+    override fun getFullAll(page: Int, limit: Int): List<AuctionFull> = auctionRepository.findFullAll(page, limit)
 
     override fun getById(id: String) = auctionRepository.findById(id) ?: throw AuctionNotFoundException(id)
 

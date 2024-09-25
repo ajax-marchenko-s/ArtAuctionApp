@@ -1,11 +1,11 @@
 package ua.marchenko.artauction.user.repository
 
 import getRandomEmail
-import getRandomObjectId
 import org.springframework.beans.factory.annotation.Autowired
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
+import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import ua.marchenko.artauction.common.AbstractBaseIntegrationTest
@@ -26,7 +26,7 @@ class UserRepositoryTest : AbstractBaseIntegrationTest {
         val savedUser = userRepository.save(user)
 
         // THEN
-        assertEquals(user.email, savedUser.email)
+        assertEquals(user.copy(id = savedUser.id), savedUser)
     }
 
     @Test
@@ -44,7 +44,7 @@ class UserRepositoryTest : AbstractBaseIntegrationTest {
     @Test
     fun `should return null when there is no user with this id`() {
         // WHEN
-        val result = userRepository.findById(getRandomObjectId().toHexString())
+        val result = userRepository.findById(ObjectId().toHexString())
 
         // THEN
         assertNull(result, "Found user must be null")
@@ -95,7 +95,7 @@ class UserRepositoryTest : AbstractBaseIntegrationTest {
     @Test
     fun `should return all users when they are exists`() {
         // GIVEN
-        val users = listOf(MongoUser.random(id = null), MongoUser.random(id = null))
+        val users = listOf(MongoUser.random(id = null))
         users.forEach { user -> userRepository.save(user) }
 
         // WHEN

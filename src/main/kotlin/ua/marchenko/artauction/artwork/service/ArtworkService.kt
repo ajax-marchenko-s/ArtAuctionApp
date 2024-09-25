@@ -5,8 +5,8 @@ import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 
 interface ArtworkService {
-    fun getAll(): List<MongoArtwork>
-    fun getFullAll(): List<ArtworkFull>
+    fun getAll(page: Int = 1, limit: Int = 10): List<MongoArtwork>
+    fun getFullAll(page: Int = 1, limit: Int = 10): List<ArtworkFull>
     fun getById(id: String): MongoArtwork
     fun getFullById(id: String): ArtworkFull
     fun save(artwork: MongoArtwork): MongoArtwork

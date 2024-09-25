@@ -1,10 +1,10 @@
 package ua.marchenko.artauction.auction.repository
 
 import auction.random
-import getRandomObjectId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.springframework.beans.factory.annotation.Autowired
 import ua.marchenko.artauction.artwork.model.MongoArtwork
@@ -36,7 +36,7 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
         val savedAuction = auctionRepository.save(auction)
 
         // THEN
-        assertEquals(auction.startBid, savedAuction.startBid)
+        assertEquals(auction.copy(id = savedAuction.id), savedAuction)
     }
 
     @Test
@@ -54,7 +54,7 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
     @Test
     fun `should return null when there is no auction with this id`() {
         // WHEN
-        val result = auctionRepository.findById(getRandomObjectId().toString())
+        val result = auctionRepository.findById(ObjectId().toString())
 
         // THEN
         assertNull(result, "Found auction must be null")
@@ -87,7 +87,7 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
     @Test
     fun `should return null when auction with this id doesnt exists`() {
         // WHEN
-        val result = artworkRepository.findFullById(getRandomObjectId().toString())
+        val result = artworkRepository.findFullById(ObjectId().toString())
 
         // THEN
         assertNull(result, "Found artwork must be null")

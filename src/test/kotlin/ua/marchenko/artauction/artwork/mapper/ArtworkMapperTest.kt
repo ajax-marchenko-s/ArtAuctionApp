@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import ua.marchenko.artauction.artwork.controller.dto.ArtworkResponse
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import artwork.random
-import getRandomObjectId
 import kotlin.test.Test
+import org.bson.types.ObjectId
 import org.junit.jupiter.api.assertThrows
 import ua.marchenko.artauction.artwork.controller.dto.ArtworkFullResponse
 import ua.marchenko.artauction.artwork.controller.dto.CreateArtworkRequest
@@ -18,7 +18,7 @@ class ArtworkMapperTest {
     @Test
     fun `should return ArtworkResponse when Artwork has not null properties (except fields from business logic)`() {
         // GIVEN
-        val mongoArtwork = MongoArtwork.random(artistId = getRandomObjectId().toHexString())
+        val mongoArtwork = MongoArtwork.random(artistId = ObjectId().toHexString())
         val expectedArtwork = ArtworkResponse(
             mongoArtwork.id!!.toHexString(),
             mongoArtwork.title!!,

@@ -16,10 +16,10 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import getRandomEmail
-import getRandomObjectId
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
+import org.bson.types.ObjectId
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.user.model.MongoUser
 import user.random
@@ -70,7 +70,7 @@ class ArtworkServiceTest {
     @Test
     fun `should return artwork by id when artwork with this id exists`() {
         // GIVEN
-        val id = getRandomObjectId().toHexString()
+        val id = ObjectId().toHexString()
         val artwork = MongoArtwork.random(id = id)
 
         every { mockArtworkRepository.findById(id) } returns artwork
@@ -85,17 +85,16 @@ class ArtworkServiceTest {
     @Test
     fun `should throw ArtworkNotFoundException when there is no artwork with this id`() {
         //GIVEN
-        val id = getRandomObjectId().toHexString()
-        every { mockArtworkRepository.findById(id) } returns null
+        every { mockArtworkRepository.findById(any()) } returns null
 
         //WHEN //THEN
-        assertThrows<ArtworkNotFoundException> { artworkService.getById(id) }
+        assertThrows<ArtworkNotFoundException> { artworkService.getById(ObjectId().toHexString()) }
     }
 
     @Test
     fun `should return full artwork by id when artwork with this id exists`() {
         // GIVEN
-        val id = getRandomObjectId().toHexString()
+        val id = ObjectId().toHexString()
         val artwork = ArtworkFull.random(id = id)
 
         every { mockArtworkRepository.findFullById(id) } returns artwork
@@ -110,11 +109,10 @@ class ArtworkServiceTest {
     @Test
     fun `should throw ArtworkNotFoundException when there is no full artwork with this id`() {
         //GIVEN
-        val id = getRandomObjectId().toHexString()
-        every { mockArtworkRepository.findFullById(id) } returns null
+        every { mockArtworkRepository.findFullById(any()) } returns null
 
         //WHEN //THEN
-        assertThrows<ArtworkNotFoundException> { artworkService.getFullById(id) }
+        assertThrows<ArtworkNotFoundException> { artworkService.getFullById(ObjectId().toHexString()) }
     }
 
     @Test
@@ -161,11 +159,10 @@ class ArtworkServiceTest {
     @Test
     fun `should return false when there is no artwork with given id`() {
         //GIVEN
-        val id = getRandomObjectId().toHexString()
-        every { mockArtworkRepository.existsById(id) } returns false
+        every { mockArtworkRepository.existsById(any()) } returns false
 
         //WHEN
-        val result = artworkService.existsById(id)
+        val result = artworkService.existsById(ObjectId().toHexString())
 
         //THEN
         assertFalse(result)
@@ -174,7 +171,7 @@ class ArtworkServiceTest {
     @Test
     fun `should return true when artwork with this id exists`() {
         //GIVEN
-        val id = getRandomObjectId().toHexString()
+        val id = ObjectId().toHexString()
         every { mockArtworkRepository.existsById(id) } returns true
 
         //WHEN

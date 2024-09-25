@@ -8,10 +8,10 @@ import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.repository.UserRepository
 import kotlin.test.Test
 import getRandomEmail
-import getRandomObjectId
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
+import org.bson.types.ObjectId
 import user.random
 
 class UserServiceTest {
@@ -52,7 +52,7 @@ class UserServiceTest {
     @Test
     fun `should return user by id when user with this id exists`() {
         //GIVEN
-        val id = getRandomObjectId().toHexString()
+        val id = ObjectId().toHexString()
         val user = MongoUser.random(id = id)
 
         every { mockUserRepository.findById(id) } returns user
@@ -67,11 +67,10 @@ class UserServiceTest {
     @Test
     fun `should throw UserNotFoundException when there is no user with this id`() {
         //GIVEN
-        val id = getRandomObjectId().toHexString()
-        every { mockUserRepository.findById(id) } returns null
+        every { mockUserRepository.findById(any()) } returns null
 
         //WHEN //THEN
-        assertThrows<UserNotFoundException> { userService.getById(id) }
+        assertThrows<UserNotFoundException> { userService.getById(ObjectId().toHexString()) }
     }
 
     @Test

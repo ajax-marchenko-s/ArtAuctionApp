@@ -1,6 +1,5 @@
 package ua.marchenko.artauction.user.controller
 
-import getRandomObjectId
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
 import ua.marchenko.artauction.user.exception.UserNotFoundException
@@ -11,6 +10,7 @@ import getRandomString
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
+import org.bson.types.ObjectId
 import ua.marchenko.artauction.user.model.MongoUser
 import user.random
 
@@ -29,7 +29,7 @@ class UserControllerTest {
         every { mockUserService.getAll() } returns users
 
         //WHEN
-        val result = userController.getAllUsers()
+        val result = userController.getAllUsers(1, 10)
 
         //THEN
         assertEquals(1, result.size)
@@ -42,7 +42,7 @@ class UserControllerTest {
         every { mockUserService.getAll() } returns emptyList()
 
         //WHEN
-        val result = userController.getAllUsers()
+        val result = userController.getAllUsers(1, 10)
 
         //THEN
         assertEquals(0, result.size)
@@ -51,7 +51,7 @@ class UserControllerTest {
     @Test
     fun `should return user with given id when auction with this id exists`() {
         //GIVEN
-        val id = getRandomObjectId().toHexString()
+        val id = ObjectId().toHexString()
         val user = MongoUser.random(id = id)
 
         every { mockUserService.getById(id) } returns user

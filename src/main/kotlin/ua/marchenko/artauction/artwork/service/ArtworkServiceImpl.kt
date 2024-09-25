@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.exception.ArtworkNotFoundException
 import ua.marchenko.artauction.artwork.model.MongoArtwork
+import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 import ua.marchenko.artauction.common.annotation.profiling.annotation.CustomProfiling
 import ua.marchenko.artauction.common.mongodb.id.toObjectId
@@ -20,9 +21,9 @@ class ArtworkServiceImpl(
 ) : ArtworkService {
 
     @CustomProfiling(timeUnit = TimeUnit.MICROSECONDS)
-    override fun getAll() = artworkRepository.findAll()
+    override fun getAll(page: Int, limit: Int) = artworkRepository.findAll(page, limit)
 
-    override fun getFullAll() = artworkRepository.findFullAll()
+    override fun getFullAll(page: Int, limit: Int): List<ArtworkFull> = artworkRepository.findFullAll(page, limit)
 
     override fun getById(id: String) = artworkRepository.findById(id) ?: throw ArtworkNotFoundException(id)
 

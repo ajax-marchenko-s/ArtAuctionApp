@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
@@ -19,20 +20,22 @@ import ua.marchenko.artauction.auction.service.AuctionService
 class AuctionController(private val auctionService: AuctionService) {
 
     @GetMapping("{id}")
-    @ResponseStatus(HttpStatus.OK)
     fun getAuctionById(@PathVariable id: String) = auctionService.getById(id).toAuctionResponse()
 
     @GetMapping("{id}/full")
-    @ResponseStatus(HttpStatus.OK)
     fun getFullAuctionById(@PathVariable id: String) = auctionService.getFullById(id).toAuctionFullResponse()
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    fun getAllAuctions() = auctionService.getAll().map { it.toAuctionResponse() }
+    fun getAllAuctions(
+        @RequestParam(required = false, defaultValue = "1") page: Int,
+        @RequestParam(required = false, defaultValue = "10") limit: Int
+    ) = auctionService.getAll(page, limit).map { it.toAuctionResponse() }
 
     @GetMapping("/full")
-    @ResponseStatus(HttpStatus.OK)
-    fun getAllFullAuctions() = auctionService.getFullAll().map { it.toAuctionFullResponse() }
+    fun getAllFullAuctions(
+        @RequestParam(required = false, defaultValue = "1") page: Int,
+        @RequestParam(required = false, defaultValue = "10") limit: Int
+    ) = auctionService.getFullAll(page, limit).map { it.toAuctionFullResponse() }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

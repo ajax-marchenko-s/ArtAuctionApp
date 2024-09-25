@@ -9,8 +9,8 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation.lookup
 import org.springframework.data.mongodb.core.aggregation.Aggregation.match
 import org.springframework.data.mongodb.core.aggregation.Aggregation.project
 import org.springframework.data.mongodb.core.aggregation.Aggregation.unwind
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation
 import org.springframework.data.mongodb.core.aggregation.Fields
+import org.springframework.data.mongodb.core.aggregation.FieldsExposingAggregationOperation
 import org.springframework.stereotype.Repository
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
@@ -31,17 +31,24 @@ internal class MongoArtworkRepository(private val mongoTemplate: MongoTemplate) 
     override fun findFullById(id: String): ArtworkFull? {
         val aggregation = Aggregation.newAggregation(
             match(Criteria.where(Fields.UNDERSCORE_ID).isEqualTo(id)),
-            *aggregateFullArtist().toTypedArray(),
+            *aggregateFullArtist(),
         )
         val results = mongoTemplate.aggregate(aggregation, MongoArtwork.COLLECTION, ArtworkFull::class.java)
         return results.mappedResults.firstOrNull()
     }
 
-    override fun findAll(): List<MongoArtwork> = mongoTemplate.findAll(MongoArtwork::class.java)
+    override fun findAll(page: Int, limit: Int): List<MongoArtwork> {
+        val skip = (page - 1) * limit
+        val query = Query().skip(skip.toLong()).limit(limit)
+        return mongoTemplate.find(query, MongoArtwork::class.java)
+    }
 
-    override fun findFullAll(): List<ArtworkFull> {
+    override fun findFullAll(page: Int, limit: Int): List<ArtworkFull> {
+        val skip = (page - 1) * limit
         val aggregation = Aggregation.newAggregation(
-            *aggregateFullArtist().toTypedArray(),
+            *aggregateFullArtist(),
+            Aggregation.skip(skip.toLong()),
+            Aggregation.limit(limit.toLong()),
         )
         val results = mongoTemplate.aggregate(aggregation, MongoArtwork.COLLECTION, ArtworkFull::class.java)
         return results.mappedResults.toList()
@@ -52,11 +59,11 @@ internal class MongoArtworkRepository(private val mongoTemplate: MongoTemplate) 
         return mongoTemplate.exists(query, MongoArtwork::class.java)
     }
 
-    private fun aggregateFullArtist(): List<AggregationOperation> {
+    private fun aggregateFullArtist(): Array<FieldsExposingAggregationOperation> {
         return listOf(
             lookup(MongoUser.COLLECTION, MongoArtwork::artistId.name, Fields.UNDERSCORE_ID, ArtworkFull::artist.name),
             project().andExclude(MongoArtwork::artistId.name),
             unwind(ArtworkFull::artist.name)
-        )
+        ).toTypedArray()
     }
 }

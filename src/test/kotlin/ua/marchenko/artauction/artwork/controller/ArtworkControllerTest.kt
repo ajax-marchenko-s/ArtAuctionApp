@@ -7,12 +7,12 @@ import ua.marchenko.artauction.artwork.mapper.toArtwork
 import ua.marchenko.artauction.artwork.mapper.toArtworkResponse
 import ua.marchenko.artauction.artwork.service.ArtworkService
 import artwork.random
-import getRandomObjectId
 import kotlin.test.Test
 import getRandomString
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
+import org.bson.types.ObjectId
 import ua.marchenko.artauction.artwork.controller.dto.CreateArtworkRequest
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 
@@ -31,7 +31,7 @@ class ArtworkControllerTest {
         every { mockArtworkService.getAll() } returns artworks
 
         // WHEN
-        val result = artworkController.getAllArtworks()
+        val result = artworkController.getAllArtworks(1, 10)
 
         //THEN
         assertEquals(1, result.size)
@@ -44,7 +44,7 @@ class ArtworkControllerTest {
         every { mockArtworkService.getAll() } returns emptyList()
 
         // WHEN
-        val result = artworkController.getAllArtworks()
+        val result = artworkController.getAllArtworks(1, 10)
 
         //THEN
         assertEquals(0, result.size)
@@ -53,7 +53,7 @@ class ArtworkControllerTest {
     @Test
     fun `should return artwork by id when artwork with this id exists`() {
         // GIVEN
-        val id = getRandomObjectId().toHexString()
+        val id = ObjectId().toHexString()
         val artwork = MongoArtwork.random(id = id)
 
         every { mockArtworkService.getById(id) } returns artwork

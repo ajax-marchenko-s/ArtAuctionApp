@@ -8,8 +8,8 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation.match
 import org.springframework.data.mongodb.core.aggregation.Aggregation.project
 import org.springframework.data.mongodb.core.aggregation.Aggregation.replaceRoot
 import org.springframework.data.mongodb.core.aggregation.Aggregation.unwind
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation
 import org.springframework.data.mongodb.core.aggregation.Fields
+import org.springframework.data.mongodb.core.aggregation.FieldsExposingAggregationOperation
 import org.springframework.data.mongodb.core.aggregation.ObjectOperators
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
@@ -36,25 +36,32 @@ internal class MongoAuctionRepository(private val mongoTemplate: MongoTemplate) 
     override fun findFullById(id: String): AuctionFull? {
         val aggregation = Aggregation.newAggregation(
             match(Criteria.where(Fields.UNDERSCORE_ID).isEqualTo(id)),
-            *aggregateFullBuyers().toTypedArray(),
-            *aggregateFullArtwork().toTypedArray(),
+            *aggregateFullBuyers(),
+            *aggregateFullArtwork(),
         )
         val results = mongoTemplate.aggregate(aggregation, MongoAuction.COLLECTION, AuctionFull::class.java)
         return results.mappedResults.firstOrNull()
     }
 
-    override fun findAll(): List<MongoAuction> = mongoTemplate.findAll(MongoAuction::class.java)
+    override fun findAll(page: Int, limit: Int): List<MongoAuction> {
+        val skip = (page - 1) * limit
+        val query = Query().skip(skip.toLong()).limit(limit)
+        return mongoTemplate.find(query, MongoAuction::class.java)
+    }
 
-    override fun findFullAll(): List<AuctionFull> {
+    override fun findFullAll(page: Int, limit: Int): List<AuctionFull> {
+        val skip = (page - 1) * limit
         val aggregation = Aggregation.newAggregation(
-            *aggregateFullBuyers().toTypedArray(),
-            *aggregateFullArtwork().toTypedArray(),
+            *aggregateFullBuyers(),
+            *aggregateFullArtwork(),
+            Aggregation.skip(skip.toLong()),
+            Aggregation.limit(limit.toLong()),
         )
         val results = mongoTemplate.aggregate(aggregation, MongoAuction.COLLECTION, AuctionFull::class.java)
         return results.mappedResults.toList()
     }
 
-    private fun aggregateFullArtwork(): List<AggregationOperation> {
+    private fun aggregateFullArtwork(): Array<FieldsExposingAggregationOperation> {
         return listOf(
             lookup(
                 MongoArtwork.COLLECTION,
@@ -74,10 +81,10 @@ internal class MongoAuctionRepository(private val mongoTemplate: MongoTemplate) 
                 MongoAuction::artworkId.name,
             ),
             unwind("${AuctionFull::artwork.name}.${ArtworkFull::artist.name}")
-        )
+        ).toTypedArray()
     }
 
-    private fun aggregateFullBuyers(): List<AggregationOperation> {
+    private fun aggregateFullBuyers(): Array<FieldsExposingAggregationOperation> {
         return listOf(
             unwind(MongoAuction::buyers.name),
             lookup(
@@ -99,6 +106,6 @@ internal class MongoAuctionRepository(private val mongoTemplate: MongoTemplate) 
             project().andExclude(
                 "${MongoAuction::buyers.name}.${MongoAuction.Bid::buyerId.name}"
             ),
-        )
+        ).toTypedArray()
     }
 }

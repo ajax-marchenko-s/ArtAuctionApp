@@ -9,7 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import ua.marchenko.artauction.auth.controller.dto.AuthenticationResponse
 import ua.marchenko.artauction.auth.data.CustomUserDetails
 import ua.marchenko.artauction.auth.mapper.toUser
-import getRandomObjectId
 import getRandomString
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -19,6 +18,7 @@ import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.exception.UserAlreadyExistsException
 import ua.marchenko.artauction.user.repository.UserRepository
 import kotlin.test.Test
+import org.bson.types.ObjectId
 import ua.marchenko.artauction.auth.controller.dto.AuthenticationRequest
 import ua.marchenko.artauction.auth.controller.dto.RegistrationRequest
 import ua.marchenko.artauction.auth.jwt.JwtServiceImpl
@@ -86,7 +86,7 @@ class AuthServiceTest {
         val registrationRequest = RegistrationRequest.random()
         val encodedPassword = getRandomString()
         val savedUser =
-            registrationRequest.toUser().copy(password = encodedPassword, id = getRandomObjectId())
+            registrationRequest.toUser().copy(password = encodedPassword, id = ObjectId())
         val userDetails =
             CustomUserDetails(registrationRequest.email, registrationRequest.password, registrationRequest.role)
         val expectedResponse = AuthenticationResponse(getRandomString())

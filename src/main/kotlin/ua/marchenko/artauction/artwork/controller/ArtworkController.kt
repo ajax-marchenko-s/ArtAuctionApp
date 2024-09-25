@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import ua.marchenko.artauction.artwork.controller.dto.CreateArtworkRequest
@@ -20,20 +21,22 @@ import ua.marchenko.artauction.artwork.service.ArtworkService
 class ArtworkController(private val artworkService: ArtworkService) {
 
     @GetMapping("{id}")
-    @ResponseStatus(HttpStatus.OK)
     fun getArtworkById(@PathVariable id: String) = artworkService.getById(id).toArtworkResponse()
 
     @GetMapping("{id}/full")
-    @ResponseStatus(HttpStatus.OK)
     fun getFullArtworkById(@PathVariable id: String) = artworkService.getFullById(id).toArtworkFullResponse()
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    fun getAllArtworks() = artworkService.getAll().map { it.toArtworkResponse() }
+    fun getAllArtworks(
+        @RequestParam(required = false, defaultValue = "1") page: Int,
+        @RequestParam(required = false, defaultValue = "10") limit: Int
+    ) = artworkService.getAll(page, limit).map { it.toArtworkResponse() }
 
     @GetMapping("/full")
-    @ResponseStatus(HttpStatus.OK)
-    fun getAllFullArtworks() = artworkService.getFullAll().map { it.toArtworkFullResponse() }
+    fun getAllFullArtworks(
+        @RequestParam(required = false, defaultValue = "1") page: Int,
+        @RequestParam(required = false, defaultValue = "10") limit: Int
+    ) = artworkService.getFullAll(page, limit).map { it.toArtworkFullResponse() }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

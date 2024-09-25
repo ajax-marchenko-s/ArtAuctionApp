@@ -1,13 +1,13 @@
 package user
 
-import getRandomObjectId
 import getRandomString
+import org.bson.types.ObjectId
 import ua.marchenko.artauction.common.mongodb.id.toObjectId
 import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.model.MongoUser
 
 fun MongoUser.Companion.random(
-    id: String? = getRandomObjectId().toHexString(),
+    id: String? = ObjectId().toHexString(),
     role: Role? = Role.ARTIST,
     email: String? = getRandomString(10),
 ) = MongoUser(

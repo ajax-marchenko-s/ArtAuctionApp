@@ -1,10 +1,10 @@
 package ua.marchenko.artauction.artwork.repository
 
 import artwork.random
-import getRandomObjectId
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
+import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,7 +31,7 @@ class ArtworkRepositoryTest : AbstractBaseIntegrationTest {
         val savedArtwork = artworkRepository.save(artwork)
 
         // THEN
-        assertEquals(artwork.title, savedArtwork.title)
+        assertEquals(artwork.copy(id = savedArtwork.id), savedArtwork)
     }
 
     @Test
@@ -49,7 +49,7 @@ class ArtworkRepositoryTest : AbstractBaseIntegrationTest {
     @Test
     fun `should return null when there is no artwork with this id`() {
         // WHEN
-        val result = artworkRepository.findById(getRandomObjectId().toString())
+        val result = artworkRepository.findById(ObjectId().toString()) //random id
 
         // THEN
         assertNull(result, "Found artwork must be null")
@@ -134,7 +134,7 @@ class ArtworkRepositoryTest : AbstractBaseIntegrationTest {
     @Test
     fun `should return false when there is no artwork with this id`() {
         // WHEN
-        val result = artworkRepository.existsById(getRandomObjectId().toString())
+        val result = artworkRepository.existsById(ObjectId().toString())
 
         // THEN
         assertFalse(result, "Artwork with given id must not exist")

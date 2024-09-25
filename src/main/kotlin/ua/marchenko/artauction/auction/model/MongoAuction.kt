@@ -1,5 +1,6 @@
 package ua.marchenko.artauction.auction.model
 
+import java.math.BigDecimal
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.MongoId
 
@@ -11,14 +12,14 @@ data class MongoAuction(
     @MongoId
     val id: ObjectId? = null,
     val artworkId: ObjectId? = null,
-    val startBid: Double? = null,
+    val startBid: BigDecimal? = null,
     val buyers: List<Bid>? = emptyList(),
     val startedAt: LocalDateTime? = null,
     val finishedAt: LocalDateTime? = null,
 ) {
     data class Bid(
         val buyerId: ObjectId? = null,
-        val bid: Double? = null,
+        val bid: BigDecimal? = null,
     ){
         companion object
     }

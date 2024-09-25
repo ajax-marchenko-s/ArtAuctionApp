@@ -3,6 +3,7 @@ package ua.marchenko.artauction.auction.mapper
 import org.junit.jupiter.api.Assertions.assertEquals
 import ua.marchenko.artauction.auction.controller.dto.AuctionResponse
 import auction.random
+import java.math.BigDecimal
 import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import ua.marchenko.artauction.artwork.mapper.toArtworkFullResponse
@@ -41,7 +42,7 @@ class AuctionMapperTest {
         val expectedAuction = AuctionResponse(
             auction.id!!.toHexString(),
             auction.artworkId!!.toHexString(),
-            BID,
+            BigDecimal(0.0),
             auction.buyers!!.map { it.toBidResponse() },
             auction.startedAt!!,
             auction.finishedAt!!
@@ -143,16 +144,12 @@ class AuctionMapperTest {
     fun `should return BidResponse with default values when Bid has all null properties`() {
         // GIVEN
         val bid = MongoAuction.Bid.random(buyerId = null, bid = null)
-        val expectedResponse = AuctionResponse.BidResponse("", 0.0)
+        val expectedResponse = AuctionResponse.BidResponse("", BigDecimal(0.0))
 
         // WHEN
         val result = bid.toBidResponse()
 
         // THEN
         assertEquals(expectedResponse, result)
-    }
-
-    companion object {
-        const val BID = 0.0
     }
 }

@@ -6,6 +6,6 @@ interface UserRepository {
     fun save(user: MongoUser): MongoUser
     fun findById(id: String): MongoUser?
     fun findByEmail(email: String): MongoUser?
-    fun findAll(): List<MongoUser>
+    fun findAll(page: Int = 1, limit: Int = 10): List<MongoUser>
     fun existsByEmail(email: String): Boolean
 }

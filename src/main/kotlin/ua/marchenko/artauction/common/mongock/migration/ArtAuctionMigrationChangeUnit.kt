@@ -25,8 +25,14 @@ class ArtAuctionMigrationChangeUnit {
     @RollbackExecution
     fun rollbackIndex(mongoTemplate: MongoTemplate) {
         val indexOps: IndexOperations = mongoTemplate.indexOps(MongoUser.COLLECTION)
-        indexOps.dropIndex("email_1")
-        log.info("Index for {} collection for {} field was rolled back", MongoUser.COLLECTION, MongoUser::email.name)
+        if (indexOps.indexInfo.any { it.name == "email_1" }) {
+            indexOps.dropIndex("email_1")
+            log.info(
+                "Index for {} collection for {} field was rolled back",
+                MongoUser.COLLECTION,
+                MongoUser::email.name
+            )
+        }
     }
 
     companion object {
