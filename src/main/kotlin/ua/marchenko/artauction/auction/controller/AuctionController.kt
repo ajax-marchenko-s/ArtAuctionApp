@@ -27,13 +27,13 @@ class AuctionController(private val auctionService: AuctionService) {
 
     @GetMapping
     fun getAllAuctions(
-        @RequestParam(required = false, defaultValue = "1") page: Int,
+        @RequestParam(required = false, defaultValue = "0") page: Int,
         @RequestParam(required = false, defaultValue = "10") limit: Int
     ) = auctionService.getAll(page, limit).map { it.toAuctionResponse() }
 
     @GetMapping("/full")
     fun getAllFullAuctions(
-        @RequestParam(required = false, defaultValue = "1") page: Int,
+        @RequestParam(required = false, defaultValue = "0") page: Int,
         @RequestParam(required = false, defaultValue = "10") limit: Int
     ) = auctionService.getFullAll(page, limit).map { it.toAuctionFullResponse() }
 

@@ -28,13 +28,13 @@ class ArtworkController(private val artworkService: ArtworkService) {
 
     @GetMapping
     fun getAllArtworks(
-        @RequestParam(required = false, defaultValue = "1") page: Int,
+        @RequestParam(required = false, defaultValue = "0") page: Int,
         @RequestParam(required = false, defaultValue = "10") limit: Int
     ) = artworkService.getAll(page, limit).map { it.toArtworkResponse() }
 
     @GetMapping("/full")
     fun getAllFullArtworks(
-        @RequestParam(required = false, defaultValue = "1") page: Int,
+        @RequestParam(required = false, defaultValue = "0") page: Int,
         @RequestParam(required = false, defaultValue = "10") limit: Int
     ) = artworkService.getFullAll(page, limit).map { it.toArtworkFullResponse() }
 

@@ -38,13 +38,13 @@ internal class MongoArtworkRepository(private val mongoTemplate: MongoTemplate) 
     }
 
     override fun findAll(page: Int, limit: Int): List<MongoArtwork> {
-        val skip = (page - 1) * limit
+        val skip = page * limit
         val query = Query().skip(skip.toLong()).limit(limit)
         return mongoTemplate.find(query, MongoArtwork::class.java)
     }
 
     override fun findFullAll(page: Int, limit: Int): List<ArtworkFull> {
-        val skip = (page - 1) * limit
+        val skip = page * limit
         val aggregation = Aggregation.newAggregation(
             *aggregateFullArtist(),
             Aggregation.skip(skip.toLong()),

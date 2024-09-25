@@ -17,7 +17,7 @@ class UserController(private val userService: UserService) {
 
     @GetMapping
     fun getAllUsers(
-        @RequestParam(required = false, defaultValue = "1") page: Int,
+        @RequestParam(required = false, defaultValue = "0") page: Int,
         @RequestParam(required = false, defaultValue = "10") limit: Int
     ) = userService.getAll(page, limit).map { it.toUserResponse() }
 }

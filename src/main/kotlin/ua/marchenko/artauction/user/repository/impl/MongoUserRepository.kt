@@ -25,7 +25,7 @@ internal class MongoUserRepository(private val mongoTemplate: MongoTemplate) : U
     }
 
     override fun findAll(page: Int, limit: Int): List<MongoUser> {
-        val skip = (page - 1) * limit
+        val skip = page * limit
         val query = Query().skip(skip.toLong()).limit(limit)
         return mongoTemplate.find(query, MongoUser::class.java)
     }
