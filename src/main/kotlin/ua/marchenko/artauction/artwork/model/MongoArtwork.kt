@@ -1,12 +1,14 @@
 package ua.marchenko.artauction.artwork.model
 
 import org.bson.types.ObjectId
+import org.springframework.data.annotation.TypeAlias
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.MongoId
 import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.enums.ArtworkStyle
 
 @Document(collection = MongoArtwork.COLLECTION)
+@TypeAlias("Artwork")
 data class MongoArtwork(
     @MongoId
     val id: ObjectId? = null,

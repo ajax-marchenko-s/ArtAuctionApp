@@ -6,8 +6,10 @@ import org.springframework.data.mongodb.core.mapping.MongoId
 
 import java.time.LocalDateTime
 import org.bson.types.ObjectId
+import org.springframework.data.annotation.TypeAlias
 
 @Document(collection = MongoAuction.COLLECTION)
+@TypeAlias("Auction")
 data class MongoAuction(
     @MongoId
     val id: ObjectId? = null,
@@ -20,10 +22,11 @@ data class MongoAuction(
     data class Bid(
         val buyerId: ObjectId? = null,
         val bid: BigDecimal? = null,
-    ){
+    ) {
         companion object
     }
-    companion object{
+
+    companion object {
         const val COLLECTION = "auction"
     }
 }
