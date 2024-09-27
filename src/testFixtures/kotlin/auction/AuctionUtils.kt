@@ -1,30 +1,61 @@
 package auction
 
-import ua.marchenko.artauction.artwork.model.Artwork
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
-import ua.marchenko.artauction.auction.model.Auction
+import ua.marchenko.artauction.auction.model.MongoAuction
 import artwork.random
-import getRandomObjectId
+import java.math.BigDecimal
 import java.time.LocalDateTime
+import org.bson.types.ObjectId
+import ua.marchenko.artauction.artwork.model.MongoArtwork
+import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
+import ua.marchenko.artauction.auction.model.projection.AuctionFull
+import ua.marchenko.artauction.auction.model.projection.AuctionFull.BidFull
 import ua.marchenko.artauction.common.mongodb.id.toObjectId
+import ua.marchenko.artauction.user.model.MongoUser
+import user.random
 
-fun Auction.Companion.random(
-    id: String? = getRandomObjectId().toHexString(),
-    artwork: Artwork? = Artwork.random(),
-    bid: Double? = 100.0,
-) = Auction(
+fun MongoAuction.Companion.random(
+    id: String? = ObjectId().toHexString(),
+    artwork: MongoArtwork? = MongoArtwork.random(),
+    startBid: BigDecimal? = BigDecimal(100.0),
+) = MongoAuction(
     id = id?.toObjectId(),
-    artwork = artwork,
-    bid = bid,
+    artworkId = artwork?.id,
+    startBid = startBid,
     startedAt = LocalDateTime.now(),
-    finishedAt = LocalDateTime.now(),
+    finishedAt = LocalDateTime.now().plusDays(1),
 )
 
-fun CreateAuctionRequest.Companion.random(artworkId: String = getRandomObjectId().toHexString()) =
+fun MongoAuction.Bid.Companion.random(
+    buyerId: String? = ObjectId().toHexString(),
+    bid: BigDecimal? = BigDecimal(100.0)
+) =
+    MongoAuction.Bid(
+        buyerId = buyerId?.toObjectId(),
+        bid = bid,
+    )
+
+fun CreateAuctionRequest.Companion.random(artworkId: String = ObjectId().toHexString()) =
     CreateAuctionRequest(
         artworkId = artworkId,
-        bid = 100.0,
-        buyerId = null,
+        startBid = BigDecimal(100.0),
         startedAt = LocalDateTime.now(),
         finishedAt = LocalDateTime.now(),
     )
+
+fun AuctionFull.Companion.random(
+    id: String? = ObjectId().toHexString(),
+    buyers: List<BidFull>? = listOf(BidFull.random(), BidFull.random())
+) = AuctionFull(
+    id = id?.toObjectId(),
+    artwork = ArtworkFull.random(),
+    startBid = BigDecimal(100.0),
+    buyers = buyers,
+    startedAt = LocalDateTime.now(),
+    finishedAt = LocalDateTime.now().plusDays(1),
+)
+
+fun BidFull.Companion.random() = BidFull(
+    buyer = MongoUser.random(),
+    bid = BigDecimal(100.0),
+)
