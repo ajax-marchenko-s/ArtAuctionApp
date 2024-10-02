@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import ua.marchenko.artauction.auth.data.CustomUserDetails
 import auth.random
 import ua.marchenko.artauction.user.enums.Role
-import ua.marchenko.artauction.user.model.User
+import ua.marchenko.artauction.user.model.MongoUser
 import kotlin.test.Test
 import ua.marchenko.artauction.auth.controller.dto.RegistrationRequest
 import user.random
@@ -16,10 +16,10 @@ class AuthMapperTest {
     fun `should return User`() {
         //GIVEN
         val user = RegistrationRequest.random()
-        val expectedUser = User(null, user.name, user.lastname, user.email, user.password, user.role)
+        val expectedUser = MongoUser(null, user.name, user.lastname, user.email, user.password, user.role)
 
         //WHEN
-        val result = user.toUser()
+        val result = user.toMongo()
 
         //THEN
         assertEquals(expectedUser, result)
@@ -28,7 +28,7 @@ class AuthMapperTest {
     @Test
     fun `should return UserDetails when User has right properties`() {
         //GIVEN
-        val user = User.random(role = Role.ARTIST)
+        val user = MongoUser.random(role = Role.ARTIST)
         val expectedUserDetails: UserDetails =
             CustomUserDetails(user.email!!, user.password!!, user.role!!)
 
@@ -42,7 +42,7 @@ class AuthMapperTest {
     @Test
     fun `should set default values when User has null properties (except fields from bl)`() {
         //GIVEN
-        val user = User.random(role = null)
+        val user = MongoUser.random(role = null)
         val expectedUserDetails: UserDetails =
             CustomUserDetails(user.email!!, user.password!!, Role.UNKNOWN)
 

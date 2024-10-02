@@ -1,9 +1,9 @@
 package ua.marchenko.artauction.user.service
 
-import ua.marchenko.artauction.user.model.User
+import ua.marchenko.artauction.user.model.MongoUser
 
 interface UserService {
-    fun getAll(): List<User>
-    fun getById(id: String): User
-    fun getByEmail(email: String): User
+    fun getAll(page: Int = 0, limit: Int = 10): List<MongoUser>
+    fun getById(id: String): MongoUser
+    fun getByEmail(email: String): MongoUser
 }

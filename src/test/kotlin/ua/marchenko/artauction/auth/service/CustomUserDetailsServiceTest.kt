@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import ua.marchenko.artauction.auth.mapper.toUserDetails
 import ua.marchenko.artauction.user.repository.UserRepository
 import kotlin.test.Test
-import ua.marchenko.artauction.user.model.User
+import ua.marchenko.artauction.user.model.MongoUser
 import user.random
 
 class CustomUserDetailsServiceTest {
@@ -25,7 +25,7 @@ class CustomUserDetailsServiceTest {
     fun `should return UserDetails by username when user with this email exists`() {
         //GIVEN
         val email = getRandomEmail()
-        val user = User.random(email = email)
+        val user = MongoUser.random(email = email)
 
         every { mockUserRepository.findByEmail(email) } returns user
 
