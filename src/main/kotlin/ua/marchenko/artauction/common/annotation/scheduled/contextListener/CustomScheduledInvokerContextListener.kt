@@ -1,12 +1,13 @@
 package ua.marchenko.artauction.common.annotation.scheduled.contextListener
 
 import java.lang.reflect.Method
+import java.time.Clock
 import java.time.LocalDateTime
-import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.DisposableBean
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.context.ApplicationListener
 import org.springframework.context.event.ContextRefreshedEvent
@@ -18,10 +19,12 @@ import ua.marchenko.artauction.common.annotation.scheduled.scheduledDetails.DayT
 
 @Component
 @Order(Ordered.LOWEST_PRECEDENCE)
-class CustomScheduledInvokerContextListener(private val beanFactory: ConfigurableListableBeanFactory) :
+class CustomScheduledInvokerContextListener(
+    private val beanFactory: ConfigurableListableBeanFactory,
+    private val clock: Clock,
+    @Qualifier("scheduledExecutorService") private val scheduledService: ScheduledExecutorService,
+) :
     ApplicationListener<ContextRefreshedEvent>, DisposableBean {
-
-    val scheduledService: ScheduledExecutorService = Executors.newScheduledThreadPool(CORE_POOL_SIZE)
 
     override fun onApplicationEvent(event: ContextRefreshedEvent) {
 
@@ -48,7 +51,7 @@ class CustomScheduledInvokerContextListener(private val beanFactory: Configurabl
         val currentMethod = bean.javaClass.getMethod(originalMethod.name, *originalMethod.parameterTypes)
         val annotation = originalMethod.getAnnotation(CustomScheduled::class.java)
         val dayTime = DayTimeDetails(annotation.day, annotation.hours, annotation.minutes, annotation.seconds)
-        val initialDelay = dayTime.calculateTimeDifference(LocalDateTime.now().minusSeconds(1)).seconds
+        val initialDelay = dayTime.calculateTimeDifference(LocalDateTime.now(clock).minusSeconds(1)).seconds
         val delay = dayTime.calculateDurationBetween().seconds
         scheduledService.scheduleWithFixedDelay({ currentMethod.invoke(bean) }, initialDelay, delay, TimeUnit.SECONDS)
         log.info("Method {} has added to ScheduledExecutorService with delay {} s", currentMethod.name, delay)
@@ -60,7 +63,6 @@ class CustomScheduledInvokerContextListener(private val beanFactory: Configurabl
     }
 
     companion object {
-        private const val CORE_POOL_SIZE = 5
         private val log = LoggerFactory.getLogger(CustomScheduledInvokerContextListener::class.java)
     }
 }

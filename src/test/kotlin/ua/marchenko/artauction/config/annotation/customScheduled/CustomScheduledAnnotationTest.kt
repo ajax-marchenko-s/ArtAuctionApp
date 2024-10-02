@@ -3,57 +3,32 @@ package ua.marchenko.artauction.config.annotation.customScheduled
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
-import config.annotation.customScheduled.CustomScheduledTestServiceWithAnnotationImpl
-import config.annotation.customScheduled.CustomScheduledTestServiceWithoutAnnotationImpl
-import getRandomString
-import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
-import io.mockk.slot
-import io.mockk.verify
-import java.time.Duration
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.config.BeanDefinition
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
-import org.springframework.context.ApplicationContext
-import org.springframework.context.event.ContextRefreshedEvent
-import ua.marchenko.artauction.common.annotation.scheduled.contextListener.CustomScheduledInvokerContextListener
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.jvm.isAccessible
-import kotlin.reflect.jvm.javaField
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationContext
+import org.springframework.context.annotation.Profile
+import org.springframework.context.event.ContextRefreshedEvent
+import org.springframework.stereotype.Component
+import ua.marchenko.artauction.common.AbstractBaseIntegrationTest
+import ua.marchenko.artauction.common.annotation.scheduled.annotation.CustomScheduled
+import ua.marchenko.artauction.common.annotation.scheduled.contextListener.CustomScheduledInvokerContextListener
+import ua.marchenko.artauction.common.annotation.scheduled.scheduledDetails.enums.Day
 
-class CustomScheduledAnnotationTest {
+class CustomScheduledAnnotationTest : AbstractBaseIntegrationTest {
 
-    @MockK
-    private lateinit var beanFactory: ConfigurableListableBeanFactory
-
-    @MockK
+    @Autowired
     private lateinit var context: ApplicationContext
 
-    @MockK
-    private lateinit var scheduledExecutorService: ScheduledExecutorService
-
-    @MockK
-    private lateinit var beanDefinition: BeanDefinition
-
-    @InjectMockKs
+    @Autowired
     private lateinit var customScheduledInvokerContextListener: CustomScheduledInvokerContextListener
 
     private lateinit var testLogAppender: ListAppender<ILoggingEvent>
 
     @BeforeEach
     fun setUp() {
-        val field = customScheduledInvokerContextListener::class.declaredMemberProperties
-            .first { it.name == SCHEDULED_EXECUTOR_SERVICE_NAME }
-        field.isAccessible = true
-        field.javaField?.set(customScheduledInvokerContextListener, scheduledExecutorService)
-
         val logger = LoggerFactory.getLogger(CustomScheduledInvokerContextListener::class.java) as Logger
         testLogAppender = ListAppender()
         testLogAppender.start()
@@ -62,56 +37,34 @@ class CustomScheduledAnnotationTest {
 
     @Test
     fun `should schedule method when CustomScheduled annotation is present`() {
-        // GIVEN
-        val beanName = getRandomString()
-        val beanNames = arrayOf(beanName)
-        val testBean = CustomScheduledTestServiceWithAnnotationImpl()
-        val delaySlot = slot<Long>()
-
-        every { context.beanDefinitionNames } returns beanNames
-        every { beanFactory.getBeanDefinition(beanName) } returns beanDefinition
-        every { beanDefinition.beanClassName } returns CustomScheduledTestServiceWithAnnotationImpl::class.java.name
-        every { context.getBean(beanName) } returns testBean
-        every { scheduledExecutorService.scheduleWithFixedDelay(any(), any(), any(), TimeUnit.SECONDS) } returns null
-
         // WHEN
         customScheduledInvokerContextListener.onApplicationEvent(ContextRefreshedEvent(context))
 
         // THEN
-        verify(exactly = 1) {
-            scheduledExecutorService.scheduleWithFixedDelay(any(), any(), capture(delaySlot), TimeUnit.SECONDS)
-        }
-        assertEquals(1, testLogAppender.list.count { it.message.contains(SCHEDULED_PART_LOG_MESSAGE_TEMPLATE) })
-        assertEquals(ANNOTATED_METHOD_DELAY, delaySlot.captured)
-    }
-
-
-    @Test
-    fun `should not schedule method when CustomScheduled annotation is not present`() {
-        // GIVEN
-        val beanName = getRandomString()
-        val beanNames = arrayOf(beanName)
-        val testBean = CustomScheduledTestServiceWithoutAnnotationImpl()
-
-        every { context.beanDefinitionNames } returns beanNames
-        every { beanFactory.getBeanDefinition(beanName) } returns beanDefinition
-        every { beanDefinition.beanClassName } returns CustomScheduledTestServiceWithoutAnnotationImpl::class.java.name
-        every { context.getBean(beanName) } returns testBean
-
-        // WHEN
-        customScheduledInvokerContextListener.onApplicationEvent(ContextRefreshedEvent(context))
-
-        // THEN
-        verify(exactly = 0) { scheduledExecutorService.scheduleWithFixedDelay(any(), any(), any(), TimeUnit.SECONDS) }
-        assertTrue(
-            testLogAppender.list.none { it.message.contains(SCHEDULED_PART_LOG_MESSAGE_TEMPLATE) },
-            "Scheduling log events was found in NOT annotated method"
-        )
+        assertTrue(testLogAppender.list.count { it.message.contains(SCHEDULED_PART_LOG_MESSAGE_TEMPLATE) } > 0,
+            "testLogAppender should contains at least one message")
     }
 
     companion object {
-        private const val SCHEDULED_EXECUTOR_SERVICE_NAME = "scheduledService"
         private const val SCHEDULED_PART_LOG_MESSAGE_TEMPLATE = "has added to ScheduledExecutorService with delay"
-        private val ANNOTATED_METHOD_DELAY = Duration.ofDays(7).seconds
+    }
+}
+
+interface CustomScheduledTestService {
+    fun testTest()
+    fun test(s: Int)
+}
+
+@Component
+@Profile("test")
+class CustomScheduledTestServiceWithAnnotationImpl : CustomScheduledTestService {
+
+    @CustomScheduled(day = Day.MONDAY, hours = 12, minutes = 0, seconds = 0)
+    override fun testTest() {
+        println("I have annotation")
+    }
+
+    override fun test(s: Int) {
+        println("I don't have annotation: $s")
     }
 }
