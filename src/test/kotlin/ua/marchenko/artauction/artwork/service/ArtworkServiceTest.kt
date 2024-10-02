@@ -8,7 +8,7 @@ import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.exception.ArtworkNotFoundException
-import ua.marchenko.artauction.artwork.model.Artwork
+import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 import ua.marchenko.artauction.user.enums.Role
 import ua.marchenko.artauction.user.service.UserService
@@ -16,11 +16,12 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import getRandomEmail
-import getRandomObjectId
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
-import ua.marchenko.artauction.user.model.User
+import org.bson.types.ObjectId
+import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
+import ua.marchenko.artauction.user.model.MongoUser
 import user.random
 
 class ArtworkServiceTest {
@@ -43,7 +44,7 @@ class ArtworkServiceTest {
     @Test
     fun `should return a list of artworks when artworks are present`() {
         // GIVEN
-        val artworks = listOf(Artwork.random())
+        val artworks = listOf(MongoArtwork.random())
         every { mockArtworkRepository.findAll() } returns artworks
 
         //WHEN
@@ -69,8 +70,8 @@ class ArtworkServiceTest {
     @Test
     fun `should return artwork by id when artwork with this id exists`() {
         // GIVEN
-        val id = getRandomObjectId().toHexString()
-        val artwork = Artwork.random(id = id)
+        val id = ObjectId().toHexString()
+        val artwork = MongoArtwork.random(id = id)
 
         every { mockArtworkRepository.findById(id) } returns artwork
 
@@ -84,19 +85,56 @@ class ArtworkServiceTest {
     @Test
     fun `should throw ArtworkNotFoundException when there is no artwork with this id`() {
         //GIVEN
-        val id = getRandomObjectId().toHexString()
-        every { mockArtworkRepository.findById(id) } returns null
+        every { mockArtworkRepository.findById(any()) } returns null
 
         //WHEN //THEN
-        assertThrows<ArtworkNotFoundException> { artworkService.getById(id) }
+        assertThrows<ArtworkNotFoundException> { artworkService.getById(ObjectId().toHexString()) }
+    }
+
+    @Test
+    fun `should return full artwork by id when artwork with this id exists`() {
+        // GIVEN
+        val id = ObjectId().toHexString()
+        val artwork = ArtworkFull.random(id = id)
+
+        every { mockArtworkRepository.findFullById(id) } returns artwork
+
+        // WHEN
+        val result = artworkService.getFullById(id)
+
+        // THEN
+        assertEquals(artwork, result)
+    }
+
+    @Test
+    fun `should throw ArtworkNotFoundException when there is no full artwork with this id`() {
+        //GIVEN
+        every { mockArtworkRepository.findFullById(any()) } returns null
+
+        //WHEN //THEN
+        assertThrows<ArtworkNotFoundException> { artworkService.getFullById(ObjectId().toHexString()) }
+    }
+
+    @Test
+    fun `should return a list of full artworks when artworks are present`() {
+        // GIVEN
+        val artworks = listOf(ArtworkFull.random())
+        every { mockArtworkRepository.findFullAll() } returns artworks
+
+        // WHEN
+        val result = artworkService.getFullAll()
+
+        // THEN
+        assertEquals(1, result.size)
+        assertEquals(artworks[0].title, result[0].title)
     }
 
     @Test
     fun `should set status and artist before calling repository method`() {
         //GIVEN
         val email = getRandomEmail()
-        val user = User.random(email = email, role = Role.ARTIST)
-        val artworkToSave = Artwork.random(status = null, artist = null)
+        val user = MongoUser.random(email = email, role = Role.ARTIST)
+        val artworkToSave = MongoArtwork.random(status = null, artistId = null)
 
         SecurityContextHolder.setContext(mockSecurityContext)
         every { mockSecurityContext.authentication } returns mockAuthentication
@@ -106,26 +144,25 @@ class ArtworkServiceTest {
             mockArtworkRepository.save(
                 artworkToSave.copy(
                     status = ArtworkStatus.VIEW,
-                    artist = user
+                    artistId = user.id
                 )
             )
-        } returns artworkToSave.copy(status = ArtworkStatus.VIEW, artist = user)
+        } returns artworkToSave.copy(status = ArtworkStatus.VIEW, artistId = user.id)
 
         //WHEN
         val result = artworkService.save(artworkToSave)
 
         //THEN
-        assertEquals(artworkToSave.copy(status = ArtworkStatus.VIEW, artist = user), result)
+        assertEquals(artworkToSave.copy(status = ArtworkStatus.VIEW, artistId = user.id), result)
     }
 
     @Test
     fun `should return false when there is no artwork with given id`() {
         //GIVEN
-        val id = getRandomObjectId().toHexString()
-        every { mockArtworkRepository.existsById(id) } returns false
+        every { mockArtworkRepository.existsById(any()) } returns false
 
         //WHEN
-        val result = artworkService.existsById(id)
+        val result = artworkService.existsById(ObjectId().toHexString())
 
         //THEN
         assertFalse(result)
@@ -134,7 +171,7 @@ class ArtworkServiceTest {
     @Test
     fun `should return true when artwork with this id exists`() {
         //GIVEN
-        val id = getRandomObjectId().toHexString()
+        val id = ObjectId().toHexString()
         every { mockArtworkRepository.existsById(id) } returns true
 
         //WHEN

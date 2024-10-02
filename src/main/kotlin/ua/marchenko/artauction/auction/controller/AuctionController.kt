@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
-import ua.marchenko.artauction.auction.mapper.toAuctionResponse
+import ua.marchenko.artauction.auction.mapper.toFullResponse
+import ua.marchenko.artauction.auction.mapper.toResponse
 import ua.marchenko.artauction.auction.service.AuctionService
 
 @RestController
@@ -18,12 +20,22 @@ import ua.marchenko.artauction.auction.service.AuctionService
 class AuctionController(private val auctionService: AuctionService) {
 
     @GetMapping("{id}")
-    @ResponseStatus(HttpStatus.OK)
-    fun getAuctionById(@PathVariable id: String) = auctionService.getById(id).toAuctionResponse()
+    fun getAuctionById(@PathVariable id: String) = auctionService.getById(id).toResponse()
+
+    @GetMapping("{id}/full")
+    fun getFullAuctionById(@PathVariable id: String) = auctionService.getFullById(id).toFullResponse()
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    fun getAllAuctions() = auctionService.getAll().map { it.toAuctionResponse() }
+    fun getAllAuctions(
+        @RequestParam(required = false, defaultValue = "0") page: Int,
+        @RequestParam(required = false, defaultValue = "10") limit: Int
+    ) = auctionService.getAll(page, limit).map { it.toResponse() }
+
+    @GetMapping("/full")
+    fun getAllFullAuctions(
+        @RequestParam(required = false, defaultValue = "0") page: Int,
+        @RequestParam(required = false, defaultValue = "10") limit: Int
+    ) = auctionService.getFullAll(page, limit).map { it.toFullResponse() }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

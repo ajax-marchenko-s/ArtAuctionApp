@@ -4,16 +4,16 @@ import auction.random
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
 import ua.marchenko.artauction.auction.exception.AuctionNotFoundException
-import ua.marchenko.artauction.auction.mapper.toAuctionResponse
 import ua.marchenko.artauction.auction.service.AuctionService
-import getRandomObjectId
 import kotlin.test.Test
 import getRandomString
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
+import org.bson.types.ObjectId
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
-import ua.marchenko.artauction.auction.model.Auction
+import ua.marchenko.artauction.auction.mapper.toResponse
+import ua.marchenko.artauction.auction.model.MongoAuction
 
 class AuctionControllerTest {
 
@@ -26,15 +26,15 @@ class AuctionControllerTest {
     @Test
     fun `should return a list of AuctionResponse when there are some auctions`() {
         //GIVEN
-        val auctions = listOf(Auction.random())
+        val auctions = listOf(MongoAuction.random())
         every { mockAuctionService.getAll() } returns auctions
 
         //WHEN
-        val result = auctionController.getAllAuctions()
+        val result = auctionController.getAllAuctions(0, 10)
 
         //THEN
         assertEquals(1, result.size)
-        assertEquals(auctions[0].toAuctionResponse(), result[0])
+        assertEquals(auctions[0].toResponse(), result[0])
     }
 
     @Test
@@ -43,7 +43,7 @@ class AuctionControllerTest {
         every { mockAuctionService.getAll() } returns emptyList()
 
         //WHEN
-        val result = auctionController.getAllAuctions()
+        val result = auctionController.getAllAuctions(0, 10)
 
         //THEN
         assertEquals(0, result.size)
@@ -52,8 +52,8 @@ class AuctionControllerTest {
     @Test
     fun `should return auction with given id when auction with this id exists`() {
         //GIVEN
-        val id = getRandomObjectId().toHexString()
-        val auction = Auction.random(id = id)
+        val id = ObjectId().toHexString()
+        val auction = MongoAuction.random(id = id)
 
         every { mockAuctionService.getById(id) } returns auction
 
@@ -61,7 +61,7 @@ class AuctionControllerTest {
         val result = auctionController.getAuctionById(id)
 
         //THEN
-        assertEquals(auction.toAuctionResponse(), result)
+        assertEquals(auction.toResponse(), result)
     }
 
     @Test
@@ -78,14 +78,14 @@ class AuctionControllerTest {
     fun `should return AuctionResponse`() {
         //GIVEN
         val auctionRequest = CreateAuctionRequest.random()
-        val auction = Auction.random()
+        val auction = MongoAuction.random()
 
-        every { mockAuctionService.save(auctionRequest) } returns auction.toAuctionResponse()
+        every { mockAuctionService.save(auctionRequest) } returns auction.toResponse()
 
         //WHEN
         val result = auctionController.addAuction(auctionRequest)
 
         //THEN
-        assertEquals(auction.toAuctionResponse(), result)
+        assertEquals(auction.toResponse(), result)
     }
 }

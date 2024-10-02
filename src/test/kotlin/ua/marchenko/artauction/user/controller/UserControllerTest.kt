@@ -1,17 +1,17 @@
 package ua.marchenko.artauction.user.controller
 
-import getRandomObjectId
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
 import ua.marchenko.artauction.user.exception.UserNotFoundException
-import ua.marchenko.artauction.user.mapper.toUserResponse
 import ua.marchenko.artauction.user.service.UserService
 import kotlin.test.Test
 import getRandomString
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
-import ua.marchenko.artauction.user.model.User
+import org.bson.types.ObjectId
+import ua.marchenko.artauction.user.mapper.toResponse
+import ua.marchenko.artauction.user.model.MongoUser
 import user.random
 
 class UserControllerTest {
@@ -25,15 +25,15 @@ class UserControllerTest {
     @Test
     fun `should return a list of UserResponse`() {
         //GIVEN
-        val users = listOf(User.random())
+        val users = listOf(MongoUser.random())
         every { mockUserService.getAll() } returns users
 
         //WHEN
-        val result = userController.getAllUsers()
+        val result = userController.getAllUsers(0, 10)
 
         //THEN
         assertEquals(1, result.size)
-        assertEquals(users[0].toUserResponse(), result[0])
+        assertEquals(users[0].toResponse(), result[0])
     }
 
     @Test
@@ -42,7 +42,7 @@ class UserControllerTest {
         every { mockUserService.getAll() } returns emptyList()
 
         //WHEN
-        val result = userController.getAllUsers()
+        val result = userController.getAllUsers(0, 10)
 
         //THEN
         assertEquals(0, result.size)
@@ -51,8 +51,8 @@ class UserControllerTest {
     @Test
     fun `should return user with given id when auction with this id exists`() {
         //GIVEN
-        val id = getRandomObjectId().toHexString()
-        val user = User.random(id = id)
+        val id = ObjectId().toHexString()
+        val user = MongoUser.random(id = id)
 
         every { mockUserService.getById(id) } returns user
 
@@ -60,7 +60,7 @@ class UserControllerTest {
         val result = userController.getUserById(id)
 
         //THEN
-        assertEquals(user.toUserResponse(), result)
+        assertEquals(user.toResponse(), result)
     }
 
     @Test

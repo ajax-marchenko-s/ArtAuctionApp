@@ -9,9 +9,9 @@ import ua.marchenko.artauction.auth.jwt.JwtService
 import ua.marchenko.artauction.auth.controller.dto.AuthenticationRequest
 import ua.marchenko.artauction.auth.controller.dto.AuthenticationResponse
 import ua.marchenko.artauction.auth.controller.dto.RegistrationRequest
+import ua.marchenko.artauction.auth.mapper.toMongo
 import ua.marchenko.artauction.user.exception.UserAlreadyExistsException
-import ua.marchenko.artauction.auth.mapper.toUser
-import ua.marchenko.artauction.user.mapper.toUserResponse
+import ua.marchenko.artauction.user.mapper.toResponse
 import ua.marchenko.artauction.user.repository.UserRepository
 
 @Service
@@ -42,7 +42,7 @@ class AuthenticationServiceImpl(
             throw UserAlreadyExistsException(userEmail = registrationRequest.email)
         }
         val newUser = registrationRequest.copy(password = passwordEncoder.encode(registrationRequest.password))
-        val user = userRepository.save(newUser.toUser()).toUserResponse()
+        val user = userRepository.save(newUser.toMongo()).toResponse()
         return authentication(AuthenticationRequest(user.email, registrationRequest.password))
     }
 }

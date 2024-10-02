@@ -2,8 +2,9 @@ package ua.marchenko.artauction.artwork.controller.dto
 
 import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.enums.ArtworkStyle
+import ua.marchenko.artauction.user.controller.dto.UserResponse
 
-data class ArtworkResponse(
+data class ArtworkFullResponse(
     val id: String,
     val title: String,
     val description: String,
@@ -11,5 +12,5 @@ data class ArtworkResponse(
     val width: Int,
     val height: Int,
     val status: ArtworkStatus,
-    val artistId: String,
+    val artist: UserResponse,
 )
