@@ -7,7 +7,6 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.DisposableBean
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.context.ApplicationListener
 import org.springframework.context.event.ContextRefreshedEvent
@@ -22,7 +21,7 @@ import ua.marchenko.artauction.common.annotation.scheduled.scheduledDetails.DayT
 class CustomScheduledInvokerContextListener(
     private val beanFactory: ConfigurableListableBeanFactory,
     private val clock: Clock,
-    @Qualifier("scheduledExecutorService") private val scheduledService: ScheduledExecutorService,
+    private val scheduledService: ScheduledExecutorService,
 ) :
     ApplicationListener<ContextRefreshedEvent>, DisposableBean {
 
