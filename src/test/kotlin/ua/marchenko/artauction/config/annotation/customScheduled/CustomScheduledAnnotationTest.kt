@@ -3,6 +3,7 @@ package ua.marchenko.artauction.config.annotation.customScheduled
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -41,8 +42,24 @@ class CustomScheduledAnnotationTest : AbstractBaseIntegrationTest {
         customScheduledInvokerContextListener.onApplicationEvent(ContextRefreshedEvent(context))
 
         // THEN
-        assertTrue(testLogAppender.list.count { it.message.contains(SCHEDULED_PART_LOG_MESSAGE_TEMPLATE) } > 0,
-            "testLogAppender should contains at least one message")
+        assertTrue(
+            testLogAppender.list.any {
+                it.formattedMessage.contains("annotatedMethod $SCHEDULED_PART_LOG_MESSAGE_TEMPLATE")
+            }, "Expected log with scheduling message not found"
+        )
+    }
+
+    @Test
+    fun `should not schedule method when CustomScheduled annotation is not present`() {
+        // WHEN
+        customScheduledInvokerContextListener.onApplicationEvent(ContextRefreshedEvent(context))
+
+        // THEN
+        assertFalse(
+            testLogAppender.list.any {
+                it.formattedMessage.contains("notAnnotatedMethod $SCHEDULED_PART_LOG_MESSAGE_TEMPLATE")
+            }, "No methods without CustomScheduled annotation should be scheduled"
+        )
     }
 
     companion object {
@@ -51,8 +68,8 @@ class CustomScheduledAnnotationTest : AbstractBaseIntegrationTest {
 }
 
 interface CustomScheduledTestService {
-    fun testTest()
-    fun test(s: Int)
+    fun annotatedMethod()
+    fun notAnnotatedMethod()
 }
 
 @Component
@@ -60,11 +77,11 @@ interface CustomScheduledTestService {
 class CustomScheduledTestServiceWithAnnotationImpl : CustomScheduledTestService {
 
     @CustomScheduled(day = Day.MONDAY, hours = 12, minutes = 0, seconds = 0)
-    override fun testTest() {
+    override fun annotatedMethod() {
         println("I have annotation")
     }
 
-    override fun test(s: Int) {
-        println("I don't have annotation: $s")
+    override fun notAnnotatedMethod() {
+        println("I don't have annotation")
     }
 }
