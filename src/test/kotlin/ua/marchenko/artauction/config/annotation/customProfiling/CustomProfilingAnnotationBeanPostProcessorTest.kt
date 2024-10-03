@@ -1,4 +1,4 @@
-package ua.marchenko.artauction.config.annotation
+package ua.marchenko.artauction.config.annotation.customProfiling
 
 import ch.qos.logback.classic.Level
 import config.annotation.customProfiling.CustomProfilingTestServiceWithAnnotationImpl
