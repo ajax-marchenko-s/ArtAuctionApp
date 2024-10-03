@@ -6,3 +6,4 @@ data:
   db-name: "art"
   port: "27017"
   host: "mongodb-service"
+  java-opts: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: mongodb-deployment
+  name: mongodb-stateful
   labels:
     app: mongodb
 spec:
@@ -30,6 +30,14 @@ spec:
               secretKeyRef:
                 name: mongodb-secret
                 key: mongo-root-password
+        volumeMounts:
+          - name: volume
+            mountPath: /data/db
+      volumes:
+          - name: volume
+            persistentVolumeClaim:
+              claimName: mongo-pvc
+  serviceName: mongo
 ---
 apiVersion: v1
 kind: Service

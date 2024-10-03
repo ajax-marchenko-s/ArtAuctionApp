@@ -18,9 +18,13 @@ spec:
       containers:
         - name: app
           image: artauction-app:latest
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8080
+            - name: general
+              containerPort: 8080
+              protocol: TCP
+            - name: remotedebugging
+              containerPort: 5005
               protocol: TCP
           env:
             - name: MONGO_USERNAME
@@ -48,6 +52,11 @@ spec:
                 configMapKeyRef:
                   name: artauction-configmap
                   key: port
+            - name: JAVA_OPTS
+              valueFrom:
+                configMapKeyRef:
+                  name: artauction-configmap
+                  key: java-opts
 ---
 apiVersion: v1
 kind: Service
