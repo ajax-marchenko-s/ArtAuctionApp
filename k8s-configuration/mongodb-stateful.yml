@@ -1,7 +1,7 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: mongodb-deployment
+  name: mongodb-stateful
   labels:
     app: mongodb
 spec:
@@ -37,6 +37,7 @@ spec:
           - name: volume
             persistentVolumeClaim:
               claimName: mongo-pvc
+  serviceName: mongo
 ---
 apiVersion: v1
 kind: Service
