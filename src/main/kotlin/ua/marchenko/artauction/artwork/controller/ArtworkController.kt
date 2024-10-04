@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+import ua.marchenko.artauction.artwork.controller.dto.ArtworkFullResponse
+import ua.marchenko.artauction.artwork.controller.dto.ArtworkResponse
 import ua.marchenko.artauction.artwork.controller.dto.CreateArtworkRequest
 import ua.marchenko.artauction.artwork.mapper.toFullResponse
 import ua.marchenko.artauction.artwork.mapper.toMongo
@@ -21,25 +25,27 @@ import ua.marchenko.artauction.artwork.service.ArtworkService
 class ArtworkController(private val artworkService: ArtworkService) {
 
     @GetMapping("{id}")
-    fun getArtworkById(@PathVariable id: String) = artworkService.getById(id).toResponse()
+    fun getArtworkById(@PathVariable id: String): Mono<ArtworkResponse> =
+        artworkService.getById(id).map { it.toResponse() }
 
     @GetMapping("{id}/full")
-    fun getFullArtworkById(@PathVariable id: String) = artworkService.getFullById(id).toFullResponse()
+    fun getFullArtworkById(@PathVariable id: String): Mono<ArtworkFullResponse> =
+        artworkService.getFullById(id).map { it.toFullResponse() }
 
     @GetMapping
     fun getAllArtworks(
         @RequestParam(required = false, defaultValue = "0") page: Int,
         @RequestParam(required = false, defaultValue = "10") limit: Int
-    ) = artworkService.getAll(page, limit).map { it.toResponse() }
+    ): Flux<ArtworkResponse> = artworkService.getAll(page, limit).map { it.toResponse() }
 
     @GetMapping("/full")
     fun getAllFullArtworks(
         @RequestParam(required = false, defaultValue = "0") page: Int,
         @RequestParam(required = false, defaultValue = "10") limit: Int
-    ) = artworkService.getFullAll(page, limit).map { it.toFullResponse() }
+    ): Flux<ArtworkFullResponse> = artworkService.getFullAll(page, limit).map { it.toFullResponse() }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun addArtwork(@Valid @RequestBody artwork: CreateArtworkRequest) =
-        artworkService.save(artwork.toMongo()).toResponse()
+    fun addArtwork(@Valid @RequestBody artwork: CreateArtworkRequest): Mono<ArtworkResponse> =
+        artworkService.save(artwork.toMongo()).map { it.toResponse() }
 }
