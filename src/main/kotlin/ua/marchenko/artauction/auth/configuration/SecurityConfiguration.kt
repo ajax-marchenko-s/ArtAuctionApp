@@ -2,8 +2,6 @@ package ua.marchenko.artauction.auth.configuration
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
-import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -13,13 +11,15 @@ import ua.marchenko.artauction.auth.jwt.JwtAuthenticationFilter
 
 @Configuration
 @EnableWebSecurity
+@Suppress("EmptyDefaultConstructor")
 class SecurityConfiguration(
-    private val authenticationProvider: AuthenticationProvider,
+//    private val reactiveAuthenticationManager: ReactiveAuthenticationManager,
 ) {
+
     @Bean
     fun securityFilterChain(
         http: HttpSecurity,
-        jwtAuthenticationFilter: JwtAuthenticationFilter
+        jwtAuthenticationFilter: JwtAuthenticationFilter,
     ): DefaultSecurityFilterChain {
         http
             .csrf { it.disable() }
@@ -27,14 +27,14 @@ class SecurityConfiguration(
                 authorize
                     .requestMatchers("/api/v1/auth/*").permitAll()
                     .requestMatchers("/error").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/v1/artwork/*").hasAuthority("ARTIST")
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/artwork/*").hasAuthority("ARTIST")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/artwork/*").hasAuthority("ARTIST")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/auction").hasAuthority("ARTIST")
+//                    .requestMatchers(HttpMethod.POST, "/api/v1/artwork/*").hasAuthority("ARTIST")
+//                    .requestMatchers(HttpMethod.PUT, "/api/v1/artwork/*").hasAuthority("ARTIST")
+//                    .requestMatchers(HttpMethod.DELETE, "/api/v1/artwork/*").hasAuthority("ARTIST")
+//                    .requestMatchers(HttpMethod.POST, "/api/v1/auction").hasAuthority("ARTIST")
                     .anyRequest().permitAll()
             }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .authenticationProvider(authenticationProvider)
+//            .authenticationManager(reactiveAuthenticationManager)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
     }
