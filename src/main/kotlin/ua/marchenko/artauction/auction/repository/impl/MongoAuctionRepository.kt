@@ -56,10 +56,10 @@ internal class MongoAuctionRepository(
     override fun findFullAll(page: Int, limit: Int): Flux<AuctionFull> {
         val skip = page * limit
         val aggregation = Aggregation.newAggregation(
-            *aggregateFullBuyers(),
-            *aggregateFullArtwork(),
             Aggregation.skip(skip.toLong()),
             Aggregation.limit(limit.toLong()),
+            *aggregateFullBuyers(),
+            *aggregateFullArtwork(),
         )
         val results = reactiveMongoTemplate.aggregate(aggregation, MongoAuction.COLLECTION, AuctionFull::class.java)
         return results

@@ -50,9 +50,9 @@ internal class MongoArtworkRepository(
     override fun findFullAll(page: Int, limit: Int): Flux<ArtworkFull> {
         val skip = page * limit
         val aggregation = Aggregation.newAggregation(
-            *aggregateFullArtist(),
             Aggregation.skip(skip.toLong()),
             Aggregation.limit(limit.toLong()),
+            *aggregateFullArtist(),
         )
         val results = reactiveMongoTemplate.aggregate(aggregation, MongoArtwork.COLLECTION, ArtworkFull::class.java)
         return results
