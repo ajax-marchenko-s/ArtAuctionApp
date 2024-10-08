@@ -30,13 +30,14 @@ class AuctionServiceImpl(
         auctionRepository.findFullById(id).switchIfEmpty(Mono.error(AuctionNotFoundException(id)))
 
     override fun save(auction: CreateAuctionRequest): Mono<MongoAuction> {
-        return artworkService.getById(auction.artworkId).flatMap { artwork ->
-            if (artwork.status != ArtworkStatus.VIEW) {
-                Mono.error(InvalidAuctionOperationException("Trying to create auction with non-VIEW artwork"))
-            } else {
-                artworkService.updateStatus(auction.artworkId, ArtworkStatus.ON_AUCTION)
-                    .then(auctionRepository.save(auction.toMongo()))
-            }
-        }
+        return artworkService.getById(auction.artworkId)
+            .filter { artwork -> artwork.status == ArtworkStatus.VIEW }
+            .switchIfEmpty(
+                Mono.error(
+                    InvalidAuctionOperationException("Cannot create auction: Artwork is not in VIEW status")
+                )
+            )
+            .flatMap { artworkService.updateStatus(auction.artworkId, ArtworkStatus.ON_AUCTION) }
+            .flatMap { auctionRepository.save(auction.toMongo()) }
     }
 }

@@ -1,6 +1,7 @@
 package ua.marchenko.artauction.artwork.service
 
 import java.util.concurrent.TimeUnit
+import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -32,15 +33,17 @@ class ArtworkServiceImpl(
         artworkRepository.findFullById(id).switchIfEmpty { Mono.error(ArtworkNotFoundException(id)) }
 
     override fun save(artwork: MongoArtwork): Mono<MongoArtwork> {
-//        val authentication: Authentication = SecurityContextHolder.getContext().authentication
-        val hardCodeEmail = "emaiddddddl@fg.jhgfmmmn"
-//        return userService.getByEmail(authentication.name)
-        return userService.getByEmail(hardCodeEmail)
-            .flatMap { artist ->
-                val artworkToSave = artwork.copy(artistId = artist.id, status = ArtworkStatus.VIEW)
-                artworkRepository.save(artworkToSave)
+        return ReactiveSecurityContextHolder.getContext()
+            .map { it.authentication }
+            .flatMap { authentication ->
+                userService.getByEmail(authentication.name)
+                    .flatMap { artist ->
+                        val artworkToSave = artwork.copy(artistId = artist.id, status = ArtworkStatus.VIEW)
+                        artworkRepository.save(artworkToSave)
+                    }
             }
     }
+
 
     override fun update(artworkId: String, artwork: MongoArtwork): Mono<MongoArtwork> {
         return getById(artworkId)
