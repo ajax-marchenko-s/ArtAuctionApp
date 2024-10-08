@@ -26,7 +26,7 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
-    implementation("org.springframework.boot:spring-boot-starter-web")
+//    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive:3.3.4")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -38,6 +38,7 @@ dependencies {
     implementation("io.mongock:mongock-springboot-v3:5.4.4")
     implementation("io.mongock:mongodb-springdata-v4-driver:5.4.4")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+    implementation("org.springframework.boot:spring-boot-starter-webflux:3.3.4")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:junit-jupiter")
@@ -45,6 +46,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("io.mockk:mockk:1.13.12")
+    testImplementation("io.projectreactor:reactor-test:3.5.11")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

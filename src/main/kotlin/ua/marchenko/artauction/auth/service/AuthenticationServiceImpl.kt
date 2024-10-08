@@ -1,6 +1,6 @@
 package ua.marchenko.artauction.auth.service
 
-import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -16,7 +16,7 @@ import ua.marchenko.artauction.user.repository.UserRepository
 
 @Service
 class AuthenticationServiceImpl(
-    private val authManager: AuthenticationManager,
+    private val reactiveAuthenticationManager: ReactiveAuthenticationManager,
     private val userDetailsService: ReactiveUserDetailsService,
     private val jwtService: JwtService,
     private val userRepository: UserRepository,
@@ -24,41 +24,35 @@ class AuthenticationServiceImpl(
 ) : AuthenticationService {
 
     override fun authentication(authenticationRequest: AuthenticationRequest): Mono<AuthenticationResponse> {
-        authManager.authenticate(
+        return reactiveAuthenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
                 authenticationRequest.email,
                 authenticationRequest.password
             )
-        )
-        return userDetailsService.findByUsername(authenticationRequest.email)
-            .flatMap { user ->
-                val accessToken = jwtService.generate(user)
-                Mono.just(
-                    AuthenticationResponse(
-                        accessToken = accessToken,
+        ).flatMap {
+            userDetailsService.findByUsername(authenticationRequest.email)
+                .flatMap { user ->
+                    val accessToken = jwtService.generate(user)
+                    Mono.just(
+                        AuthenticationResponse(
+                            accessToken = accessToken,
+                        )
                     )
-                )
-            }
+                }
+        }.onErrorResume {
+            Mono.error(RuntimeException("Invalid credentials"))
+        }
     }
 
     override fun register(registrationRequest: RegistrationRequest): Mono<AuthenticationResponse> {
         return userRepository.existsByEmail(registrationRequest.email)
-            .flatMap { existByEmail ->
-                if (existByEmail) {
-                    Mono.error(UserAlreadyExistsException(userEmail = registrationRequest.email))
-                } else {
-                    val newUser =
-                        registrationRequest.copy(password = passwordEncoder.encode(registrationRequest.password))
-                    userRepository.save(newUser.toMongo())
-                        .then(
-                            authentication(
-                                AuthenticationRequest(
-                                    registrationRequest.email,
-                                    registrationRequest.password
-                                )
-                            )
-                        )
-                }
+            .filter { existByEmail -> !existByEmail }
+            .switchIfEmpty(Mono.error(UserAlreadyExistsException(userEmail = registrationRequest.email)))
+            .flatMap {
+                userRepository.save(
+                    registrationRequest.copy(password = passwordEncoder.encode(registrationRequest.password)).toMongo()
+                )
             }
+            .flatMap { authentication(AuthenticationRequest(registrationRequest.email, registrationRequest.password)) }
     }
 }

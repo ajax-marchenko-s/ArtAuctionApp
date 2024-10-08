@@ -2,40 +2,45 @@ package ua.marchenko.artauction.auth.configuration
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.web.DefaultSecurityFilterChain
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.http.HttpMethod
+import org.springframework.security.authentication.ReactiveAuthenticationManager
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder
+import org.springframework.security.config.web.server.ServerHttpSecurity
+import org.springframework.security.web.server.SecurityWebFilterChain
+import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository
 import ua.marchenko.artauction.auth.jwt.JwtAuthenticationFilter
 
 @Configuration
-@EnableWebSecurity
 @Suppress("EmptyDefaultConstructor")
+@EnableWebFluxSecurity
+@EnableReactiveMethodSecurity
 class SecurityConfiguration(
-//    private val reactiveAuthenticationManager: ReactiveAuthenticationManager,
+    private val reactiveAuthenticationManager: ReactiveAuthenticationManager,
 ) {
 
     @Bean
     fun securityFilterChain(
-        http: HttpSecurity,
+        http: ServerHttpSecurity,
         jwtAuthenticationFilter: JwtAuthenticationFilter,
-    ): DefaultSecurityFilterChain {
-        http
+    ): SecurityWebFilterChain {
+        return http
             .csrf { it.disable() }
-            .authorizeHttpRequests { authorize ->
+            .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+            .httpBasic { it.disable() }
+            .authorizeExchange { authorize ->
                 authorize
-                    .requestMatchers("/api/v1/auth/*").permitAll()
-                    .requestMatchers("/error").permitAll()
-//                    .requestMatchers(HttpMethod.POST, "/api/v1/artwork/*").hasAuthority("ARTIST")
-//                    .requestMatchers(HttpMethod.PUT, "/api/v1/artwork/*").hasAuthority("ARTIST")
-//                    .requestMatchers(HttpMethod.DELETE, "/api/v1/artwork/*").hasAuthority("ARTIST")
-//                    .requestMatchers(HttpMethod.POST, "/api/v1/auction").hasAuthority("ARTIST")
-                    .anyRequest().permitAll()
+                    .pathMatchers("/api/v1/auth/*").permitAll()
+                    .pathMatchers("/error").permitAll()
+                    .pathMatchers(HttpMethod.POST, "/api/v1/artworks/**").hasAuthority("ARTIST")
+                    .pathMatchers(HttpMethod.PUT, "/api/v1/artworks/**").hasAuthority("ARTIST")
+                    .pathMatchers(HttpMethod.DELETE, "/api/v1/artworks/**").hasAuthority("ARTIST")
+                    .pathMatchers(HttpMethod.POST, "/api/v1/auctions/**").hasAuthority("ARTIST")
+                    .anyExchange().permitAll()
             }
-            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-//            .authenticationManager(reactiveAuthenticationManager)
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
-        return http.build()
+            .authenticationManager(reactiveAuthenticationManager)
+            .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+            .build()
     }
 }
