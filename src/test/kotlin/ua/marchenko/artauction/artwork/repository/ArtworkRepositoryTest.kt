@@ -91,43 +91,51 @@ class ArtworkRepositoryTest : AbstractBaseIntegrationTest {
             .verifyComplete()
     }
 
-//    @Test
-//    fun `should return all artworks with artist when they are exists`() {
-//        // GIVEN
-//        val savedArtist = userRepository.save(MongoUser.random(id = null)).block()
-//        val artworks = listOf(
-//            artworkRepository.save(MongoArtwork.random(artistId = savedArtist?.id.toString())).block(),
-//            artworkRepository.save(MongoArtwork.random(artistId = savedArtist?.id.toString())).block()
-//        )
-//
-//        // WHEN
-//        val result = artworkRepository.findFullAll()
-//
-//        // THEN
-//        assertTrue(result.size >= artworks.size, "Size of list must be at least ${result.size}")
-//        artworks.forEach { artwork ->
-//            assertTrue(
-//                result.any { it.title == artwork.title && it.artist?.name == savedArtist.name },
-//                "Artwork with title ${artwork.title} and artist ${savedArtist.name} must be found"
-//            )
-//        }
-//    }
+    @Test
+    fun `should return all artworks with artist when they are exists`() {
+        // GIVEN
+        val savedArtist = userRepository.save(MongoUser.random(id = null)).block()
+        val artworks = listOf(
+            artworkRepository.save(MongoArtwork.random(artistId = savedArtist?.id.toString())).block(),
+            artworkRepository.save(MongoArtwork.random(artistId = savedArtist?.id.toString())).block()
+        )
 
-//    @Test
-//    fun `should return all artworks when they are exists`() {
-//        // GIVEN
-//        val artworks = listOf(MongoArtwork.random(id = null), MongoArtwork.random(id = null))
-//        artworks.forEach { artwork -> artworkRepository.save(artwork) }
-//
-//        // WHEN
-//        val result = artworkRepository.findAll()
-//
-//        // THEN
-//        assertTrue(result.size >= artworks.size, "Size of list must be at least ${result.size}")
-//        artworks.forEach { artwork ->
-//            assertTrue(result.any { it.title == artwork.title }, "Artwork with title ${artwork.title} must be found")
-//        }
-//    }
+        // WHEN
+        val result = artworkRepository.findFullAll().collectList()
+
+        // THEN
+        result.test()
+            .expectNextMatches { foundArtworks ->
+                foundArtworks.any { it.title == artworks[0]?.title && it.artist?.name == savedArtist?.name } &&
+                        foundArtworks.any { it.title == artworks[1]?.title && it.artist?.name == savedArtist?.name }
+            }
+            .`as`(
+                "Artwork with title ${artworks[0]?.title} and ${artworks[1]?.title}," +
+                        " artist ${savedArtist?.name} must be found"
+            )
+            .verifyComplete()
+    }
+
+    @Test
+    fun `should return all artworks when they are exists`() {
+        // GIVEN
+        val artworks = listOf(
+            artworkRepository.save(MongoArtwork.random(id = null)).block(),
+            artworkRepository.save(MongoArtwork.random(id = null)).block()
+        )
+
+        // WHEN
+        val result = artworkRepository.findAll().collectList()
+
+        // THEN
+        result.test()
+            .expectNextMatches { foundArtworks ->
+                foundArtworks.any { it.id == artworks[0]?.id } &&
+                        foundArtworks.any { it.id == artworks[1]?.id }
+            }
+            .`as`("Artwork with id ${artworks[0]?.id} and ${artworks[1]?.id} must be found")
+            .verifyComplete()
+    }
 
     @Test
     fun `should return true when artwork with this id exists`() {

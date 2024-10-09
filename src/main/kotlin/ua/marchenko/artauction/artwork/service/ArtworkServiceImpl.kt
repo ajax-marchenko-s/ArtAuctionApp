@@ -44,7 +44,6 @@ class ArtworkServiceImpl(
             }
     }
 
-
     override fun update(artworkId: String, artwork: MongoArtwork): Mono<MongoArtwork> {
         return getById(artworkId)
             .flatMap { artworkFromDB ->
