@@ -37,7 +37,9 @@ class AuctionServiceImpl(
                     InvalidAuctionOperationException("Cannot create auction: Artwork is not in VIEW status")
                 )
             )
-            .flatMap { artworkService.updateStatus(auction.artworkId, ArtworkStatus.ON_AUCTION) }
-            .flatMap { auctionRepository.save(auction.toMongo()) }
+            .flatMap {
+                artworkService.updateStatus(auction.artworkId, ArtworkStatus.ON_AUCTION)
+                    .then(auctionRepository.save(auction.toMongo()))
+            }
     }
 }

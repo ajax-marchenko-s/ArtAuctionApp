@@ -53,6 +53,6 @@ class AuthenticationServiceImpl(
                     registrationRequest.copy(password = passwordEncoder.encode(registrationRequest.password)).toMongo()
                 )
             }
-            .flatMap { authentication(AuthenticationRequest(registrationRequest.email, registrationRequest.password)) }
+            .then(authentication(AuthenticationRequest(registrationRequest.email, registrationRequest.password)))
     }
 }
