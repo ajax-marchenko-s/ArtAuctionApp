@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import ua.marchenko.artauction.auth.service.CustomUserDetailsServiceImpl
 import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.BeforeEach
 import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.server.ServerWebExchange
@@ -39,12 +38,7 @@ class JwtAuthenticationFilterTest {
     private lateinit var userDetails: UserDetails
 
     @InjectMockKs
-    private lateinit var jwtAuthenticationFilter: JwtAuthenticationFilterForTest
-
-    @BeforeEach
-    fun setup() {
-        ReactiveSecurityContextHolder.clearContext()
-    }
+    private lateinit var jwtAuthenticationFilter: JwtAuthenticationFilter
 
     @Test
     fun `should not authenticate when Authorization header is null`() {
@@ -53,7 +47,7 @@ class JwtAuthenticationFilterTest {
         every { filterChain.filter(exchange) } returns Mono.empty()
 
         // WHEN
-        val result = jwtAuthenticationFilter.filterTest(exchange, filterChain)
+        val result = jwtAuthenticationFilter.filter(exchange, filterChain)
 
         // THEN
         result.test()
@@ -69,7 +63,7 @@ class JwtAuthenticationFilterTest {
         every { filterChain.filter(exchange) } returns Mono.empty()
 
         // WHEN
-        val result = jwtAuthenticationFilter.filterTest(exchange, filterChain)
+        val result = jwtAuthenticationFilter.filter(exchange, filterChain)
 
         // THEN
         result.test()
@@ -122,7 +116,7 @@ class JwtAuthenticationFilterTest {
         every { filterChain.filter(exchange) } returns Mono.empty()
 
         // WHEN
-        val result = jwtAuthenticationFilter.filterTest(exchange, filterChain)
+        val result = jwtAuthenticationFilter.filter(exchange, filterChain)
 
         // THEN
         result.test()
@@ -134,17 +128,6 @@ class JwtAuthenticationFilterTest {
                     }
             }
             .verifyComplete()
-    }
-
-    class JwtAuthenticationFilterForTest(
-        userDetailsService: CustomUserDetailsServiceImpl,
-        jwtService: JwtService,
-    ) : JwtAuthenticationFilter(
-        userDetailsService,
-        jwtService,
-    ) {
-        fun filterTest(exchange: ServerWebExchange, filterChain: WebFilterChain) =
-            filter(exchange, filterChain)
     }
 
     companion object {

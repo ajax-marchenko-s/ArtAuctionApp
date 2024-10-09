@@ -66,7 +66,6 @@ class ArtworkRepositoryTest : AbstractBaseIntegrationTest {
             MongoArtwork.random(id = null, artistId = savedArtist?.id.toString())
         ).block()
 
-
         // WHEN
         val result = artworkRepository.findFullById(savedArtwork?.id.toString())
 
@@ -129,10 +128,7 @@ class ArtworkRepositoryTest : AbstractBaseIntegrationTest {
 
         // THEN
         result.test()
-            .expectNextMatches { foundArtworks ->
-                foundArtworks.any { it.id == artworks[0]?.id } &&
-                        foundArtworks.any { it.id == artworks[1]?.id }
-            }
+            .expectNextMatches { it.containsAll(artworks) }
             .`as`("Artwork with id ${artworks[0]?.id} and ${artworks[1]?.id} must be found")
             .verifyComplete()
     }

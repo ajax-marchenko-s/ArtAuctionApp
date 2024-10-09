@@ -116,8 +116,18 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
     fun `should return all auctions when they are exists`() {
         // GIVEN
         val auctions = listOf(
-            auctionRepository.save(MongoAuction.random(id = null)).block(),
-            auctionRepository.save(MongoAuction.random(id = null)).block()
+            auctionRepository.save(
+                MongoAuction.random(
+                    id = null, startedAt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
+                    finishedAt = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS)
+                )
+            ).block(),
+            auctionRepository.save(
+                MongoAuction.random(
+                    id = null, startedAt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
+                    finishedAt = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS)
+                )
+            ).block()
         )
 
         // WHEN
@@ -125,11 +135,8 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
 
         // THEN
         result.test()
-            .expectNextMatches { foundAuctions ->
-                auctions.all { auction ->
-                    foundAuctions.any { it.artworkId == auction?.artworkId }
-                }
-            }
+            .expectNextMatches { it.containsAll(auctions) }
+            .`as`("Auction with id ${auctions[0]?.id} and ${auctions[1]?.id} must be found")
             .verifyComplete()
     }
 

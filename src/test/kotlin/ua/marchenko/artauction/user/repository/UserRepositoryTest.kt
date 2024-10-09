@@ -115,7 +115,7 @@ class UserRepositoryTest : AbstractBaseIntegrationTest {
 
         // THEN
         result.test()
-            .expectNextMatches { foundUsers -> foundUsers.any { it.id == users[0]?.id } }
+            .expectNextMatches { it.containsAll(users) }
             .`as`("User with id ${users[0]?.id} must be found")
             .verifyComplete()
     }
