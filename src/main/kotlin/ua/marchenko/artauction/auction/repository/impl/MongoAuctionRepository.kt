@@ -1,6 +1,6 @@
 package ua.marchenko.artauction.auction.repository.impl
 
-import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Aggregation
 import org.springframework.data.mongodb.core.aggregation.Aggregation.group
 import org.springframework.data.mongodb.core.aggregation.Aggregation.lookup
@@ -15,6 +15,8 @@ import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.stereotype.Repository
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.auction.model.MongoAuction
@@ -24,41 +26,42 @@ import ua.marchenko.artauction.user.model.MongoUser
 
 @Repository
 @Suppress("SpreadOperator")
-internal class MongoAuctionRepository(private val mongoTemplate: MongoTemplate) : AuctionRepository {
+internal class MongoAuctionRepository(
+    private val reactiveMongoTemplate: ReactiveMongoTemplate
+) : AuctionRepository {
 
-    override fun save(auction: MongoAuction): MongoAuction = mongoTemplate.save(auction)
+    override fun save(auction: MongoAuction): Mono<MongoAuction> = reactiveMongoTemplate.save(auction)
 
-    override fun findById(id: String): MongoAuction? {
+    override fun findById(id: String): Mono<MongoAuction> {
         val query = Query.query(Criteria.where(Fields.UNDERSCORE_ID).isEqualTo(id))
-        return mongoTemplate.findOne(query, MongoAuction::class.java)
+        return reactiveMongoTemplate.findOne(query, MongoAuction::class.java)
     }
 
-    override fun findFullById(id: String): AuctionFull? {
+    override fun findFullById(id: String): Mono<AuctionFull> {
         val aggregation = Aggregation.newAggregation(
             match(Criteria.where(Fields.UNDERSCORE_ID).isEqualTo(id)),
             *aggregateFullBuyers(),
             *aggregateFullArtwork(),
         )
-        val results = mongoTemplate.aggregate(aggregation, MongoAuction.COLLECTION, AuctionFull::class.java)
-        return results.mappedResults.firstOrNull()
+        return reactiveMongoTemplate.aggregate(aggregation, MongoAuction.COLLECTION, AuctionFull::class.java)
+            .singleOrEmpty()
     }
 
-    override fun findAll(page: Int, limit: Int): List<MongoAuction> {
+    override fun findAll(page: Int, limit: Int): Flux<MongoAuction> {
         val skip = page * limit
         val query = Query().skip(skip.toLong()).limit(limit)
-        return mongoTemplate.find(query, MongoAuction::class.java)
+        return reactiveMongoTemplate.find(query, MongoAuction::class.java)
     }
 
-    override fun findFullAll(page: Int, limit: Int): List<AuctionFull> {
+    override fun findFullAll(page: Int, limit: Int): Flux<AuctionFull> {
         val skip = page * limit
         val aggregation = Aggregation.newAggregation(
-            *aggregateFullBuyers(),
-            *aggregateFullArtwork(),
             Aggregation.skip(skip.toLong()),
             Aggregation.limit(limit.toLong()),
+            *aggregateFullBuyers(),
+            *aggregateFullArtwork(),
         )
-        val results = mongoTemplate.aggregate(aggregation, MongoAuction.COLLECTION, AuctionFull::class.java)
-        return results.mappedResults.toList()
+        return reactiveMongoTemplate.aggregate(aggregation, MongoAuction.COLLECTION, AuctionFull::class.java)
     }
 
     private fun aggregateFullArtwork(): Array<FieldsExposingAggregationOperation> {
