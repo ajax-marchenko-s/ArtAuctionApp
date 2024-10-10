@@ -27,7 +27,6 @@ class UserRepositoryTest : AbstractBaseIntegrationTest {
         savedUser.test()
             .assertNext { userFromMono -> assertEquals(user.copy(id = userFromMono.id), userFromMono) }
             .verifyComplete()
-
     }
 
     @Test
@@ -45,7 +44,7 @@ class UserRepositoryTest : AbstractBaseIntegrationTest {
     }
 
     @Test
-    fun `should return null when there is no user with this id`() {
+    fun `should return empty when there is no user with this id`() {
         // WHEN
         val result = userRepository.findById(ObjectId().toHexString())
 
@@ -65,7 +64,7 @@ class UserRepositoryTest : AbstractBaseIntegrationTest {
         // THEN
         result.test()
             .expectNext(true)
-            .`as`("User with given email must exist")
+            .`as`("User with email ${savedUser.email} must exist")
             .verifyComplete()
     }
 
@@ -116,7 +115,7 @@ class UserRepositoryTest : AbstractBaseIntegrationTest {
         // THEN
         result.test()
             .expectNextMatches { it.containsAll(users) }
-            .`as`("User with id ${users[0]?.id} must be found")
+            .`as`("Users $users must be found")
             .verifyComplete()
     }
 }

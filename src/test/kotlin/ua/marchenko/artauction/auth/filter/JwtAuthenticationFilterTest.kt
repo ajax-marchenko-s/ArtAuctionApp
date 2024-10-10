@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
 import ua.marchenko.artauction.auth.jwt.JwtAuthenticationFilter
 import ua.marchenko.artauction.auth.jwt.JwtService
@@ -50,10 +51,12 @@ class JwtAuthenticationFilterTest {
         val result = jwtAuthenticationFilter.filter(exchange, filterChain)
 
         // THEN
-        result.test()
-            .verifyComplete()
+        result.test().then {
+            ReactiveSecurityContextHolder.getContext().map { it.authentication }.doOnNext { authentication ->
+                assertNull(authentication, "ReactiveSecurityContextHolder authentication should be null")
+            }
+        }.verifyComplete()
         verify { filterChain.filter(exchange) }
-        assertNull(ReactiveSecurityContextHolder.getContext().block()?.authentication)
     }
 
     @Test
@@ -66,9 +69,11 @@ class JwtAuthenticationFilterTest {
         val result = jwtAuthenticationFilter.filter(exchange, filterChain)
 
         // THEN
-        result.test()
-            .verifyComplete()
-        assertNull(ReactiveSecurityContextHolder.getContext().block()?.authentication)
+        result.test().then {
+            ReactiveSecurityContextHolder.getContext().map { it.authentication }.doOnNext { authentication ->
+                assertNull(authentication, "ReactiveSecurityContextHolder authentication should be null")
+            }
+        }.verifyComplete()
         verify { filterChain.filter(exchange) }
     }
 
@@ -80,7 +85,7 @@ class JwtAuthenticationFilterTest {
 
         every { exchange.request.headers.getFirst(HEADER_AUTHORIZATION) } returns "$HEADER_BEARER_PREFIX$token"
         every { jwtService.extractEmail(token) } returns email
-        every { userDetailsService.findByUsername(email) } returns Mono.just(userDetails)
+        every { userDetailsService.findByUsername(email) } returns userDetails.toMono()
         every { jwtService.isValid(token, userDetails) } returns true
         every { userDetails.authorities } returns listOf()
         every { userDetails.username } returns email
@@ -92,14 +97,11 @@ class JwtAuthenticationFilterTest {
         // THEN
         result.test()
             .then {
-                ReactiveSecurityContextHolder.getContext()
-                    .map { it.authentication }
-                    .doOnNext { authentication ->
-                        assertNotNull(authentication)
-                        assertEquals(email, authentication.name)
-                    }
+            ReactiveSecurityContextHolder.getContext().map { it.authentication }.doOnNext { authentication ->
+                assertNotNull(authentication, "ReactiveSecurityContextHolder authentication should not be null")
+                assertEquals(email, authentication.name)
             }
-            .verifyComplete()
+        }.verifyComplete()
         verify { filterChain.filter(exchange) }
     }
 
@@ -111,7 +113,7 @@ class JwtAuthenticationFilterTest {
 
         every { exchange.request.headers.getFirst(HEADER_AUTHORIZATION) } returns "$HEADER_BEARER_PREFIX$token"
         every { jwtService.extractEmail(token) } returns email
-        every { userDetailsService.findByUsername(email) } returns Mono.just(userDetails)
+        every { userDetailsService.findByUsername(email) } returns userDetails.toMono()
         every { jwtService.isValid(token, userDetails) } returns false
         every { filterChain.filter(exchange) } returns Mono.empty()
 
@@ -119,15 +121,11 @@ class JwtAuthenticationFilterTest {
         val result = jwtAuthenticationFilter.filter(exchange, filterChain)
 
         // THEN
-        result.test()
-            .then {
-                ReactiveSecurityContextHolder.getContext()
-                    .map { it.authentication }
-                    .doOnNext { authentication ->
-                        assertNull(authentication)
-                    }
+        result.test().then {
+            ReactiveSecurityContextHolder.getContext().map { it.authentication }.doOnNext { authentication ->
+                assertNull(authentication, "ReactiveSecurityContextHolder authentication should be null")
             }
-            .verifyComplete()
+        }.verifyComplete()
     }
 
     companion object {

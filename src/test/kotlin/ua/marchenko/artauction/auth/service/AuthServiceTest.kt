@@ -15,6 +15,7 @@ import ua.marchenko.artauction.user.exception.UserAlreadyExistsException
 import ua.marchenko.artauction.user.repository.UserRepository
 import kotlin.test.Test
 import org.bson.types.ObjectId
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
@@ -27,22 +28,18 @@ import ua.marchenko.artauction.auth.mapper.toMongo
 class AuthServiceTest {
 
     @MockK
-    @Suppress("UnusedPrivateProperty")
     private lateinit var mockAuthManager: ReactiveAuthenticationManager
 
     @MockK
-    @Suppress("UnusedPrivateProperty")
     private lateinit var mockUserDetailsService: CustomUserDetailsServiceImpl
 
     @MockK
-    @Suppress("UnusedPrivateProperty")
     private lateinit var mockJwtService: JwtServiceImpl
 
     @MockK
     private lateinit var mockUserRepository: UserRepository
 
     @MockK
-    @Suppress("UnusedPrivateProperty")
     private lateinit var mockPasswordEncoder: PasswordEncoder
 
     @InjectMockKs
@@ -57,9 +54,8 @@ class AuthServiceTest {
         val userDetails = CustomUserDetails(getRandomString(), getRandomString(), Role.ARTIST)
         val expectedResponse = AuthenticationResponse(getRandomString())
 
-        every { mockAuthManager.authenticate(usernamePasswordAuthenticationToken) } returns Mono.just(
-            usernamePasswordAuthenticationToken
-        )
+        every { mockAuthManager.authenticate(usernamePasswordAuthenticationToken) } returns
+                usernamePasswordAuthenticationToken.toMono()
         every { mockUserDetailsService.findByUsername(authenticationRequest.email) } returns userDetails.toMono()
         every { mockJwtService.generate(userDetails) } returns expectedResponse.accessToken
 
@@ -74,7 +70,7 @@ class AuthServiceTest {
     }
 
     @Test
-    fun `should throw RuntimeException when provided credentials are incorrect`() {
+    fun `should throw BadCredentialsException when provided credentials are incorrect`() {
         // GIVEN
         val authenticationRequest = AuthenticationRequest.random()
         val usernamePasswordAuthenticationToken =
@@ -82,14 +78,14 @@ class AuthServiceTest {
 
         every {
             mockAuthManager.authenticate(usernamePasswordAuthenticationToken)
-        } returns Mono.error(RuntimeException("Unauthorized"))
+        } returns Mono.error(BadCredentialsException("Unauthorized"))
 
         // WHEN
         val result = authenticationService.authentication(authenticationRequest)
 
         // THEN
         result.test()
-            .verifyError(RuntimeException::class.java)
+            .verifyError(BadCredentialsException::class.java)
     }
 
     @Test
@@ -109,16 +105,16 @@ class AuthServiceTest {
                     registrationRequest.password
                 )
             )
-        } returns Mono.just(
-            UsernamePasswordAuthenticationToken(
-                registrationRequest.email, registrationRequest.password, listOf()
-            )
-        )
+        } returns UsernamePasswordAuthenticationToken(
+            registrationRequest.email,
+            registrationRequest.password,
+            listOf()
+        ).toMono()
 
-        every { mockUserRepository.existsByEmail(registrationRequest.email) } returns Mono.just(false)
+        every { mockUserRepository.existsByEmail(registrationRequest.email) } returns false.toMono()
         every { mockPasswordEncoder.encode(registrationRequest.password) } returns encodedPassword
-        every { mockUserRepository.save(savedUser.copy(id = null)) } returns Mono.just(savedUser)
-        every { mockUserDetailsService.findByUsername(registrationRequest.email) } returns Mono.just(userDetails)
+        every { mockUserRepository.save(savedUser.copy(id = null)) } returns savedUser.toMono()
+        every { mockUserDetailsService.findByUsername(registrationRequest.email) } returns userDetails.toMono()
         every { mockJwtService.generate(userDetails) } returns expectedResponse.accessToken
 
         // WHEN
@@ -135,7 +131,7 @@ class AuthServiceTest {
     fun `should throw UserAlreadyExistsException when user with registration email is already exist`() {
         //GIVEN
         val registrationRequest = RegistrationRequest.random()
-        every { mockUserRepository.existsByEmail(registrationRequest.email) } returns Mono.just(true)
+        every { mockUserRepository.existsByEmail(registrationRequest.email) } returns true.toMono()
 
         // WHEN
         val result = authenticationService.register(registrationRequest)

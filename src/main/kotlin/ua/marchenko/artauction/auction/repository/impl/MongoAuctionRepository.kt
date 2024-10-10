@@ -43,8 +43,8 @@ internal class MongoAuctionRepository(
             *aggregateFullBuyers(),
             *aggregateFullArtwork(),
         )
-        val results = reactiveMongoTemplate.aggregate(aggregation, MongoAuction.COLLECTION, AuctionFull::class.java)
-        return results.singleOrEmpty()
+        return reactiveMongoTemplate.aggregate(aggregation, MongoAuction.COLLECTION, AuctionFull::class.java)
+            .singleOrEmpty()
     }
 
     override fun findAll(page: Int, limit: Int): Flux<MongoAuction> {
@@ -61,8 +61,7 @@ internal class MongoAuctionRepository(
             *aggregateFullBuyers(),
             *aggregateFullArtwork(),
         )
-        val results = reactiveMongoTemplate.aggregate(aggregation, MongoAuction.COLLECTION, AuctionFull::class.java)
-        return results
+        return reactiveMongoTemplate.aggregate(aggregation, MongoAuction.COLLECTION, AuctionFull::class.java)
     }
 
     private fun aggregateFullArtwork(): Array<FieldsExposingAggregationOperation> {

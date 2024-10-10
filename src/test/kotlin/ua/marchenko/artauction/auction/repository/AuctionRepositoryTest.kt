@@ -1,12 +1,14 @@
 package ua.marchenko.artauction.auction.repository
 
+import artwork.toFullArtwork
 import auction.random
+import auction.toFullAuction
+import auction.toFullBid
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import kotlin.test.Test
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.springframework.beans.factory.annotation.Autowired
 import reactor.kotlin.test.test
 import ua.marchenko.artauction.artwork.model.MongoArtwork
@@ -64,7 +66,7 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
     }
 
     @Test
-    fun `should return null when there is no auction with this id`() {
+    fun `should return empty when there is no auction with this id`() {
         // WHEN
         val result = auctionRepository.findById(ObjectId().toString())
 
@@ -77,33 +79,32 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
     fun `should return full auction with buyers and artwork when auction with this id exists`() {
         // GIVEN
         val savedArtist = userRepository.save(MongoUser.random(id = null)).block()
-        val savedArtwork = artworkRepository.save(MongoArtwork(artistId = savedArtist?.id)).block()
+        val savedArtworkFull = artworkRepository.save(MongoArtwork(artistId = savedArtist?.id))
+            .block()?.toFullArtwork(savedArtist)
         val savedBuyer = userRepository.save(MongoUser.random(id = null, role = Role.BUYER)).block()
+        val buyers = listOf(MongoAuction.Bid.random(buyerId = savedBuyer?.id!!.toHexString()))
 
-        val buyers = listOf(
-            MongoAuction.Bid.random(buyerId = savedBuyer?.id!!.toHexString()),
-        )
-        val savedAuction = auctionRepository.save(MongoAuction(buyers = buyers, artworkId = savedArtwork?.id)).block()
+        val auction = auctionRepository.save(
+            MongoAuction(
+                id = null,
+                buyers = buyers,
+                artworkId = savedArtworkFull?.id,
+                startedAt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
+                finishedAt = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS)
+            )
+        ).block()?.toFullAuction(savedArtworkFull, buyers.map { it.toFullBid(savedBuyer) })
 
         // WHEN
-        val result = auctionRepository.findFullById(savedAuction?.id.toString())
+        val result = auctionRepository.findFullById(auction?.id.toString())
 
         // THEN
         result.test()
-            .assertNext { auction ->
-                assertEquals(savedArtwork?.title, auction?.artwork?.title)
-                assertEquals(savedArtist?.name, auction?.artwork?.artist?.name)
-                assertEquals(buyers.size, auction?.buyers?.size)
-                assertTrue(
-                    auction?.buyers?.any { it.buyer?.name == savedBuyer.name } ?: false,
-                    "Buyer with name ${savedBuyer.name} must be found"
-                )
-            }
+            .expectNext(auction)
             .verifyComplete()
     }
 
     @Test
-    fun `should return null when auction with this id doesnt exists`() {
+    fun `should return empty when auction with this id doesnt exists`() {
         // WHEN
         val result = artworkRepository.findFullById(ObjectId().toString())
 
@@ -136,7 +137,7 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
         // THEN
         result.test()
             .expectNextMatches { it.containsAll(auctions) }
-            .`as`("Auction with id ${auctions[0]?.id} and ${auctions[1]?.id} must be found")
+            .`as`("Auctions $auctions must be found")
             .verifyComplete()
     }
 
@@ -144,27 +145,30 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
     fun `should return all auctions with artwork and buyers when they are exists`() {
         // GIVEN
         val savedArtist = userRepository.save(MongoUser.random(id = null)).block()
-        val savedArtwork = artworkRepository.save(MongoArtwork(artistId = savedArtist?.id)).block()
+        val savedArtworkFull = artworkRepository.save(MongoArtwork(artistId = savedArtist?.id))
+            .block()?.toFullArtwork(savedArtist)
         val savedBuyer = userRepository.save(MongoUser.random(id = null, role = Role.BUYER)).block()
-        val buyers = listOf(
-            MongoAuction.Bid.random(buyerId = savedBuyer?.id!!.toHexString()),
+        val buyers = listOf(MongoAuction.Bid.random(buyerId = savedBuyer?.id!!.toHexString()))
+
+        val auctions = listOf(
+            auctionRepository.save(
+                MongoAuction(
+                    id = null,
+                    buyers = buyers,
+                    artworkId = savedArtworkFull?.id,
+                    startedAt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
+                    finishedAt = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS)
+                )
+            ).block()?.toFullAuction(savedArtworkFull, buyers.map { it.toFullBid(savedBuyer) })
         )
-        val auctions =
-            listOf(auctionRepository.save(MongoAuction(buyers = buyers, artworkId = savedArtwork?.id)).block())
 
         // WHEN
         val result = auctionRepository.findFullAll().collectList()
 
         // THEN
         result.test()
-            .expectNextMatches { foundAuctions ->
-                foundAuctions.any {
-                    it.id == auctions[0]?.id &&
-                            it.buyers?.size == buyers.size &&
-                            it.artwork?.artist?.name == savedArtist?.name
-                }
-            }
-            .`as`("Auction with id ${auctions[0]?.id} must be found")
+            .expectNextMatches { it.containsAll(auctions) }
+            .`as`("Auctions $auctions must be found")
             .verifyComplete()
     }
 }

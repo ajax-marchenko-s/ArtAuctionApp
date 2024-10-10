@@ -21,7 +21,6 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
-import reactor.kotlin.test.expectError
 import reactor.kotlin.test.test
 import reactor.kotlin.test.verifyError
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
@@ -34,7 +33,6 @@ class ArtworkServiceTest {
     private lateinit var mockArtworkRepository: ArtworkRepository
 
     @MockK
-    @Suppress("UnusedPrivateProperty")
     private lateinit var mockUserService: UserService
 
     @MockK
@@ -159,15 +157,12 @@ class ArtworkServiceTest {
 
         every { mockAuthentication.name } returns email
         every { mockSecurityContext.authentication } returns mockAuthentication
-        every { mockUserService.getByEmail(email) } returns Mono.just(user)
-        every { mockArtworkRepository.save(expectedArtwork) } returns Mono.just(expectedArtwork)
+        every { mockUserService.getByEmail(email) } returns user.toMono()
+        every { mockArtworkRepository.save(expectedArtwork) } returns expectedArtwork.toMono()
 
         // WHEN
-        val result = Mono.defer {
-            artworkService.save(artworkToSave)
-        }.contextWrite(
-            ReactiveSecurityContextHolder.withSecurityContext(Mono.just(mockSecurityContext))
-        )
+        val result = artworkService.save(artworkToSave)
+            .contextWrite(ReactiveSecurityContextHolder.withSecurityContext(mockSecurityContext.toMono()))
 
         // THEN
         result.test()
@@ -176,11 +171,10 @@ class ArtworkServiceTest {
         verify { mockArtworkRepository.save(expectedArtwork) }
     }
 
-
     @Test
     fun `should return false when there is no artwork with given id`() {
         //GIVEN
-        every { mockArtworkRepository.existsById(any()) } returns Mono.just(false)
+        every { mockArtworkRepository.existsById(any()) } returns false.toMono()
 
         //WHEN
         val result = artworkService.existsById(ObjectId().toHexString())
@@ -196,7 +190,7 @@ class ArtworkServiceTest {
     fun `should return true when artwork with this id exists`() {
         // GIVEN
         val id = ObjectId().toHexString()
-        every { mockArtworkRepository.existsById(id) } returns Mono.just(true)
+        every { mockArtworkRepository.existsById(id) } returns true.toMono()
 
         // WHEN
         val result = artworkService.existsById(id)

@@ -171,7 +171,6 @@ class AuctionServiceTest {
         val auctionRequest = CreateAuctionRequest.random(artworkId = artwork.id!!.toHexString())
 
         every { mockArtworkService.getById(auctionRequest.artworkId) } returns artwork.toMono()
-            .also { println(artwork) }
 
         // WHEN
         val result = auctionService.save(auctionRequest)

@@ -1,5 +1,6 @@
 package ua.marchenko.artauction.auth.service
 
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService
@@ -11,6 +12,7 @@ import ua.marchenko.artauction.auth.controller.dto.AuthenticationRequest
 import ua.marchenko.artauction.auth.controller.dto.AuthenticationResponse
 import ua.marchenko.artauction.auth.controller.dto.RegistrationRequest
 import ua.marchenko.artauction.auth.mapper.toMongo
+import ua.marchenko.artauction.common.reactive.switchIfEmpty
 import ua.marchenko.artauction.user.exception.UserAlreadyExistsException
 import ua.marchenko.artauction.user.repository.UserRepository
 
@@ -29,30 +31,21 @@ class AuthenticationServiceImpl(
                 authenticationRequest.email,
                 authenticationRequest.password
             )
-        ).flatMap {
-            userDetailsService.findByUsername(authenticationRequest.email)
-                .flatMap { user ->
-                    val accessToken = jwtService.generate(user)
-                    Mono.just(
-                        AuthenticationResponse(
-                            accessToken = accessToken,
-                        )
-                    )
-                }
-        }.onErrorResume {
-            Mono.error(RuntimeException("Invalid credentials"))
-        }
+        )
+            .flatMap { userDetailsService.findByUsername(authenticationRequest.email) }
+            .map { user -> jwtService.generate(user) }
+            .map { accessToken -> AuthenticationResponse(accessToken) }
+            .onErrorResume { Mono.error(BadCredentialsException("Invalid credentials")) }
     }
 
     override fun register(registrationRequest: RegistrationRequest): Mono<AuthenticationResponse> {
         return userRepository.existsByEmail(registrationRequest.email)
-            .filter { existByEmail -> !existByEmail }
-            .switchIfEmpty(Mono.error(UserAlreadyExistsException(userEmail = registrationRequest.email)))
+            .filter { emailExists -> !emailExists }
+            .switchIfEmpty { Mono.error(UserAlreadyExistsException(userEmail = registrationRequest.email)) }
             .flatMap {
                 userRepository.save(
                     registrationRequest.copy(password = passwordEncoder.encode(registrationRequest.password)).toMongo()
-                )
+                ).then(authentication(AuthenticationRequest(registrationRequest.email, registrationRequest.password)))
             }
-            .then(authentication(AuthenticationRequest(registrationRequest.email, registrationRequest.password)))
     }
 }

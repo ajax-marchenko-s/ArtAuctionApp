@@ -12,6 +12,7 @@ import ua.marchenko.artauction.auction.exception.InvalidAuctionOperationExceptio
 import ua.marchenko.artauction.auction.mapper.toMongo
 import ua.marchenko.artauction.auction.model.MongoAuction
 import ua.marchenko.artauction.auction.model.projection.AuctionFull
+import ua.marchenko.artauction.common.reactive.switchIfEmpty
 
 @Service
 class AuctionServiceImpl(
@@ -24,19 +25,19 @@ class AuctionServiceImpl(
     override fun getFullAll(page: Int, limit: Int): Flux<AuctionFull> = auctionRepository.findFullAll(page, limit)
 
     override fun getById(id: String): Mono<MongoAuction> =
-        auctionRepository.findById(id).switchIfEmpty(Mono.error(AuctionNotFoundException(id)))
+        auctionRepository.findById(id).switchIfEmpty { Mono.error(AuctionNotFoundException(id)) }
 
     override fun getFullById(id: String): Mono<AuctionFull> =
-        auctionRepository.findFullById(id).switchIfEmpty(Mono.error(AuctionNotFoundException(id)))
+        auctionRepository.findFullById(id).switchIfEmpty { Mono.error(AuctionNotFoundException(id)) }
 
     override fun save(auction: CreateAuctionRequest): Mono<MongoAuction> {
         return artworkService.getById(auction.artworkId)
             .filter { artwork -> artwork.status == ArtworkStatus.VIEW }
-            .switchIfEmpty(
+            .switchIfEmpty {
                 Mono.error(
                     InvalidAuctionOperationException("Cannot create auction: Artwork is not in VIEW status")
                 )
-            )
+            }
             .flatMap {
                 artworkService.updateStatus(auction.artworkId, ArtworkStatus.ON_AUCTION)
                     .then(auctionRepository.save(auction.toMongo()))

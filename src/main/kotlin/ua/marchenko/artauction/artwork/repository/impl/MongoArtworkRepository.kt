@@ -37,8 +37,8 @@ internal class MongoArtworkRepository(
             match(Criteria.where(Fields.UNDERSCORE_ID).isEqualTo(id)),
             *aggregateFullArtist(),
         )
-        val results = reactiveMongoTemplate.aggregate(aggregation, MongoArtwork.COLLECTION, ArtworkFull::class.java)
-        return results.singleOrEmpty()
+        return reactiveMongoTemplate.aggregate(aggregation, MongoArtwork.COLLECTION, ArtworkFull::class.java)
+            .singleOrEmpty()
     }
 
     override fun findAll(page: Int, limit: Int): Flux<MongoArtwork> {
@@ -54,8 +54,7 @@ internal class MongoArtworkRepository(
             Aggregation.limit(limit.toLong()),
             *aggregateFullArtist(),
         )
-        val results = reactiveMongoTemplate.aggregate(aggregation, MongoArtwork.COLLECTION, ArtworkFull::class.java)
-        return results
+        return reactiveMongoTemplate.aggregate(aggregation, MongoArtwork.COLLECTION, ArtworkFull::class.java)
     }
 
     override fun existsById(id: String): Mono<Boolean> {

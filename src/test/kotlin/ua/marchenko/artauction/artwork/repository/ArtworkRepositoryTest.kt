@@ -1,6 +1,7 @@
 package ua.marchenko.artauction.artwork.repository
 
 import artwork.random
+import artwork.toFullArtwork
 import kotlin.test.Test
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -49,7 +50,7 @@ class ArtworkRepositoryTest : AbstractBaseIntegrationTest {
     }
 
     @Test
-    fun `should return null when there is no artwork with this id`() {
+    fun `should return empty when there is no artwork with this id`() {
         // WHEN
         val result = artworkRepository.findById(ObjectId().toString()) //random id
 
@@ -62,23 +63,21 @@ class ArtworkRepositoryTest : AbstractBaseIntegrationTest {
     fun `should return artwork with artist when artwork with this id exists`() {
         // GIVEN
         val savedArtist = userRepository.save(MongoUser.random(id = null)).block()
-        val savedArtwork = artworkRepository.save(
+        val artwork = artworkRepository.save(
             MongoArtwork.random(id = null, artistId = savedArtist?.id.toString())
-        ).block()
+        ).block()?.toFullArtwork(savedArtist)
 
         // WHEN
-        val result = artworkRepository.findFullById(savedArtwork?.id.toString())
+        val result = artworkRepository.findFullById(artwork?.id.toString())
 
         // THEN
         result.test()
-            .assertNext { artwork ->
-                assertEquals(savedArtist?.name, artwork.artist?.name)
-            }
+            .expectNext(artwork)
             .verifyComplete()
     }
 
     @Test
-    fun `should return null when artist of artwork doesnt exist in db`() {
+    fun `should return empty when artist of artwork doesnt exist in db`() {
         // GIVEN
         val savedArtwork = artworkRepository.save(MongoArtwork.random(id = null)).block()
 
@@ -91,12 +90,14 @@ class ArtworkRepositoryTest : AbstractBaseIntegrationTest {
     }
 
     @Test
-    fun `should return all artworks with artist when they are exists`() {
+    fun `should return all full artwork when they are exists`() {
         // GIVEN
         val savedArtist = userRepository.save(MongoUser.random(id = null)).block()
         val artworks = listOf(
-            artworkRepository.save(MongoArtwork.random(artistId = savedArtist?.id.toString())).block(),
             artworkRepository.save(MongoArtwork.random(artistId = savedArtist?.id.toString())).block()
+                ?.toFullArtwork(savedArtist),
+            artworkRepository.save(MongoArtwork.random(artistId = savedArtist?.id.toString())).block()
+                ?.toFullArtwork(savedArtist),
         )
 
         // WHEN
@@ -104,10 +105,7 @@ class ArtworkRepositoryTest : AbstractBaseIntegrationTest {
 
         // THEN
         result.test()
-            .expectNextMatches { foundArtworks ->
-                foundArtworks.any { it.title == artworks[0]?.title && it.artist?.name == savedArtist?.name } &&
-                        foundArtworks.any { it.title == artworks[1]?.title && it.artist?.name == savedArtist?.name }
-            }
+            .expectNextMatches { it.containsAll(artworks) }
             .`as`(
                 "Artwork with title ${artworks[0]?.title} and ${artworks[1]?.title}," +
                         " artist ${savedArtist?.name} must be found"
