@@ -57,7 +57,7 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
         ).block()
 
         // WHEN
-        val result = auctionRepository.findById(savedAuction?.id.toString())
+        val result = auctionRepository.findById(savedAuction!!.id.toString())
 
         // THEN
         result.test()
@@ -79,23 +79,23 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
     fun `should return full auction with buyers and artwork when auction with this id exists`() {
         // GIVEN
         val savedArtist = userRepository.save(MongoUser.random(id = null)).block()
-        val savedArtworkFull = artworkRepository.save(MongoArtwork(artistId = savedArtist?.id))
-            .block()?.toFullArtwork(savedArtist)
+        val savedArtworkFull = artworkRepository.save(MongoArtwork(artistId = savedArtist!!.id))
+            .block()!!.toFullArtwork(savedArtist)
         val savedBuyer = userRepository.save(MongoUser.random(id = null, role = Role.BUYER)).block()
-        val buyers = listOf(MongoAuction.Bid.random(buyerId = savedBuyer?.id!!.toHexString()))
+        val buyers = listOf(MongoAuction.Bid.random(buyerId = savedBuyer!!.id!!.toHexString()))
 
         val auction = auctionRepository.save(
             MongoAuction(
                 id = null,
                 buyers = buyers,
-                artworkId = savedArtworkFull?.id,
+                artworkId = savedArtworkFull.id,
                 startedAt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                 finishedAt = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS)
             )
-        ).block()?.toFullAuction(savedArtworkFull, buyers.map { it.toFullBid(savedBuyer) })
+        ).block()!!.toFullAuction(savedArtworkFull, buyers.map { it.toFullBid(savedBuyer) })
 
         // WHEN
-        val result = auctionRepository.findFullById(auction?.id.toString())
+        val result = auctionRepository.findFullById(auction.id.toString())
 
         // THEN
         result.test()
@@ -145,21 +145,21 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
     fun `should return all auctions with artwork and buyers when they are exists`() {
         // GIVEN
         val savedArtist = userRepository.save(MongoUser.random(id = null)).block()
-        val savedArtworkFull = artworkRepository.save(MongoArtwork(artistId = savedArtist?.id))
-            .block()?.toFullArtwork(savedArtist)
+        val savedArtworkFull = artworkRepository.save(MongoArtwork(artistId = savedArtist!!.id))
+            .block()!!.toFullArtwork(savedArtist)
         val savedBuyer = userRepository.save(MongoUser.random(id = null, role = Role.BUYER)).block()
-        val buyers = listOf(MongoAuction.Bid.random(buyerId = savedBuyer?.id!!.toHexString()))
+        val buyers = listOf(MongoAuction.Bid.random(buyerId = savedBuyer!!.id!!.toHexString()))
 
         val auctions = listOf(
             auctionRepository.save(
                 MongoAuction(
                     id = null,
                     buyers = buyers,
-                    artworkId = savedArtworkFull?.id,
+                    artworkId = savedArtworkFull.id,
                     startedAt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     finishedAt = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS)
                 )
-            ).block()?.toFullAuction(savedArtworkFull, buyers.map { it.toFullBid(savedBuyer) })
+            ).block()!!.toFullAuction(savedArtworkFull, buyers.map { it.toFullBid(savedBuyer) })
         )
 
         // WHEN

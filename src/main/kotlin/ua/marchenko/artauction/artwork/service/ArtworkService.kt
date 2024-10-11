@@ -13,6 +13,11 @@ interface ArtworkService {
     fun getFullById(id: String): Mono<ArtworkFull>
     fun save(artwork: MongoArtwork): Mono<MongoArtwork>
     fun update(artworkId: String, artwork: MongoArtwork): Mono<MongoArtwork>
-    fun updateStatus(artworkId: String, status: ArtworkStatus): Mono<MongoArtwork>
+    fun updateStatusByIdAndPreviousStatus(
+        artworkId: String,
+        prevStatus: ArtworkStatus,
+        newStatus: ArtworkStatus
+    ): Mono<MongoArtwork>
+
     fun existsById(id: String): Mono<Boolean>
 }

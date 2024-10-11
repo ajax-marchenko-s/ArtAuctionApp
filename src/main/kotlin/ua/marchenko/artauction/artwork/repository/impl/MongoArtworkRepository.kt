@@ -1,9 +1,7 @@
 package ua.marchenko.artauction.artwork.repository.impl
 
+import org.springframework.data.mongodb.core.FindAndModifyOptions
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
-import org.springframework.data.mongodb.core.query.Criteria
-import org.springframework.data.mongodb.core.query.Query
-import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.data.mongodb.core.aggregation.Aggregation
 import org.springframework.data.mongodb.core.aggregation.Aggregation.lookup
 import org.springframework.data.mongodb.core.aggregation.Aggregation.match
@@ -11,13 +9,19 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation.project
 import org.springframework.data.mongodb.core.aggregation.Aggregation.unwind
 import org.springframework.data.mongodb.core.aggregation.Fields
 import org.springframework.data.mongodb.core.aggregation.FieldsExposingAggregationOperation
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.Update
+import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 import ua.marchenko.artauction.user.model.MongoUser
+
 
 @Repository
 @Suppress("SpreadOperator")
@@ -60,6 +64,19 @@ internal class MongoArtworkRepository(
     override fun existsById(id: String): Mono<Boolean> {
         val query = Query.query(Criteria.where(MongoArtwork::id.name).isEqualTo(id))
         return reactiveMongoTemplate.exists(query, MongoArtwork::class.java)
+    }
+
+    override fun updateStatusByIdAndPreviousStatus(
+        artworkId: String,
+        prevStatus: ArtworkStatus,
+        newStatus: ArtworkStatus
+    ): Mono<MongoArtwork> {
+        val query = Query.query(
+            Criteria.where(MongoArtwork::id.name).`is`(artworkId).and(MongoArtwork::status.name).`is`(prevStatus)
+        )
+        val changes = Update.update(MongoArtwork::status.name, newStatus)
+        val options = FindAndModifyOptions.options().returnNew(true)
+        return reactiveMongoTemplate.findAndModify(query, changes, options, MongoArtwork::class.java)
     }
 
     private fun aggregateFullArtist(): Array<FieldsExposingAggregationOperation> {

@@ -35,7 +35,7 @@ class UserRepositoryTest : AbstractBaseIntegrationTest {
         val savedUser = userRepository.save(MongoUser.random(id = null)).block()
 
         // WHEN
-        val foundUser = userRepository.findById(savedUser?.id.toString())
+        val foundUser = userRepository.findById(savedUser!!.id.toString())
 
         // THEN
         foundUser.test()
@@ -59,7 +59,7 @@ class UserRepositoryTest : AbstractBaseIntegrationTest {
         val savedUser = userRepository.save(MongoUser.random(id = null)).block()
 
         // WHEN
-        val result = userRepository.existsByEmail(savedUser?.email!!)
+        val result = userRepository.existsByEmail(savedUser!!.email!!)
 
         // THEN
         result.test()
@@ -86,7 +86,7 @@ class UserRepositoryTest : AbstractBaseIntegrationTest {
         val savedUser = userRepository.save(MongoUser.random(id = null)).block()
 
         // WHEN
-        val foundUser = userRepository.findByEmail(savedUser?.email!!)
+        val foundUser = userRepository.findByEmail(savedUser!!.email!!)
 
         // THEN
         foundUser.test()

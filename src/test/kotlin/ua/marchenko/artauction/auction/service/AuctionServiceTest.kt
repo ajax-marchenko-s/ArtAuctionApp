@@ -142,17 +142,17 @@ class AuctionServiceTest {
     fun `should change artwork status and save when artwork exist and artwork status is view`() {
         //GIVEN
         val newAuctionId = ObjectId()
-        val artwork = MongoArtwork.random(status = ArtworkStatus.VIEW)
+        val artwork = MongoArtwork.random(status = ArtworkStatus.ON_AUCTION)
         val auctionRequest = CreateAuctionRequest.random(artworkId = artwork.id!!.toHexString())
         val auction = auctionRequest.toMongo()
 
-        every { mockArtworkService.getById(auctionRequest.artworkId) } returns artwork.toMono()
         every {
-            mockArtworkService.updateStatus(
+            mockArtworkService.updateStatusByIdAndPreviousStatus(
                 auctionRequest.artworkId,
+                ArtworkStatus.VIEW,
                 ArtworkStatus.ON_AUCTION
             )
-        } returns artwork.copy(status = ArtworkStatus.ON_AUCTION).toMono()
+        } returns artwork.toMono()
         every { mockAuctionRepository.save(auction) } returns auction.copy(id = newAuctionId).toMono()
 
         //WHEN
@@ -167,10 +167,15 @@ class AuctionServiceTest {
     @Test
     fun `should throw InvalidAuctionOperationException when artwork doesnt have VIEW status`() {
         // GIVEN
-        val artwork = MongoArtwork.random(status = ArtworkStatus.ON_AUCTION)
-        val auctionRequest = CreateAuctionRequest.random(artworkId = artwork.id!!.toHexString())
+        val auctionRequest = CreateAuctionRequest.random(artworkId = ObjectId().toHexString())
 
-        every { mockArtworkService.getById(auctionRequest.artworkId) } returns artwork.toMono()
+        every {
+            mockArtworkService.updateStatusByIdAndPreviousStatus(
+                auctionRequest.artworkId,
+                ArtworkStatus.VIEW,
+                ArtworkStatus.ON_AUCTION
+            )
+        } returns Mono.empty()
 
         // WHEN
         val result = auctionService.save(auctionRequest)
@@ -178,6 +183,5 @@ class AuctionServiceTest {
         // THEN
         result.test()
             .verifyError(InvalidAuctionOperationException::class)
-
     }
 }

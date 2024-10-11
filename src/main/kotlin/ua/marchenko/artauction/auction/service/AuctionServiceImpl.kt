@@ -12,7 +12,7 @@ import ua.marchenko.artauction.auction.exception.InvalidAuctionOperationExceptio
 import ua.marchenko.artauction.auction.mapper.toMongo
 import ua.marchenko.artauction.auction.model.MongoAuction
 import ua.marchenko.artauction.auction.model.projection.AuctionFull
-import ua.marchenko.artauction.common.reactive.switchIfEmpty
+import reactor.kotlin.core.publisher.switchIfEmpty
 
 @Service
 class AuctionServiceImpl(
@@ -31,16 +31,14 @@ class AuctionServiceImpl(
         auctionRepository.findFullById(id).switchIfEmpty { Mono.error(AuctionNotFoundException(id)) }
 
     override fun save(auction: CreateAuctionRequest): Mono<MongoAuction> {
-        return artworkService.getById(auction.artworkId)
-            .filter { artwork -> artwork.status == ArtworkStatus.VIEW }
+        return artworkService.updateStatusByIdAndPreviousStatus(
+            auction.artworkId,
+            ArtworkStatus.VIEW,
+            ArtworkStatus.ON_AUCTION
+        )
             .switchIfEmpty {
-                Mono.error(
-                    InvalidAuctionOperationException("Cannot create auction: Artwork is not in VIEW status")
-                )
+                Mono.error(InvalidAuctionOperationException("Cannot create auction: Artwork is not in VIEW status"))
             }
-            .flatMap {
-                artworkService.updateStatus(auction.artworkId, ArtworkStatus.ON_AUCTION)
-                    .then(auctionRepository.save(auction.toMongo()))
-            }
+            .flatMap { auctionRepository.save(auction.toMongo()) }
     }
 }

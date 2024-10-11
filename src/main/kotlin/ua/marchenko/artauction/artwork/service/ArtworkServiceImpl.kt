@@ -12,7 +12,7 @@ import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 import ua.marchenko.artauction.common.annotation.profiling.annotation.CustomProfiling
 import ua.marchenko.artauction.common.mongodb.id.toObjectId
-import ua.marchenko.artauction.common.reactive.switchIfEmpty
+import reactor.kotlin.core.publisher.switchIfEmpty
 import ua.marchenko.artauction.user.service.UserService
 
 @Service
@@ -54,11 +54,12 @@ class ArtworkServiceImpl(
             }
     }
 
-    override fun updateStatus(artworkId: String, status: ArtworkStatus): Mono<MongoArtwork> {
-        return getById(artworkId)
-            .flatMap { artworkFromDB ->
-                artworkRepository.save(artworkFromDB.copy(status = status))
-            }
+    override fun updateStatusByIdAndPreviousStatus(
+        artworkId: String,
+        prevStatus: ArtworkStatus,
+        newStatus: ArtworkStatus
+    ): Mono<MongoArtwork> {
+        return artworkRepository.updateStatusByIdAndPreviousStatus(artworkId, prevStatus, newStatus)
     }
 
     override fun existsById(id: String) = artworkRepository.existsById(id)

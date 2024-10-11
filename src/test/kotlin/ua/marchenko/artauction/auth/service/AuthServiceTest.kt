@@ -15,6 +15,7 @@ import ua.marchenko.artauction.user.exception.UserAlreadyExistsException
 import ua.marchenko.artauction.user.repository.UserRepository
 import kotlin.test.Test
 import org.bson.types.ObjectId
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import reactor.core.publisher.Mono
@@ -126,12 +127,13 @@ class AuthServiceTest {
             .verifyComplete()
     }
 
-
     @Test
     fun `should throw UserAlreadyExistsException when user with registration email is already exist`() {
         //GIVEN
         val registrationRequest = RegistrationRequest.random()
-        every { mockUserRepository.existsByEmail(registrationRequest.email) } returns true.toMono()
+        every { mockPasswordEncoder.encode(registrationRequest.password) } returns registrationRequest.password
+        every { mockUserRepository.save(registrationRequest.toMongo()) } returns
+                DuplicateKeyException("duplicate key").toMono()
 
         // WHEN
         val result = authenticationService.register(registrationRequest)
@@ -139,5 +141,21 @@ class AuthServiceTest {
         // THEN
         result.test()
             .verifyError(UserAlreadyExistsException::class.java)
+    }
+
+    @Test
+    fun `should throw given error when saving user throws error`() {
+        //GIVEN
+        val registrationRequest = RegistrationRequest.random()
+        every { mockPasswordEncoder.encode(registrationRequest.password) } returns registrationRequest.password
+        every { mockUserRepository.save(registrationRequest.toMongo()) } returns
+                RuntimeException("error").toMono()
+
+        // WHEN
+        val result = authenticationService.register(registrationRequest)
+
+        // THEN
+        result.test()
+            .verifyError(RuntimeException::class.java)
     }
 }

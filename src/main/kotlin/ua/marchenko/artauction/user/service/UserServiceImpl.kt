@@ -3,7 +3,7 @@ package ua.marchenko.artauction.user.service
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import ua.marchenko.artauction.common.reactive.switchIfEmpty
+import reactor.kotlin.core.publisher.switchIfEmpty
 import ua.marchenko.artauction.user.exception.UserNotFoundException
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.repository.UserRepository
