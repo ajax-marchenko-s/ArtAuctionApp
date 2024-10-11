@@ -15,7 +15,7 @@ import ua.marchenko.artauction.user.model.MongoUser
 class UserEmailIndexMigration {
 
     @Execution
-    fun createHashedIndex(db: MongoDatabase) {
+    fun createIndexes(db: MongoDatabase) {
         db.getCollection(MongoUser.COLLECTION).createIndex(
             Document(MongoUser::email.name, "hashed"),
             IndexOptions().name(EMAIL_HASHED_INDEX)
@@ -33,7 +33,7 @@ class UserEmailIndexMigration {
     }
 
     @RollbackExecution
-    fun rollbackIndex(mongoTemplate: MongoTemplate) {
+    fun rollbackIndexes(mongoTemplate: MongoTemplate) {
         val indexOps: IndexOperations = mongoTemplate.indexOps(MongoUser.COLLECTION)
         if (indexOps.indexInfo.any { it.name == EMAIL_HASHED_INDEX }) {
             indexOps.dropIndex(EMAIL_HASHED_INDEX)
@@ -58,6 +58,5 @@ class UserEmailIndexMigration {
         private val log = LoggerFactory.getLogger(UserEmailIndexMigration::class.java)
         private const val EMAIL_HASHED_INDEX = "email_hashed"
         private const val EMAIL_UNIQUE_INDEX = "email_1"
-
     }
 }
