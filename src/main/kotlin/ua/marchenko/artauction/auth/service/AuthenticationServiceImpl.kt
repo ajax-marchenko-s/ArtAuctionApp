@@ -26,7 +26,6 @@ class AuthenticationServiceImpl(
 ) : AuthenticationService {
 
     override fun authentication(authenticationRequest: AuthenticationRequest): Mono<AuthenticationResponse> {
-        println("ASDFGHJKLKJHGFDSDFGHJKL")
         return reactiveAuthenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
                 authenticationRequest.email,
