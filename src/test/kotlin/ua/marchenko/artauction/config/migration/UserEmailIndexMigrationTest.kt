@@ -23,16 +23,20 @@ class UserEmailIndexMigrationTest : AbstractBaseIntegrationTest {
         //THEN
         val indexes = mongoTemplate.db.getCollection(MongoUser.COLLECTION).listIndexes().toList()
         assertTrue(
-            indexes.any { it["name"] == EMAIL_HASHED_INDEX
-                    && (it["key"] as Document).size == 1
-                    && (it["key"] as Document)["email"] == "hashed" },
+            indexes.any {
+                it["name"] == EMAIL_HASHED_INDEX
+                        && (it["key"] as Document).size == 1
+                        && (it["key"] as Document)["email"] == "hashed"
+            },
             "Email hashed index must be contained in the database"
         )
         assertTrue(
-            indexes.any { it["name"] == EMAIL_UNIQUE_INDEX
-                    && it["unique"] == true
-                    && (it["key"] as Document).size == 1
-                    && (it["key"] as Document)["email"] == 1 },
+            indexes.any {
+                it["name"] == EMAIL_UNIQUE_INDEX
+                        && it["unique"] == true
+                        && (it["key"] as Document).size == 1
+                        && (it["key"] as Document)["email"] == 1
+            },
             "Email unique index must be contained in the database"
         )
     }
@@ -48,16 +52,20 @@ class UserEmailIndexMigrationTest : AbstractBaseIntegrationTest {
         //THEN
         val indexes = mongoTemplate.db.getCollection(MongoUser.COLLECTION).listIndexes().toList()
         assertFalse(
-            indexes.any { it["name"] == EMAIL_HASHED_INDEX
-                    && (it["key"] as Document).size == 1
-                    && (it["key"] as Document)["email"] == "hashed" },
+            indexes.any {
+                it["name"] == EMAIL_HASHED_INDEX
+                        && (it["key"] as Document).size == 1
+                        && (it["key"] as Document)["email"] == "hashed"
+            },
             "Email hashed index must not be contained in the database"
         )
         assertFalse(
-            indexes.any { it["name"] == EMAIL_UNIQUE_INDEX
-                    && it["unique"] == true
-                    && (it["key"] as Document).size == 1
-                    && (it["key"] as Document)["email"] == 1 },
+            indexes.any {
+                it["name"] == EMAIL_UNIQUE_INDEX
+                        && it["unique"] == true
+                        && (it["key"] as Document).size == 1
+                        && (it["key"] as Document)["email"] == 1
+            },
             "Email unique index must not be contained in the database"
         )
     }
