@@ -9,6 +9,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.test.Test
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.springframework.beans.factory.annotation.Autowired
 import reactor.kotlin.test.test
 import ua.marchenko.artauction.artwork.model.MongoArtwork
@@ -136,8 +137,7 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
 
         // THEN
         result.test()
-            .expectNextMatches { it.containsAll(auctions) }
-            .`as`("Auctions $auctions must be found")
+            .assertNext { assertTrue(it.containsAll(auctions), "Auctions $auctions must be found") }
             .verifyComplete()
     }
 
@@ -167,8 +167,7 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
 
         // THEN
         result.test()
-            .expectNextMatches { it.containsAll(auctions) }
-            .`as`("Auctions $auctions must be found")
+            .assertNext { assertTrue(it.containsAll(auctions), "Auctions $auctions must be found") }
             .verifyComplete()
     }
 }

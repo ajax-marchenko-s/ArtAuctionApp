@@ -11,7 +11,6 @@ import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 import ua.marchenko.artauction.common.annotation.profiling.annotation.CustomProfiling
-import ua.marchenko.artauction.common.mongodb.id.toObjectId
 import reactor.kotlin.core.publisher.switchIfEmpty
 import ua.marchenko.artauction.user.service.UserService
 
@@ -42,17 +41,9 @@ class ArtworkServiceImpl(
             }
     }
 
-    override fun update(artworkId: String, artwork: MongoArtwork): Mono<MongoArtwork> {
-        return getById(artworkId)
-            .flatMap { artworkFromDB ->
-                val updatedArtwork = artwork.copy(
-                    id = artworkId.toObjectId(),
-                    status = artworkFromDB.status,
-                    artistId = artworkFromDB.artistId
-                )
-                artworkRepository.save(updatedArtwork)
-            }
-    }
+    override fun update(artworkId: String, artwork: MongoArtwork): Mono<MongoArtwork> =
+        artworkRepository.updateById(artworkId, artwork)
+            .switchIfEmpty { Mono.error(ArtworkNotFoundException(artworkId)) }
 
     override fun updateStatusByIdAndPreviousStatus(
         artworkId: String,

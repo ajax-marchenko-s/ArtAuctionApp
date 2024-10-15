@@ -97,11 +97,11 @@ class JwtAuthenticationFilterTest {
         // THEN
         result.test()
             .then {
-            ReactiveSecurityContextHolder.getContext().map { it.authentication }.doOnNext { authentication ->
-                assertNotNull(authentication, "ReactiveSecurityContextHolder authentication should not be null")
-                assertEquals(email, authentication.name)
-            }
-        }.verifyComplete()
+                ReactiveSecurityContextHolder.getContext().map { it.authentication }.doOnNext { authentication ->
+                    assertNotNull(authentication, "ReactiveSecurityContextHolder authentication should not be null")
+                    assertEquals(email, authentication.name)
+                }
+            }.verifyComplete()
         verify { filterChain.filter(exchange) }
     }
 

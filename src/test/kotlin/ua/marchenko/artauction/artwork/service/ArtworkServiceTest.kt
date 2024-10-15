@@ -15,7 +15,9 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.bson.types.ObjectId
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -181,8 +183,7 @@ class ArtworkServiceTest {
 
         //THEN
         result.test()
-            .expectNext(false)
-            .`as`("ExistsById should return false")
+            .assertNext { assertFalse(it, "ExistsById should return false") }
             .verifyComplete()
     }
 
@@ -197,8 +198,7 @@ class ArtworkServiceTest {
 
         // THEN
         result.test()
-            .expectNext(true)
-            .`as`("ExistsById should return true")
+            .assertNext { assertTrue(it, "ExistsById should return false") }
             .verifyComplete()
     }
 }

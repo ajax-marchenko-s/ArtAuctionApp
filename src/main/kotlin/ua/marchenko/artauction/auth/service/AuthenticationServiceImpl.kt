@@ -28,27 +28,20 @@ class AuthenticationServiceImpl(
     override fun authentication(authenticationRequest: AuthenticationRequest): Mono<AuthenticationResponse> {
         return reactiveAuthenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
-                authenticationRequest.email,
-                authenticationRequest.password
+                authenticationRequest.email, authenticationRequest.password
             )
-        )
-            .flatMap { userDetailsService.findByUsername(authenticationRequest.email) }
-            .map { user -> jwtService.generate(user) }
-            .map { accessToken -> AuthenticationResponse(accessToken) }
+        ).flatMap { userDetailsService.findByUsername(authenticationRequest.email) }
+            .map { user -> jwtService.generate(user) }.map { accessToken -> AuthenticationResponse(accessToken) }
             .onErrorResume { Mono.error(BadCredentialsException("Invalid credentials")) }
     }
 
     override fun register(registrationRequest: RegistrationRequest): Mono<AuthenticationResponse> {
         return userRepository.save(
             registrationRequest.copy(password = passwordEncoder.encode(registrationRequest.password)).toMongo()
-        )
-            .flatMap { authentication(AuthenticationRequest(registrationRequest.email, registrationRequest.password)) }
-            .onErrorResume { ex ->
-                if (ex is DuplicateKeyException) {
-                    Mono.error(UserAlreadyExistsException(userEmail = registrationRequest.email))
-                } else {
-                    Mono.error(ex)
-                }
+        ).flatMap { authentication(AuthenticationRequest(registrationRequest.email, registrationRequest.password)) }
+            .onErrorMap(DuplicateKeyException::class.java) {
+                UserAlreadyExistsException(userEmail = registrationRequest.email)
             }
+            .onErrorResume { Mono.error(it) }
     }
 }

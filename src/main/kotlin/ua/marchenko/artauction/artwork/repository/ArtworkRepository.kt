@@ -13,6 +13,7 @@ interface ArtworkRepository {
     fun findAll(page: Int = 0, limit: Int = 10): Flux<MongoArtwork>
     fun findFullAll(page: Int = 0, limit: Int = 10): Flux<ArtworkFull>
     fun existsById(id: String): Mono<Boolean>
+    fun updateById(id: String, artwork: MongoArtwork): Mono<MongoArtwork>
     fun updateStatusByIdAndPreviousStatus(
         artworkId: String,
         prevStatus: ArtworkStatus,

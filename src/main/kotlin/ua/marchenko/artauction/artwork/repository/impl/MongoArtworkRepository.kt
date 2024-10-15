@@ -1,5 +1,6 @@
 package ua.marchenko.artauction.artwork.repository.impl
 
+import kotlin.reflect.full.memberProperties
 import org.springframework.data.mongodb.core.FindAndModifyOptions
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Aggregation
@@ -21,7 +22,6 @@ import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 import ua.marchenko.artauction.user.model.MongoUser
-
 
 @Repository
 @Suppress("SpreadOperator")
@@ -75,6 +75,26 @@ internal class MongoArtworkRepository(
             Criteria.where(MongoArtwork::id.name).`is`(artworkId).and(MongoArtwork::status.name).`is`(prevStatus)
         )
         val changes = Update.update(MongoArtwork::status.name, newStatus)
+        val options = FindAndModifyOptions.options().returnNew(true)
+        return reactiveMongoTemplate.findAndModify(query, changes, options, MongoArtwork::class.java)
+    }
+
+    override fun updateById(id: String, artwork: MongoArtwork): Mono<MongoArtwork> {
+        val query = Query.query(Criteria.where(MongoArtwork::id.name).`is`(id))
+        val changes = Update()
+        MongoArtwork::class.memberProperties
+            .filter {
+                it.name !in listOf(
+                    MongoArtwork::id.name,
+                    MongoArtwork::status.name,
+                    MongoArtwork::artistId.name
+                )
+            }
+            .forEach { property ->
+                property.get(artwork)?.let { value ->
+                    changes.set(property.name, value)
+                }
+            }
         val options = FindAndModifyOptions.options().returnNew(true)
         return reactiveMongoTemplate.findAndModify(query, changes, options, MongoArtwork::class.java)
     }
