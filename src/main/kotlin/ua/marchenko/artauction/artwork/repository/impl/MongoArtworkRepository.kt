@@ -80,16 +80,16 @@ internal class MongoArtworkRepository(
     }
 
     override fun updateById(id: String, artwork: MongoArtwork): Mono<MongoArtwork> {
+        val nonUpdatableFields = listOf(
+            MongoArtwork::id.name,
+            MongoArtwork::status.name,
+            MongoArtwork::artistId.name
+        )
+
         val query = Query.query(Criteria.where(MongoArtwork::id.name).`is`(id))
         val changes = Update()
         MongoArtwork::class.memberProperties
-            .filter {
-                it.name !in listOf(
-                    MongoArtwork::id.name,
-                    MongoArtwork::status.name,
-                    MongoArtwork::artistId.name
-                )
-            }
+            .filter { !nonUpdatableFields.contains(it.name) }
             .forEach { property ->
                 property.get(artwork)?.let { value ->
                     changes.set(property.name, value)

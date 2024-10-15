@@ -42,6 +42,5 @@ class AuthenticationServiceImpl(
             .onErrorMap(DuplicateKeyException::class.java) {
                 UserAlreadyExistsException(userEmail = registrationRequest.email)
             }
-            .onErrorResume { Mono.error(it) }
     }
 }
