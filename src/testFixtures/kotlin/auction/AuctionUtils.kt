@@ -37,12 +37,16 @@ fun MongoAuction.Bid.Companion.random(
         bid = bid,
     )
 
-fun CreateAuctionRequest.Companion.random(artworkId: String = ObjectId().toHexString()) =
+fun CreateAuctionRequest.Companion.random(
+    artworkId: String = ObjectId().toHexString(),
+    startedAt: LocalDateTime = LocalDateTime.now(),
+    finishedAt: LocalDateTime = LocalDateTime.now().plusDays(1),
+) =
     CreateAuctionRequest(
         artworkId = artworkId,
         startBid = BigDecimal(100.0),
-        startedAt = LocalDateTime.now(),
-        finishedAt = LocalDateTime.now(),
+        startedAt = startedAt,
+        finishedAt = finishedAt,
     )
 
 fun AuctionFull.Companion.random(

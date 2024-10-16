@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import ua.marchenko.artauction.common.exception.type.general.AlreadyExistException
 import ua.marchenko.artauction.common.exception.type.general.NotFoundException
 import java.time.LocalDateTime
-import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.validation.FieldError
-import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.support.WebExchangeBindException
+import org.springframework.web.server.ServerWebInputException
 import ua.marchenko.artauction.auction.exception.InvalidAuctionOperationException
 
 @ControllerAdvice
@@ -32,7 +32,7 @@ class ExceptionHandler {
     )
 
     @ExceptionHandler
-    fun handleJsonParseException(ex: HttpMessageNotReadableException) = ResponseEntity(
+    fun handleServerWebInputException(ex: ServerWebInputException) = ResponseEntity(
         createErrorMessageModel(HttpStatus.BAD_REQUEST.value(), "JSON parse error: ${ex.message}"),
         HttpStatus.BAD_REQUEST
     )
@@ -54,7 +54,7 @@ class ExceptionHandler {
         ResponseEntity(createErrorMessageModel(HttpStatus.CONFLICT.value(), ex.message), HttpStatus.CONFLICT)
 
     @ExceptionHandler
-    fun handleMethodArgumentNotValidExceptionException(ex: MethodArgumentNotValidException):
+    fun handleWebExchangeBindException(ex: WebExchangeBindException):
             ResponseEntity<ErrorMessageModel> {
         val message = ex.bindingResult.allErrors.joinToString("; ") { error ->
             "field ${(error as FieldError).field}: ${error.defaultMessage}"
@@ -64,12 +64,6 @@ class ExceptionHandler {
             HttpStatus.BAD_REQUEST
         )
     }
-
-    @ExceptionHandler
-    fun handleIllegalStateException(ex: IllegalStateException) = ResponseEntity(
-        createErrorMessageModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.message),
-        HttpStatus.INTERNAL_SERVER_ERROR
-    )
 
     @ExceptionHandler
     fun handleException(ex: Exception) = ResponseEntity(
