@@ -26,9 +26,9 @@ fun MongoArtwork.Companion.random(
     artistId = artistId?.toObjectId(),
 )
 
-fun CreateArtworkRequest.Companion.random(title: String = getRandomString()) =
+fun CreateArtworkRequest.Companion.random() =
     CreateArtworkRequest(
-        title = title,
+        title = getRandomString(),
         description = getRandomString(),
         style = ArtworkStyle.POP_ART,
         width = 100,
