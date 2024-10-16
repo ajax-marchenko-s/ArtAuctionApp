@@ -21,6 +21,7 @@ import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
 import ua.marchenko.artauction.auction.exception.InvalidAuctionOperationException
 import ua.marchenko.artauction.auth.jwt.JwtAuthenticationFilter
+import ua.marchenko.artauction.common.exception.ErrorMessageModel
 import ua.marchenko.artauction.common.exception.type.general.AlreadyExistException
 import ua.marchenko.artauction.common.exception.type.general.NotFoundException
 
@@ -41,7 +42,7 @@ class ExceptionHandlerTest {
     @Test
     fun `should return 404 when controller throw NotFoundException`() {
         // GIVEN
-        every { mockTestController.test() } returns Mono.error(NotFoundException("Not found"))
+        every { mockTestController.test() } returns Mono.error(NotFoundException(ERROR_MESSAGE))
         every { mockJwtAuthenticationFilter.filter(any(), any()) } answers {
             secondArg<WebFilterChain>().filter(firstArg())
         }
@@ -53,13 +54,13 @@ class ExceptionHandlerTest {
             .expectStatus().isNotFound
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
             .expectBody()
-            .jsonPath("$.message").isEqualTo("Not found")
+            .jsonPath(ErrorMessageModel::message.name).isEqualTo(ERROR_MESSAGE)
     }
 
     @Test
     fun `should return 409 when controller throw AlreadyExistException`() {
         // GIVEN
-        every { mockTestController.test() } returns Mono.error(AlreadyExistException("Already exist"))
+        every { mockTestController.test() } returns Mono.error(AlreadyExistException(ERROR_MESSAGE))
         every { mockJwtAuthenticationFilter.filter(any(), any()) } answers {
             secondArg<WebFilterChain>().filter(firstArg())
         }
@@ -71,13 +72,13 @@ class ExceptionHandlerTest {
             .expectStatus().isEqualTo(409)
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
             .expectBody()
-            .jsonPath("$.message").isEqualTo("Already exist")
+            .jsonPath(ErrorMessageModel::message.name).isEqualTo(ERROR_MESSAGE)
     }
 
     @Test
     fun `should return 400 when controller throw BadCredentialsException`() {
         // GIVEN
-        every { mockTestController.test() } returns Mono.error(BadCredentialsException("Bad credentials exception"))
+        every { mockTestController.test() } returns Mono.error(BadCredentialsException(ERROR_MESSAGE))
         every { mockJwtAuthenticationFilter.filter(any(), any()) } answers {
             secondArg<WebFilterChain>().filter(firstArg())
         }
@@ -89,13 +90,13 @@ class ExceptionHandlerTest {
             .expectStatus().isBadRequest
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
             .expectBody()
-            .jsonPath("$.message").isEqualTo("Bad credentials exception")
+            .jsonPath(ErrorMessageModel::message.name).isEqualTo(ERROR_MESSAGE)
     }
 
     @Test
     fun `should return 400 when controller throw ServerWebInputException`() {
         // GIVEN
-        every { mockTestController.test() } returns Mono.error(ServerWebInputException("Server Web Input Exception"))
+        every { mockTestController.test() } returns Mono.error(ServerWebInputException(ERROR_MESSAGE))
         every { mockJwtAuthenticationFilter.filter(any(), any()) } answers {
             secondArg<WebFilterChain>().filter(firstArg())
         }
@@ -107,14 +108,15 @@ class ExceptionHandlerTest {
             .expectStatus().isBadRequest
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
             .expectBody()
-            .jsonPath("$.message").isEqualTo("JSON parse error: 400 BAD_REQUEST \"Server Web Input Exception\"")
+            .jsonPath(ErrorMessageModel::message.name)
+            .isEqualTo("JSON parse error: 400 BAD_REQUEST \"$ERROR_MESSAGE\"")
     }
 
     @Test
     fun `should return 400 when controller throw InvalidAuctionOperationException`() {
         // GIVEN
         every { mockTestController.test() } returns
-                Mono.error(InvalidAuctionOperationException("Invalid Auction Operation Exception"))
+                Mono.error(InvalidAuctionOperationException(ERROR_MESSAGE))
         every { mockJwtAuthenticationFilter.filter(any(), any()) } answers {
             secondArg<WebFilterChain>().filter(firstArg())
         }
@@ -126,15 +128,18 @@ class ExceptionHandlerTest {
             .expectStatus().isBadRequest
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
             .expectBody()
-            .jsonPath("$.message").isEqualTo("Invalid Auction Operation Exception")
+            .jsonPath(ErrorMessageModel::message.name).isEqualTo(ERROR_MESSAGE)
     }
 
     @Test
     fun `should return 400 when controller throw WebExchangeBindException`() {
         // GIVEN
         val targetObject = Any()
-        val bindingResult: BindingResult = BeanPropertyBindingResult(targetObject, "authenticationRequest")
-        bindingResult.addError(FieldError("authenticationRequest", "email", "Invalid email format"))
+        val objectName = "authenticationRequest"
+        val invalidField = "email"
+        val defaultMessage = "Invalid email format"
+        val bindingResult: BindingResult = BeanPropertyBindingResult(targetObject, objectName)
+        bindingResult.addError(FieldError(objectName, invalidField, defaultMessage))
         val methodParameter = mockk<MethodParameter>(relaxed = true)
 
         every { mockTestController.test() } returns Mono.error(WebExchangeBindException(methodParameter, bindingResult))
@@ -149,13 +154,13 @@ class ExceptionHandlerTest {
             .expectStatus().isBadRequest
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
             .expectBody()
-            .jsonPath("$.message").isEqualTo("field email: Invalid email format")
+            .jsonPath(ErrorMessageModel::message.name).isEqualTo("field $invalidField: $defaultMessage")
     }
 
     @Test
     fun `should return 500 when controller throw Exception`() {
         // GIVEN
-        every { mockTestController.test() } returns Mono.error(Exception("General Exception"))
+        every { mockTestController.test() } returns Mono.error(Exception(ERROR_MESSAGE))
         every { mockJwtAuthenticationFilter.filter(any(), any()) } answers {
             secondArg<WebFilterChain>().filter(firstArg())
         }
@@ -167,10 +172,11 @@ class ExceptionHandlerTest {
             .expectStatus().is5xxServerError
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
             .expectBody()
-            .jsonPath("$.message").isEqualTo("General Exception")
+            .jsonPath(ErrorMessageModel::message.name).isEqualTo(ERROR_MESSAGE)
     }
 
     companion object {
         private const val URL = "/test"
+        private const val ERROR_MESSAGE = "Something went wrong"
     }
 }
