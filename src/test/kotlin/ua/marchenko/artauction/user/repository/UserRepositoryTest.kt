@@ -4,6 +4,8 @@ import getRandomEmail
 import kotlin.test.Test
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.springframework.beans.factory.annotation.Autowired
 import reactor.kotlin.test.test
 import ua.marchenko.artauction.common.AbstractBaseIntegrationTest
@@ -63,8 +65,7 @@ class UserRepositoryTest : AbstractBaseIntegrationTest {
 
         // THEN
         result.test()
-            .expectNext(true)
-            .`as`("User with email ${savedUser.email} must exist")
+            .assertNext { assertTrue(it, "User with email ${savedUser.email} must exist") }
             .verifyComplete()
     }
 
@@ -75,8 +76,7 @@ class UserRepositoryTest : AbstractBaseIntegrationTest {
 
         // THEN
         result.test()
-            .expectNext(false)
-            .`as`("User with given email must not exist")
+            .assertNext { assertFalse(it, "User with given email must not exist") }
             .verifyComplete()
     }
 
@@ -114,8 +114,7 @@ class UserRepositoryTest : AbstractBaseIntegrationTest {
 
         // THEN
         result.test()
-            .expectNextMatches { it.containsAll(users) }
-            .`as`("Users $users must be found")
+            .assertNext { assertTrue(it.containsAll(users), "Users $users must be found") }
             .verifyComplete()
     }
 }
