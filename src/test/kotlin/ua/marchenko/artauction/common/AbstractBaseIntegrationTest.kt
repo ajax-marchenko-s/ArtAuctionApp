@@ -14,16 +14,13 @@ import org.testcontainers.containers.MongoDBContainer
 interface AbstractBaseIntegrationTest {
 
     companion object {
-        val mongoDBContainer = MongoDBContainer("mongo:latest")
+        val mongoDBContainer = MongoDBContainer("mongo:7.0.14")
             .apply { start() }
     }
 
-    class TestContainerInitializer: ApplicationContextInitializer<ConfigurableApplicationContext> {
+    class TestContainerInitializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
         override fun initialize(configurableApplicationContext: ConfigurableApplicationContext) {
-            mongoDBContainer.start()
-            val testPropertyValues = TestPropertyValues.of(
-                "spring.data.mongodb.uri=${mongoDBContainer.replicaSetUrl}"
-            )
+            val testPropertyValues = TestPropertyValues.of("spring.data.mongodb.uri=${mongoDBContainer.replicaSetUrl}")
             testPropertyValues.applyTo(configurableApplicationContext.environment)
         }
     }

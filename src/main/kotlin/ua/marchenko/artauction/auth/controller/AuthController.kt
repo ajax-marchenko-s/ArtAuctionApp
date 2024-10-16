@@ -16,7 +16,6 @@ import ua.marchenko.artauction.auth.service.AuthenticationService
 class AuthController(
     private val authenticationService: AuthenticationService
 ) {
-
     @PostMapping("/authenticate")
     @ResponseStatus(HttpStatus.OK)
     fun authenticate(@Valid @RequestBody authRequest: AuthenticationRequest) =

@@ -1,13 +1,13 @@
 package ua.marchenko.artauction.user.repository
 
 import getRandomEmail
-import org.springframework.beans.factory.annotation.Autowired
 import kotlin.test.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertNull
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.springframework.beans.factory.annotation.Autowired
+import reactor.kotlin.test.test
 import ua.marchenko.artauction.common.AbstractBaseIntegrationTest
 import ua.marchenko.artauction.user.model.MongoUser
 import user.random
@@ -26,40 +26,47 @@ class UserRepositoryTest : AbstractBaseIntegrationTest {
         val savedUser = userRepository.save(user)
 
         // THEN
-        assertEquals(user.copy(id = savedUser.id), savedUser)
+        savedUser.test()
+            .assertNext { userFromMono -> assertEquals(user.copy(id = userFromMono.id), userFromMono) }
+            .verifyComplete()
     }
 
     @Test
     fun `should find user by id when this user exists`() {
         // GIVEN
-        val savedUser = userRepository.save(MongoUser.random(id = null))
+        val savedUser = userRepository.save(MongoUser.random(id = null)).block()
 
         // WHEN
-        val foundUser = userRepository.findById(savedUser.id.toString())
+        val foundUser = userRepository.findById(savedUser!!.id.toString())
 
         // THEN
-        assertEquals(savedUser.id, foundUser?.id)
+        foundUser.test()
+            .expectNext(savedUser)
+            .verifyComplete()
     }
 
     @Test
-    fun `should return null when there is no user with this id`() {
+    fun `should return empty when there is no user with this id`() {
         // WHEN
         val result = userRepository.findById(ObjectId().toHexString())
 
         // THEN
-        assertNull(result, "Found user must be null")
+        result.test()
+            .verifyComplete()
     }
 
     @Test
     fun `should return true when user with given email exists`() {
         // GIVEN
-        val savedUser = userRepository.save(MongoUser.random(id = null))
+        val savedUser = userRepository.save(MongoUser.random(id = null)).block()
 
         // WHEN
-        val result = userRepository.existsByEmail(savedUser.email!!)
+        val result = userRepository.existsByEmail(savedUser!!.email!!)
 
         // THEN
-        assertTrue(result, "User with given email must exist")
+        result.test()
+            .assertNext { assertTrue(it, "User with email ${savedUser.email} must exist") }
+            .verifyComplete()
     }
 
     @Test
@@ -68,43 +75,46 @@ class UserRepositoryTest : AbstractBaseIntegrationTest {
         val result = userRepository.existsByEmail(getRandomEmail())
 
         // THEN
-        assertFalse(result, "User with given email must not exist")
+        result.test()
+            .assertNext { assertFalse(it, "User with given email must not exist") }
+            .verifyComplete()
     }
 
     @Test
     fun `should return user when user with given email exists`() {
         // GIVEN
-        val savedUser = userRepository.save(MongoUser.random(id = null))
+        val savedUser = userRepository.save(MongoUser.random(id = null)).block()
 
         // WHEN
-        val foundUser = userRepository.findByEmail(savedUser.email!!)
+        val foundUser = userRepository.findByEmail(savedUser!!.email!!)
 
         // THEN
-        assertEquals(savedUser.email, foundUser?.email)
+        foundUser.test()
+            .expectNext(savedUser)
+            .verifyComplete()
     }
 
     @Test
-    fun `should return null when user with given email doesnt exists`() {
+    fun `should return Mono empty() when user with given email doesnt exists`() {
         // WHEN
         val result = userRepository.findByEmail(getRandomEmail())
 
         // THEN
-        assertNull(result, "Found user must be null")
+        result.test()
+            .verifyComplete()
     }
 
     @Test
     fun `should return all users when they are exists`() {
         // GIVEN
-        val users = listOf(MongoUser.random(id = null))
-        users.forEach { user -> userRepository.save(user) }
+        val users = listOf(userRepository.save(MongoUser.random(id = null)).block())
 
         // WHEN
-        val result = userRepository.findAll()
+        val result = userRepository.findAll().collectList()
 
         // THEN
-        assertTrue(result.size >= users.size, "Size of list must be at least ${users.size}")
-        users.forEach { user ->
-            assertTrue(result.any { it.email == user.email }, "User with email ${user.email} must be found")
-        }
+        result.test()
+            .assertNext { assertTrue(it.containsAll(users), "Users $users must be found") }
+            .verifyComplete()
     }
 }

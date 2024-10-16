@@ -1,49 +1,47 @@
 package ua.marchenko.artauction.auth.jwt
 
-import jakarta.servlet.FilterChain
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
-import org.springframework.web.filter.OncePerRequestFilter
 import ua.marchenko.artauction.auth.service.CustomUserDetailsServiceImpl
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.ReactiveSecurityContextHolder
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.server.ServerWebExchange
+import org.springframework.web.server.WebFilter
+import org.springframework.web.server.WebFilterChain
+import reactor.core.publisher.Mono
 
 @Component
 class JwtAuthenticationFilter(
     private val userDetailsService: CustomUserDetailsServiceImpl,
     private val jwtService: JwtService,
-) : OncePerRequestFilter() {
+) : WebFilter {
 
-    override fun doFilterInternal(
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-        filterChain: FilterChain
-    ) {
-        val authHeader: String? = request.getHeader(HEADER_AUTHORIZATION)
+    @Suppress("ForbiddenVoid", "ReturnCount")
+    override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
+        val authHeader = exchange.request.headers.getFirst(HEADER_AUTHORIZATION)
+
         if (authHeader == null || !authHeader.startsWith(HEADER_BEARER_PREFIX)) {
-            filterChain.doFilter(request, response)
-            return
+            return chain.filter(exchange)
         }
+
         val jwtToken = authHeader.extractTokenValue()
         val email = jwtService.extractEmail(jwtToken)
+
         if (email != null && SecurityContextHolder.getContext().authentication == null) {
-            val foundUser = userDetailsService.loadUserByUsername(email)
-            if (jwtService.isValid(jwtToken, foundUser))
-                updateContext(foundUser, request)
-            filterChain.doFilter(request, response)
+            return userDetailsService.findByUsername(email)
+                .filter { jwtService.isValid(jwtToken, it) }
+                .flatMap { userDetails ->
+                    chain.filter(exchange).contextWrite(
+                        ReactiveSecurityContextHolder.withAuthentication(
+                            UsernamePasswordAuthenticationToken(userDetails.username, null, userDetails.authorities)
+                        )
+                    )
+                }
         }
+        return chain.filter(exchange)
     }
 
     private fun String.extractTokenValue() = substringAfter(HEADER_BEARER_PREFIX)
-
-    private fun updateContext(foundUser: UserDetails, request: HttpServletRequest) {
-        val authToken = UsernamePasswordAuthenticationToken(foundUser, null, foundUser.authorities)
-        authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
-        SecurityContextHolder.getContext().authentication = authToken
-    }
 
     companion object {
         private const val HEADER_AUTHORIZATION = "Authorization"

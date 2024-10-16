@@ -1,9 +1,8 @@
 package ua.marchenko.artauction.artwork.repository.impl
 
-import org.springframework.data.mongodb.core.MongoTemplate
-import org.springframework.data.mongodb.core.query.Criteria
-import org.springframework.data.mongodb.core.query.Query
-import org.springframework.data.mongodb.core.query.isEqualTo
+import kotlin.reflect.full.memberProperties
+import org.springframework.data.mongodb.core.FindAndModifyOptions
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Aggregation
 import org.springframework.data.mongodb.core.aggregation.Aggregation.lookup
 import org.springframework.data.mongodb.core.aggregation.Aggregation.match
@@ -11,7 +10,14 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation.project
 import org.springframework.data.mongodb.core.aggregation.Aggregation.unwind
 import org.springframework.data.mongodb.core.aggregation.Fields
 import org.springframework.data.mongodb.core.aggregation.FieldsExposingAggregationOperation
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.Update
+import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.stereotype.Repository
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+import ua.marchenko.artauction.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
@@ -19,44 +25,78 @@ import ua.marchenko.artauction.user.model.MongoUser
 
 @Repository
 @Suppress("SpreadOperator")
-internal class MongoArtworkRepository(private val mongoTemplate: MongoTemplate) : ArtworkRepository {
+internal class MongoArtworkRepository(
+    private val reactiveMongoTemplate: ReactiveMongoTemplate
+) : ArtworkRepository {
 
-    override fun save(artwork: MongoArtwork): MongoArtwork = mongoTemplate.save(artwork)
+    override fun save(artwork: MongoArtwork): Mono<MongoArtwork> = reactiveMongoTemplate.save(artwork)
 
-    override fun findById(id: String): MongoArtwork? {
+    override fun findById(id: String): Mono<MongoArtwork> {
         val query = Query.query(Criteria.where(Fields.UNDERSCORE_ID).isEqualTo(id))
-        return mongoTemplate.findOne(query, MongoArtwork::class.java)
+        return reactiveMongoTemplate.findOne(query, MongoArtwork::class.java)
     }
 
-    override fun findFullById(id: String): ArtworkFull? {
+    override fun findFullById(id: String): Mono<ArtworkFull> {
         val aggregation = Aggregation.newAggregation(
             match(Criteria.where(Fields.UNDERSCORE_ID).isEqualTo(id)),
             *aggregateFullArtist(),
         )
-        val results = mongoTemplate.aggregate(aggregation, MongoArtwork.COLLECTION, ArtworkFull::class.java)
-        return results.mappedResults.firstOrNull()
+        return reactiveMongoTemplate.aggregate(aggregation, MongoArtwork.COLLECTION, ArtworkFull::class.java)
+            .singleOrEmpty()
     }
 
-    override fun findAll(page: Int, limit: Int): List<MongoArtwork> {
+    override fun findAll(page: Int, limit: Int): Flux<MongoArtwork> {
         val skip = page * limit
         val query = Query().skip(skip.toLong()).limit(limit)
-        return mongoTemplate.find(query, MongoArtwork::class.java)
+        return reactiveMongoTemplate.find(query, MongoArtwork::class.java)
     }
 
-    override fun findFullAll(page: Int, limit: Int): List<ArtworkFull> {
+    override fun findFullAll(page: Int, limit: Int): Flux<ArtworkFull> {
         val skip = page * limit
         val aggregation = Aggregation.newAggregation(
-            *aggregateFullArtist(),
             Aggregation.skip(skip.toLong()),
             Aggregation.limit(limit.toLong()),
+            *aggregateFullArtist(),
         )
-        val results = mongoTemplate.aggregate(aggregation, MongoArtwork.COLLECTION, ArtworkFull::class.java)
-        return results.mappedResults.toList()
+        return reactiveMongoTemplate.aggregate(aggregation, MongoArtwork.COLLECTION, ArtworkFull::class.java)
     }
 
-    override fun existsById(id: String): Boolean {
+    override fun existsById(id: String): Mono<Boolean> {
         val query = Query.query(Criteria.where(MongoArtwork::id.name).isEqualTo(id))
-        return mongoTemplate.exists(query, MongoArtwork::class.java)
+        return reactiveMongoTemplate.exists(query, MongoArtwork::class.java)
+    }
+
+    override fun updateStatusByIdAndPreviousStatus(
+        artworkId: String,
+        prevStatus: ArtworkStatus,
+        newStatus: ArtworkStatus
+    ): Mono<MongoArtwork> {
+        val query = Query.query(
+            Criteria.where(MongoArtwork::id.name).`is`(artworkId).and(MongoArtwork::status.name).`is`(prevStatus)
+        )
+        val changes = Update.update(MongoArtwork::status.name, newStatus)
+        val options = FindAndModifyOptions.options().returnNew(true)
+        return reactiveMongoTemplate.findAndModify(query, changes, options, MongoArtwork::class.java)
+    }
+
+    override fun updateById(id: String, artwork: MongoArtwork): Mono<MongoArtwork> {
+        val nonUpdatableFields = listOf(
+            MongoArtwork::id.name,
+            MongoArtwork::status.name,
+            MongoArtwork::artistId.name
+        )
+
+        val query = Query.query(Criteria.where(MongoArtwork::id.name).`is`(id))
+        val changes = Update()
+        MongoArtwork::class.memberProperties
+            .filter { !nonUpdatableFields.contains(it.name) }
+            .forEach { property ->
+                property.get(artwork)?.let { value ->
+                    changes.set(property.name, value)
+                }
+            }
+        val options = FindAndModifyOptions.options().returnNew(true)
+        return reactiveMongoTemplate.findAndModify(query, changes, options, MongoArtwork::class.java)
     }
 
     private fun aggregateFullArtist(): Array<FieldsExposingAggregationOperation> {

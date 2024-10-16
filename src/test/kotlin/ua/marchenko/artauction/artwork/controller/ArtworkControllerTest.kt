@@ -1,7 +1,5 @@
 package ua.marchenko.artauction.artwork.controller
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.assertThrows
 import ua.marchenko.artauction.artwork.exception.ArtworkNotFoundException
 import ua.marchenko.artauction.artwork.service.ArtworkService
 import artwork.random
@@ -11,6 +9,11 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import org.bson.types.ObjectId
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toFlux
+import reactor.kotlin.core.publisher.toMono
+import reactor.kotlin.test.test
 import ua.marchenko.artauction.artwork.controller.dto.CreateArtworkRequest
 import ua.marchenko.artauction.artwork.mapper.toMongo
 import ua.marchenko.artauction.artwork.mapper.toResponse
@@ -28,26 +31,28 @@ class ArtworkControllerTest {
     fun `should return a list of ArtworkResponse when there are some artworks`() {
         // GIVEN
         val artworks = listOf(MongoArtwork.random())
-        every { mockArtworkService.getAll() } returns artworks
+        every { mockArtworkService.getAll() } returns artworks.toFlux()
 
         // WHEN
         val result = artworkController.getAllArtworks(0, 10)
 
         //THEN
-        assertEquals(1, result.size)
-        assertEquals(artworks[0].toResponse(), result[0])
+        result.test()
+            .expectNext(artworks[0].toResponse())
+            .verifyComplete()
     }
 
     @Test
     fun `should return an empty list when there are no artworks`() {
         // GIVEN
-        every { mockArtworkService.getAll() } returns emptyList()
+        every { mockArtworkService.getAll() } returns Flux.empty()
 
         // WHEN
         val result = artworkController.getAllArtworks(0, 10)
 
         //THEN
-        assertEquals(0, result.size)
+        result.test()
+            .verifyComplete()
     }
 
     @Test
@@ -56,23 +61,32 @@ class ArtworkControllerTest {
         val id = ObjectId().toHexString()
         val artwork = MongoArtwork.random(id = id)
 
-        every { mockArtworkService.getById(id) } returns artwork
+        every { mockArtworkService.getById(id) } returns artwork.toMono()
 
         // WHEN
         val result = artworkController.getArtworkById(id)
 
-        //THEN
-        assertEquals(artwork.toResponse(), result)
+        // THEN
+        result.test()
+            .expectNext(artwork.toResponse())
+            .verifyComplete()
     }
 
     @Test
     fun `should throw ArtworkNotFoundException when there is no artwork with this id`() {
         // GIVEN
         val id = getRandomString()
-        every { mockArtworkService.getById(id) } throws ArtworkNotFoundException(id)
+        every { mockArtworkService.getById(id) } returns Mono.error(
+            ArtworkNotFoundException(id)
+        )
 
-        // WHEN-THEN
-        assertThrows<ArtworkNotFoundException> { artworkController.getArtworkById(id) }
+        // WHEN
+        val result = artworkController.getArtworkById(id)
+
+        // THEN
+        result.test()
+            .verifyError(ArtworkNotFoundException::class.java)
+
     }
 
     @Test
@@ -81,12 +95,14 @@ class ArtworkControllerTest {
         val artworkRequest = CreateArtworkRequest.random()
         val artwork = MongoArtwork.random()
 
-        every { mockArtworkService.save(artworkRequest.toMongo()) } returns artwork
+        every { mockArtworkService.save(artworkRequest.toMongo()) } returns artwork.toMono()
 
         // WHEN
         val result = artworkController.addArtwork(artworkRequest)
 
         //THEN
-        assertEquals(artwork.toResponse(), result)
+        result.test()
+            .expectNext(artwork.toResponse())
+            .verifyComplete()
     }
 }

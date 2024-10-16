@@ -2,23 +2,22 @@ package ua.marchenko.artauction.auth.filter
 
 import getRandomEmail
 import getRandomString
-import io.mockk.Runs
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
-import io.mockk.just
 import io.mockk.verify
-import jakarta.servlet.FilterChain
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
-import kotlin.test.assertNotNull
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
-import org.springframework.security.core.context.SecurityContextHolder
 import ua.marchenko.artauction.auth.service.CustomUserDetailsServiceImpl
 import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.BeforeEach
+import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
+import org.springframework.web.server.ServerWebExchange
+import org.springframework.web.server.WebFilterChain
+import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toMono
+import reactor.kotlin.test.test
 import ua.marchenko.artauction.auth.jwt.JwtAuthenticationFilter
 import ua.marchenko.artauction.auth.jwt.JwtService
 
@@ -31,51 +30,51 @@ class JwtAuthenticationFilterTest {
     private lateinit var jwtService: JwtService
 
     @MockK
-    private lateinit var request: HttpServletRequest
+    private lateinit var exchange: ServerWebExchange
 
     @MockK
-    private lateinit var response: HttpServletResponse
-
-    @MockK
-    private lateinit var filterChain: FilterChain
+    private lateinit var filterChain: WebFilterChain
 
     @MockK
     private lateinit var userDetails: UserDetails
 
     @InjectMockKs
-    private lateinit var jwtAuthenticationFilter: JwtAuthenticationFilterForTest
-
-    @BeforeEach
-    fun setup() {
-        SecurityContextHolder.clearContext()
-    }
+    private lateinit var jwtAuthenticationFilter: JwtAuthenticationFilter
 
     @Test
     fun `should not authenticate when Authorization header is null`() {
         // GIVEN
-        every { request.getHeader(HEADER_AUTHORIZATION) } returns null
-        every { filterChain.doFilter(request, response) } just Runs
+        every { exchange.request.headers.getFirst(HEADER_AUTHORIZATION) } returns null
+        every { filterChain.filter(exchange) } returns Mono.empty()
 
         // WHEN
-        jwtAuthenticationFilter.doFilterInternalTest(request, response, filterChain)
+        val result = jwtAuthenticationFilter.filter(exchange, filterChain)
 
         // THEN
-        verify { filterChain.doFilter(request, response) }
-        assertNull(SecurityContextHolder.getContext().authentication)
+        result.test().then {
+            ReactiveSecurityContextHolder.getContext().map { it.authentication }.doOnNext { authentication ->
+                assertNull(authentication, "ReactiveSecurityContextHolder authentication should be null")
+            }
+        }.verifyComplete()
+        verify { filterChain.filter(exchange) }
     }
 
     @Test
     fun `should not authenticate when Authorization header does not start with Bearer`() {
         // GIVEN
-        every { request.getHeader(HEADER_AUTHORIZATION) } returns getRandomString()
-        every { filterChain.doFilter(request, response) } just Runs
+        every { exchange.request.headers.getFirst(HEADER_AUTHORIZATION) } returns getRandomString()
+        every { filterChain.filter(exchange) } returns Mono.empty()
 
         // WHEN
-        jwtAuthenticationFilter.doFilterInternalTest(request, response, filterChain)
+        val result = jwtAuthenticationFilter.filter(exchange, filterChain)
 
         // THEN
-        assertNull(SecurityContextHolder.getContext().authentication)
-        verify { filterChain.doFilter(request, response) }
+        result.test().then {
+            ReactiveSecurityContextHolder.getContext().map { it.authentication }.doOnNext { authentication ->
+                assertNull(authentication, "ReactiveSecurityContextHolder authentication should be null")
+            }
+        }.verifyComplete()
+        verify { filterChain.filter(exchange) }
     }
 
     @Test
@@ -83,23 +82,27 @@ class JwtAuthenticationFilterTest {
         // GIVEN
         val token = getRandomString()
         val email = getRandomEmail()
-        val remoteAddr = "127.0.0.1"
 
-        every { request.getHeader(HEADER_AUTHORIZATION) } returns "$HEADER_BEARER_PREFIX$token"
+        every { exchange.request.headers.getFirst(HEADER_AUTHORIZATION) } returns "$HEADER_BEARER_PREFIX$token"
         every { jwtService.extractEmail(token) } returns email
-        every { userDetailsService.loadUserByUsername(email) } returns userDetails
+        every { userDetailsService.findByUsername(email) } returns userDetails.toMono()
         every { jwtService.isValid(token, userDetails) } returns true
         every { userDetails.authorities } returns listOf()
-        every { WebAuthenticationDetailsSource().buildDetails(request) } returns null
-        every { request.remoteAddr } returns remoteAddr
-        every { filterChain.doFilter(request, response) } just Runs
+        every { userDetails.username } returns email
+        every { filterChain.filter(exchange) } returns Mono.empty()
 
         // WHEN
-        jwtAuthenticationFilter.doFilterInternalTest(request, response, filterChain)
+        val result = jwtAuthenticationFilter.filter(exchange, filterChain)
 
         // THEN
-        assertNotNull(SecurityContextHolder.getContext().authentication)
-        verify { filterChain.doFilter(request, response) }
+        result.test()
+            .then {
+                ReactiveSecurityContextHolder.getContext().map { it.authentication }.doOnNext { authentication ->
+                    assertNotNull(authentication, "ReactiveSecurityContextHolder authentication should not be null")
+                    assertEquals(email, authentication.name)
+                }
+            }.verifyComplete()
+        verify { filterChain.filter(exchange) }
     }
 
     @Test
@@ -108,29 +111,21 @@ class JwtAuthenticationFilterTest {
         val token = getRandomString()
         val email = getRandomEmail()
 
-        every { request.getHeader(HEADER_AUTHORIZATION) } returns "$HEADER_BEARER_PREFIX$token"
+        every { exchange.request.headers.getFirst(HEADER_AUTHORIZATION) } returns "$HEADER_BEARER_PREFIX$token"
         every { jwtService.extractEmail(token) } returns email
-        every { userDetailsService.loadUserByUsername(email) } returns userDetails
+        every { userDetailsService.findByUsername(email) } returns userDetails.toMono()
         every { jwtService.isValid(token, userDetails) } returns false
-        every { filterChain.doFilter(request, response) } just Runs
+        every { filterChain.filter(exchange) } returns Mono.empty()
 
         // WHEN
-        jwtAuthenticationFilter.doFilterInternalTest(request, response, filterChain)
+        val result = jwtAuthenticationFilter.filter(exchange, filterChain)
 
         // THEN
-        assertNull(SecurityContextHolder.getContext().authentication)
-        verify { filterChain.doFilter(request, response) }
-    }
-
-    class JwtAuthenticationFilterForTest(
-        userDetailsService: CustomUserDetailsServiceImpl,
-        jwtService: JwtService,
-    ) : JwtAuthenticationFilter(
-        userDetailsService,
-        jwtService,
-    ) {
-        fun doFilterInternalTest(req: HttpServletRequest, res: HttpServletResponse, filterChain: FilterChain) =
-            doFilterInternal(req, res, filterChain)
+        result.test().then {
+            ReactiveSecurityContextHolder.getContext().map { it.authentication }.doOnNext { authentication ->
+                assertNull(authentication, "ReactiveSecurityContextHolder authentication should be null")
+            }
+        }.verifyComplete()
     }
 
     companion object {

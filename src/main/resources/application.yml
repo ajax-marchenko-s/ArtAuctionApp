@@ -3,6 +3,8 @@ spring:
     name: artauction
   profiles:
     active: local
+  main:
+    web-application-type: reactive
 
 security:
   jwt:

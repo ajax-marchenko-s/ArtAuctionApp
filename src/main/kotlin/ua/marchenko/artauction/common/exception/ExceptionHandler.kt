@@ -10,10 +10,13 @@ import ua.marchenko.artauction.common.exception.type.general.AlreadyExistExcepti
 import ua.marchenko.artauction.common.exception.type.general.NotFoundException
 import java.time.LocalDateTime
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
+import ua.marchenko.artauction.auction.exception.InvalidAuctionOperationException
 
 @ControllerAdvice
+@Suppress("TooManyFunctions")
 class ExceptionHandler {
 
     @ExceptionHandler
@@ -33,6 +36,14 @@ class ExceptionHandler {
         createErrorMessageModel(HttpStatus.BAD_REQUEST.value(), "JSON parse error: ${ex.message}"),
         HttpStatus.BAD_REQUEST
     )
+
+    @ExceptionHandler
+    fun handleInvalidAuctionOperationException(ex: InvalidAuctionOperationException) =
+        ResponseEntity(createErrorMessageModel(HttpStatus.BAD_REQUEST.value(), ex.message), HttpStatus.BAD_REQUEST)
+
+    @ExceptionHandler
+    fun handleBadCredentialsException(ex: BadCredentialsException) =
+        ResponseEntity(createErrorMessageModel(HttpStatus.BAD_REQUEST.value(), ex.message), HttpStatus.BAD_REQUEST)
 
     @ExceptionHandler
     fun handleNotFoundException(ex: NotFoundException) =
