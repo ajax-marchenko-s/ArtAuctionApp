@@ -7,10 +7,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
-import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
-import org.springframework.context.annotation.Profile
 import org.springframework.core.MethodParameter
 import org.springframework.http.MediaType
 import org.springframework.security.authentication.BadCredentialsException
@@ -182,12 +180,6 @@ class ExceptionHandlerTest {
             .jsonPath(ErrorMessageModel::message.name).isEqualTo(ERROR_MESSAGE)
     }
 
-    companion object {
-        private const val URL = "/test"
-        private const val ERROR_MESSAGE = "Something went wrong"
-    }
-
-    @TestConfiguration
     class ExceptionHandlerTestConfiguration {
         @Bean
         fun securityWebFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
@@ -198,12 +190,15 @@ class ExceptionHandlerTest {
     }
 
     @RestController
-    @Profile("test")
     class ExceptionHandlerTestController {
-
-        @GetMapping("/test")
+        @GetMapping(URL)
         fun test(): Mono<Unit> {
             return Mono.empty()
         }
+    }
+
+    companion object {
+        private const val URL = "/test"
+        private const val ERROR_MESSAGE = "Something went wrong"
     }
 }
