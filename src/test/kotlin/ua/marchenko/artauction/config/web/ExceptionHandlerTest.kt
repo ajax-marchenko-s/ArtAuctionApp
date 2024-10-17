@@ -7,14 +7,21 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.Profile
 import org.springframework.core.MethodParameter
 import org.springframework.http.MediaType
 import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.config.web.server.ServerHttpSecurity
+import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.validation.BeanPropertyBindingResult
 import org.springframework.validation.BindingResult
 import org.springframework.validation.FieldError
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.support.WebExchangeBindException
 import org.springframework.web.server.ServerWebInputException
 import org.springframework.web.server.WebFilterChain
@@ -25,8 +32,8 @@ import ua.marchenko.artauction.common.exception.ErrorMessageModel
 import ua.marchenko.artauction.common.exception.type.general.AlreadyExistException
 import ua.marchenko.artauction.common.exception.type.general.NotFoundException
 
-@WebFluxTest(ExceptionHandlerTestController::class)
-@Import(value = [ExceptionHandlerTestConfiguration::class])
+@WebFluxTest(ExceptionHandlerTest.ExceptionHandlerTestController::class)
+@Import(value = [ExceptionHandlerTest.ExceptionHandlerTestConfiguration::class])
 @AutoConfigureWebTestClient
 class ExceptionHandlerTest {
 
@@ -178,5 +185,25 @@ class ExceptionHandlerTest {
     companion object {
         private const val URL = "/test"
         private const val ERROR_MESSAGE = "Something went wrong"
+    }
+
+    @TestConfiguration
+    class ExceptionHandlerTestConfiguration {
+        @Bean
+        fun securityWebFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
+            return http.csrf { it.disable() }
+                .authorizeExchange { it.anyExchange().permitAll() }
+                .build()
+        }
+    }
+
+    @RestController
+    @Profile("test")
+    class ExceptionHandlerTestController {
+
+        @GetMapping("/test")
+        fun test(): Mono<Unit> {
+            return Mono.empty()
+        }
     }
 }
