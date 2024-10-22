@@ -1,6 +1,6 @@
-package ua.marchenko.artauction.user.controller.dto
+package ua.marchenko.core.user.dto
 
-import ua.marchenko.artauction.user.enums.Role
+import ua.marchenko.core.user.enums.Role
 
 data class UserResponse(
     val id: String,
