@@ -13,9 +13,6 @@ import ua.marchenko.artauction.artwork.mapper.toResponse
 import ua.marchenko.artauction.artwork.service.ArtworkService
 import ua.marchenko.artauction.common.nats.NatsController
 import ua.marchenko.internal.ArtworkNatsSubject
-import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest
-import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse
-
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest as CreateArtworkRequestProto
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse as CreateArtworkResponseProto
 
@@ -31,7 +28,7 @@ class AddArtworkNatsController(
 
     override val parser: Parser<CreateArtworkRequestProto> = CreateArtworkRequestProto.parser()
 
-    override fun handle(request: CreateArtworkRequest): Mono<CreateArtworkResponse> {
+    override fun handle(request: CreateArtworkRequestProto): Mono<CreateArtworkResponseProto> {
         return artworkService.save(request.toCreateArtworkRequest().toMongo())
             .map { it.toResponse().toCreateArtworkSuccessResponseProto() }
             .onErrorResume { it.toCreateArtworkFailureResponseProto().toMono() }

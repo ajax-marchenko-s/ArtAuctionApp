@@ -10,7 +10,7 @@ import ua.marchenko.core.artwork.dto.CreateArtworkRequest
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.core.artwork.enums.ArtworkStyle
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest as CreateArtworkRequestProto
-import ua.marchenko.internal.commonmodels.artwork.ArtworkStyleProto
+import ua.marchenko.internal.commonmodels.artwork.ArtworkStyle as ArtworkStyleProto
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse as CreateArtworkResponseProto
 import ua.marchenko.internal.commonmodels.artwork.Artwork as ArtworkProto
 import ua.marchenko.internal.commonmodels.artwork.ArtworkFull as ArtworkFullProto

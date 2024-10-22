@@ -9,7 +9,7 @@ option java_multiple_files = true;
 message CreateArtworkRequest {
   string title = 1;
   string description = 2;
-  ArtworkStyleProto style = 3;
+  ArtworkStyle style = 3;
   uint32 width = 4;
   uint32 height = 5;
 }
