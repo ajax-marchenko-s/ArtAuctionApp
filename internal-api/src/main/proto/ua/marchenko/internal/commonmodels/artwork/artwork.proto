@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option java_package = "ua.marchenko.internal.commonmodels.artwork";
+option java_multiple_files = true;
+
+enum ArtworkStyleProto {
+  ARTWORK_STYLE_UNSPECIFIED = 0;
+  REALISM = 1;
+  IMPRESSIONISM = 2;
+  EXPRESSIONISM = 3;
+  CUBISM = 4;
+  SURREALISM = 5;
+  ABSTRACT = 6;
+  POP_ART = 7;
+  MINIMALISM = 8;
+  RENAISSANCE = 9;
+}
+
+enum ArtworkStatus {
+  ARTWORK_STATUS_UNSPECIFIED = 0;
+  SOLD = 1;
+  ON_AUCTION = 2;
+  VIEW = 3;
+}
+
+message Artwork {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  ArtworkStyleProto style = 4;
+  uint32 width = 5;
+  uint32 height = 6;
+  ArtworkStatus status = 7;
+  string artistId = 8;
+}

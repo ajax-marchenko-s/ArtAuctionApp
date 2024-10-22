@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "ua/marchenko/internal/commonmodels/artwork/artwork.proto";
+import "ua/marchenko/internal/commonmodels/user/user.proto";
+
+option java_package = "ua.marchenko.internal.commonmodels.artwork";
+option java_multiple_files = true;
+
+message ArtworkFull {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  ArtworkStyleProto style = 4;
+  uint32 width = 5;
+  uint32 height = 6;
+  ArtworkStatus status = 7;
+  User artist = 8;
+}
