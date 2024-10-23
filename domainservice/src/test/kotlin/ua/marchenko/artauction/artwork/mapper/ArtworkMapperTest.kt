@@ -1,12 +1,13 @@
 package ua.marchenko.artauction.artwork.mapper
 
+import artwork.random
 import org.junit.jupiter.api.Assertions.assertEquals
 import ua.marchenko.artauction.artwork.model.MongoArtwork
-import artwork.random
 import kotlin.test.Test
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.assertThrows
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
+import ua.marchenko.artauction.common.mongodb.id.toObjectId
 import ua.marchenko.artauction.user.mapper.toResponse
 import ua.marchenko.core.artwork.dto.ArtworkFullResponse
 import ua.marchenko.core.artwork.dto.ArtworkResponse
@@ -84,7 +85,7 @@ class ArtworkMapperTest {
                 artwork.width,
                 artwork.height,
                 null,
-                null
+                artwork.artistId.toObjectId()
             )
 
         //WHEN

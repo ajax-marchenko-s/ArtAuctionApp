@@ -9,6 +9,8 @@ import ua.marchenko.core.artwork.dto.ArtworkResponse
 import ua.marchenko.core.artwork.dto.CreateArtworkRequest
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.core.artwork.enums.ArtworkStyle
+import ua.marchenko.core.user.exception.UserNotFoundException
+import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest as CreateArtworkRequestProto
 import ua.marchenko.internal.commonmodels.artwork.ArtworkStyle as ArtworkStyleProto
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse as CreateArtworkResponseProto
@@ -25,14 +27,19 @@ fun CreateArtworkRequest.toCreateArtworkRequestProto(): CreateArtworkRequestProt
         .setTitle(title)
         .setDescription(description)
         .setWidth(width)
-        .setWidth(width)
         .setHeight(height)
         .setStyle(style.toArtworkStyleProto())
+        .setArtistId(artistId)
         .build()
 
 fun CreateArtworkResponseProto.toArtworkResponse(): ArtworkResponse {
     if (hasFailure()) {
-        error(failure.message)
+        when (failure.errorCase!!) {
+            CreateArtworkResponse.Failure.ErrorCase.ARTIST_NOT_FOUND ->
+                throw UserNotFoundException(value = failure.message)
+
+            CreateArtworkResponse.Failure.ErrorCase.ERROR_NOT_SET -> error(failure.message)
+        }
     }
     return success.artwork.toArtworkResponse()
 }
@@ -77,8 +84,8 @@ fun FindAllArtworksFullResponseProto.toFullArtworkList(): List<ArtworkFullRespon
     return success.artworksList.map { it.toArtworkFullResponse() }
 }
 
-fun ArtworkProto.toArtworkResponse(): ArtworkResponse {
-    return ArtworkResponse(
+fun ArtworkProto.toArtworkResponse(): ArtworkResponse =
+    ArtworkResponse(
         id = id,
         title = title,
         description = description,
@@ -88,7 +95,6 @@ fun ArtworkProto.toArtworkResponse(): ArtworkResponse {
         status = status.toArtworkStatus(),
         artistId = artistId
     )
-}
 
 fun ArtworkFullProto.toArtworkFullResponse(): ArtworkFullResponse =
     ArtworkFullResponse(

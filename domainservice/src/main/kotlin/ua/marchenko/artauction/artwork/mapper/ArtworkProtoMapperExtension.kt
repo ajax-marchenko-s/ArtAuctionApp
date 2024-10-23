@@ -9,6 +9,7 @@ import ua.marchenko.core.artwork.dto.ArtworkResponse
 import ua.marchenko.core.artwork.dto.CreateArtworkRequest
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.core.artwork.enums.ArtworkStyle
+import ua.marchenko.core.user.exception.UserNotFoundException
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksResponse as FindAllArtworksResponseProto
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullResponse as FindAllArtworksFullResponseProto
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdResponse as FindArtworkByIdResponseProto
@@ -18,11 +19,10 @@ import ua.marchenko.internal.commonmodels.artwork.ArtworkStyle as ArtworkStylePr
 import ua.marchenko.internal.commonmodels.artwork.ArtworkStatus as ArtworkStatusProto
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse as CreateArtworkResponseProto
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest as CreateArtworkRequestProto
-import ua.marchenko.internal.commonmodels.Error as ErrorProto
 import ua.marchenko.internal.commonmodels.artwork.Artwork as ArtworkProto
 
-fun CreateArtworkRequestProto.toCreateArtworkRequest() =
-    CreateArtworkRequest(title, description, style.toArtworkStyle(), width, height)
+fun CreateArtworkRequestProto.toCreateArtworkRequest(): CreateArtworkRequest =
+    CreateArtworkRequest(title, description, style.toArtworkStyle(), width, height, artistId)
 
 fun ArtworkResponse.toCreateArtworkSuccessResponseProto(): CreateArtworkResponseProto {
     return CreateArtworkResponseProto.newBuilder().also { builder ->
@@ -33,6 +33,9 @@ fun ArtworkResponse.toCreateArtworkSuccessResponseProto(): CreateArtworkResponse
 fun Throwable.toCreateArtworkFailureResponseProto(): CreateArtworkResponseProto {
     return CreateArtworkResponseProto.newBuilder().also { builder ->
         builder.failureBuilder.setMessage(this.message.orEmpty())
+        if (this is UserNotFoundException) {
+            builder.failureBuilder.artistNotFoundBuilder
+        }
     }.build()
 }
 
@@ -46,9 +49,7 @@ fun Throwable.toFindArtworkByIdFailureResponseProto(): FindArtworkByIdResponsePr
     return FindArtworkByIdResponseProto.newBuilder().also { builder ->
         builder.failureBuilder.setMessage(message.orEmpty())
         if (this is ArtworkNotFoundException) {
-            builder.failureBuilder.setNotFoundById(
-                ErrorProto.getDefaultInstance()
-            )
+            builder.failureBuilder.notFoundByIdBuilder
         }
     }.build()
 }
@@ -75,9 +76,7 @@ fun Throwable.toFindArtworkFullByIdFailureResponseProto(): FindArtworkFullByIdRe
     return FindArtworkFullByIdResponseProto.newBuilder().also { builder ->
         builder.failureBuilder.setMessage(message.orEmpty())
         if (this is ArtworkNotFoundException) {
-            builder.failureBuilder.setNotFoundById(
-                ErrorProto.getDefaultInstance()
-            )
+            builder.failureBuilder.notFoundByIdBuilder
         }
     }.build()
 }
@@ -94,7 +93,7 @@ fun Throwable.toFindAllArtworksFullFailureResponseProto(): FindAllArtworksFullRe
     }.build()
 }
 
-private fun ArtworkFullResponse.toArtworkFullProto(): ArtworkFullProto {
+fun ArtworkFullResponse.toArtworkFullProto(): ArtworkFullProto {
     return ArtworkFullProto.newBuilder()
         .setId(id)
         .setTitle(title)
@@ -107,7 +106,7 @@ private fun ArtworkFullResponse.toArtworkFullProto(): ArtworkFullProto {
         .build()
 }
 
-private fun ArtworkResponse.toArtworkProto(): ArtworkProto {
+fun ArtworkResponse.toArtworkProto(): ArtworkProto {
     return ArtworkProto.newBuilder()
         .setId(id)
         .setTitle(title)

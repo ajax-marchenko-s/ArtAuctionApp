@@ -12,6 +12,7 @@ message CreateArtworkRequest {
   ArtworkStyle style = 3;
   uint32 width = 4;
   uint32 height = 5;
+  string artistId = 6;
 }
 
 message CreateArtworkResponse {
@@ -27,5 +28,9 @@ message CreateArtworkResponse {
 
   message Failure {
     string message = 100;
+
+    oneof error {
+      Error artist_not_found = 1;
+    }
   }
 }

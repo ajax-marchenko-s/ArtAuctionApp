@@ -3,6 +3,7 @@ package ua.marchenko.artauction.user.mapper
 import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
+import ua.marchenko.artauction.user.controller.dto.CreateUserRequest
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.core.user.dto.UserResponse
 import ua.marchenko.core.user.enums.Role
@@ -11,7 +12,7 @@ import user.random
 class UserMapperTest {
 
     @Test
-    fun `should return UserResponse if User has not null properties (except fields from bl)`() {
+    fun `should return UserResponse when User has not null properties (except fields from bl)`() {
         //GIVEN
         val user = MongoUser.random(role = Role.ARTIST)
         val expectedUser =
@@ -25,7 +26,7 @@ class UserMapperTest {
     }
 
     @Test
-    fun `should set default values if User has null properties (except fields from bl)`() {
+    fun `should set default values when User has null properties (except fields from bl)`() {
         //GIVEN
         val user = MongoUser.random(role = null)
         val expectedUser =
@@ -48,5 +49,19 @@ class UserMapperTest {
             user.toResponse()
         }
         assertEquals("user id cannot be null", exception.message)
+    }
+
+    @Test
+    fun `should return MongoUser from CreateUserRequest`() {
+        //GIVEN
+        val request = CreateUserRequest.random()
+        val expectedUser =
+            MongoUser(null, request.name, request.lastname, request.email, request.password, request.role)
+
+        //WHEN
+        val result = request.toMongo()
+
+        //THEN
+        assertEquals(expectedUser, result)
     }
 }

@@ -11,5 +11,6 @@ dependencies {
     implementation("com.google.protobuf:protobuf-kotlin:4.28.2")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation(kotlin("test"))
+    testImplementation("io.mockk:mockk:1.13.12")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

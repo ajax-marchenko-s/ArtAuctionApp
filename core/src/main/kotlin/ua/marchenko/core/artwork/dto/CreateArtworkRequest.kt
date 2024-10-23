@@ -25,7 +25,11 @@ data class CreateArtworkRequest @JsonCreator constructor(
 
     @JsonProperty("height")
     @field:Min(value = 1, message = "Artwork height must be greater than zero")
-    val height: Int
+    val height: Int,
+
+    @JsonProperty("artistId")
+    @field:NotBlank(message = "ArtistId cannot be blank")
+    val artistId: String,
 ) {
     companion object
 }

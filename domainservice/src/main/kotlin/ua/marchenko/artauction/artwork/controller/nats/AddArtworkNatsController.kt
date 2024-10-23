@@ -12,7 +12,7 @@ import ua.marchenko.artauction.artwork.mapper.toMongo
 import ua.marchenko.artauction.artwork.mapper.toResponse
 import ua.marchenko.artauction.artwork.service.ArtworkService
 import ua.marchenko.artauction.common.nats.NatsController
-import ua.marchenko.internal.ArtworkNatsSubject
+import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest as CreateArtworkRequestProto
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse as CreateArtworkResponseProto
 
@@ -22,7 +22,7 @@ class AddArtworkNatsController(
     override val connection: Connection,
 ) : NatsController<CreateArtworkRequestProto, CreateArtworkResponseProto> {
 
-    override val subject: String = ArtworkNatsSubject.CREATE
+    override val subject: String = NatsSubject.ArtworkNatsSubject.CREATE
 
     override val queueGroup: String = QUEUE_GROUP
 

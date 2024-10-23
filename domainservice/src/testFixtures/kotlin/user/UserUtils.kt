@@ -3,6 +3,7 @@ package user
 import getRandomString
 import org.bson.types.ObjectId
 import ua.marchenko.artauction.common.mongodb.id.toObjectId
+import ua.marchenko.artauction.user.controller.dto.CreateUserRequest
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.core.user.enums.Role
 
@@ -18,3 +19,12 @@ fun MongoUser.Companion.random(
     password = getRandomString(),
     role = role,
 )
+
+fun CreateUserRequest.Companion.random() =
+    CreateUserRequest(
+        name = getRandomString(),
+        lastname = getRandomString(),
+        email = getRandomString(),
+        password = getRandomString(),
+        role = Role.ARTIST,
+    )

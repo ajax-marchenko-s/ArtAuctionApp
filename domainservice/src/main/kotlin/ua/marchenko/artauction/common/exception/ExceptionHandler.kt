@@ -47,12 +47,6 @@ class ExceptionHandler {
     }
 
     @ExceptionHandler
-    fun handleIllegalStateException(ex: IllegalStateException) = ResponseEntity(
-        createErrorMessageModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.message),
-        HttpStatus.INTERNAL_SERVER_ERROR
-    )
-
-    @ExceptionHandler
     fun handleException(ex: Exception) = ResponseEntity(
         createErrorMessageModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.message),
         HttpStatus.INTERNAL_SERVER_ERROR

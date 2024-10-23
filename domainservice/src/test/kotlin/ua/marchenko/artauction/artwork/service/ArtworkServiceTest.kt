@@ -7,6 +7,7 @@ import kotlin.test.Test
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
+import io.mockk.verifyOrder
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -16,21 +17,20 @@ import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
+import ua.marchenko.artauction.user.model.MongoUser
+import ua.marchenko.artauction.user.service.UserService
+import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.core.artwork.exception.ArtworkNotFoundException
+import ua.marchenko.core.user.enums.Role
+import user.random
 
 class ArtworkServiceTest {
 
     @MockK
     private lateinit var mockArtworkRepository: ArtworkRepository
 
-//    @MockK
-//    private lateinit var mockUserService: UserService
-//
-//    @MockK
-//    private lateinit var mockAuthentication: Authentication
-//
-//    @MockK
-//    private lateinit var mockSecurityContext: SecurityContext
+    @MockK
+    private lateinit var mockUserService: UserService
 
     @InjectMockKs
     private lateinit var artworkService: ArtworkServiceImpl
@@ -138,29 +138,29 @@ class ArtworkServiceTest {
             .verifyComplete()
     }
 
-//    @Test
-//    fun `should set status and artist before calling repository method`() {
-//        // GIVEN
-//        val email = getRandomEmail()
-//        val user = MongoUser.random(email = email, role = Role.ARTIST)
-//        val artworkToSave = MongoArtwork.random(status = null, artistId = null)
-//        val expectedArtwork = artworkToSave.copy(status = ArtworkStatus.VIEW, artistId = user.id)
-//
-//        every { mockAuthentication.name } returns email
-//        every { mockSecurityContext.authentication } returns mockAuthentication
-//        every { mockUserService.getByEmail(email) } returns user.toMono()
-//        every { mockArtworkRepository.save(expectedArtwork) } returns expectedArtwork.toMono()
-//
-//        // WHEN
-//        val result = artworkService.save(artworkToSave)
-//            .contextWrite(ReactiveSecurityContextHolder.withSecurityContext(mockSecurityContext.toMono()))
-//
-//        // THEN
-//        result.test()
-//            .expectNext(expectedArtwork)
-//            .verifyComplete()
-//        verify { mockArtworkRepository.save(expectedArtwork) }
-//    }
+    @Test
+    fun `should set status and call userService before calling repository method`() {
+        // GIVEN
+        val artistId = ObjectId().toHexString()
+        val user = MongoUser.random(id = artistId)
+        val artworkToSave = MongoArtwork.random(status = null, artistId = artistId)
+        val expectedArtwork = artworkToSave.copy(status = ArtworkStatus.VIEW)
+
+        every { mockUserService.getByIdAndRole(artistId, Role.ARTIST) } returns user.toMono()
+        every { mockArtworkRepository.save(expectedArtwork) } returns expectedArtwork.toMono()
+
+        // WHEN
+        val result = artworkService.save(artworkToSave)
+
+        // THEN
+        result.test()
+            .expectNext(expectedArtwork)
+            .verifyComplete()
+        verifyOrder {
+            mockUserService.getByIdAndRole(artistId, Role.ARTIST)
+            mockArtworkRepository.save(expectedArtwork)
+        }
+    }
 
     @Test
     fun `should return false when there is no artwork with given id`() {

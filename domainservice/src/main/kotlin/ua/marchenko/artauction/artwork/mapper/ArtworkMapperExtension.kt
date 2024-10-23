@@ -2,6 +2,7 @@ package ua.marchenko.artauction.artwork.mapper
 
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
+import ua.marchenko.artauction.common.mongodb.id.toObjectId
 import ua.marchenko.artauction.user.mapper.toResponse
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.core.artwork.dto.ArtworkFullResponse
@@ -32,4 +33,5 @@ fun ArtworkFull.toFullResponse() = ArtworkFullResponse(
     artist?.toResponse() ?: MongoUser().toResponse()
 )
 
-fun CreateArtworkRequest.toMongo() = MongoArtwork(null, title, description, style, width, height, null, null)
+fun CreateArtworkRequest.toMongo(): MongoArtwork =
+    MongoArtwork(null, title, description, style, width, height, null, artistId.toObjectId())

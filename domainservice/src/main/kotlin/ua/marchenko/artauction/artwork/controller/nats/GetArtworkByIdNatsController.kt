@@ -10,7 +10,7 @@ import ua.marchenko.artauction.artwork.mapper.toFindArtworkByIdSuccessResponsePr
 import ua.marchenko.artauction.artwork.mapper.toResponse
 import ua.marchenko.artauction.artwork.service.ArtworkService
 import ua.marchenko.artauction.common.nats.NatsController
-import ua.marchenko.internal.ArtworkNatsSubject
+import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdRequest
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdResponse
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdRequest as FindArtworkByIdRequestProto
@@ -22,7 +22,7 @@ class GetArtworkByIdNatsController(
     override val connection: Connection,
 ) : NatsController<FindArtworkByIdRequestProto, FindArtworkByIdResponseProto> {
 
-    override val subject: String = ArtworkNatsSubject.FIND_BY_ID
+    override val subject: String = NatsSubject.ArtworkNatsSubject.FIND_BY_ID
 
     override val queueGroup: String = QUEUE_GROUP
 

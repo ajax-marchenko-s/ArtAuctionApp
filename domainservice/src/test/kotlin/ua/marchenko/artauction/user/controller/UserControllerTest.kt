@@ -1,6 +1,6 @@
 package ua.marchenko.artauction.user.controller
 
-import ua.marchenko.artauction.user.exception.UserNotFoundException
+import ua.marchenko.core.user.exception.UserNotFoundException
 import ua.marchenko.artauction.user.service.UserService
 import kotlin.test.Test
 import getRandomString

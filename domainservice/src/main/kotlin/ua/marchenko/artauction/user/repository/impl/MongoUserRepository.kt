@@ -10,6 +10,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.repository.UserRepository
+import ua.marchenko.core.user.enums.Role
 
 @Repository
 internal class MongoUserRepository(
@@ -37,5 +38,10 @@ internal class MongoUserRepository(
     override fun existsByEmail(email: String): Mono<Boolean> {
         val query = Query(Criteria.where(MongoUser::email.name).isEqualTo(email))
         return reactiveMongoTemplate.exists(query, MongoUser::class.java)
+    }
+
+    override fun findByIdAndRole(id: String, role: Role): Mono<MongoUser> {
+        val query = Query.query(Criteria.where(MongoUser::id.name).`is`(id).and(MongoUser::role.name).`is`(role))
+        return reactiveMongoTemplate.findOne(query, MongoUser::class.java)
     }
 }

@@ -10,7 +10,7 @@ import ua.marchenko.artauction.artwork.mapper.toFindAllArtworksFullSuccessRespon
 import ua.marchenko.artauction.artwork.mapper.toFullResponse
 import ua.marchenko.artauction.artwork.service.ArtworkService
 import ua.marchenko.artauction.common.nats.NatsController
-import ua.marchenko.internal.ArtworkNatsSubject
+import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullRequest as FindAllArtworksFullRequestProto
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullResponse as FindAllArtworksFullResponseProto
 
@@ -20,7 +20,7 @@ class GetAllArtworksFullNatsController(
     override val connection: Connection,
 ) : NatsController<FindAllArtworksFullRequestProto, FindAllArtworksFullResponseProto> {
 
-    override val subject: String = ArtworkNatsSubject.FIND_ALL_FULL
+    override val subject: String = NatsSubject.ArtworkNatsSubject.FIND_ALL_FULL
 
     override val queueGroup: String = QUEUE_GROUP
 
