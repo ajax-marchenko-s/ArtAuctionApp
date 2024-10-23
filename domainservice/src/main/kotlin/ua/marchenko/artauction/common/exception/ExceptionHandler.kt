@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import ua.marchenko.artauction.common.exception.type.general.AlreadyExistException
 import java.time.LocalDateTime
 import org.springframework.http.converter.HttpMessageNotReadableException
-import org.springframework.validation.FieldError
-import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.server.ServerWebInputException
 import ua.marchenko.artauction.auction.exception.InvalidAuctionOperationException
 import ua.marchenko.core.common.exception.ErrorMessageModel
 import ua.marchenko.core.common.exception.NotFoundException
@@ -35,16 +34,10 @@ class ExceptionHandler {
         ResponseEntity(createErrorMessageModel(HttpStatus.CONFLICT.value(), ex.message), HttpStatus.CONFLICT)
 
     @ExceptionHandler
-    fun handleMethodArgumentNotValidExceptionException(ex: MethodArgumentNotValidException):
-            ResponseEntity<ErrorMessageModel> {
-        val message = ex.bindingResult.allErrors.joinToString("; ") { error ->
-            "field ${(error as FieldError).field}: ${error.defaultMessage}"
-        }
-        return ResponseEntity(
-            createErrorMessageModel(HttpStatus.BAD_REQUEST.value(), message),
-            HttpStatus.BAD_REQUEST
-        )
-    }
+    fun handleServerWebInputException(ex: ServerWebInputException) = ResponseEntity(
+        createErrorMessageModel(HttpStatus.BAD_REQUEST.value(), "JSON parse error: ${ex.message}"),
+        HttpStatus.BAD_REQUEST
+    )
 
     @ExceptionHandler
     fun handleException(ex: Exception) = ResponseEntity(

@@ -20,4 +20,5 @@ dependencies {
     testImplementation("org.testcontainers:mongodb:1.19.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("io.mockk:mockk:1.13.12")
+    testImplementation("com.ninja-squad:springmockk:4.0.2")
 }

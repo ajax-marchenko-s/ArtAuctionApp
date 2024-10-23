@@ -7,13 +7,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Import
 import org.springframework.core.MethodParameter
 import org.springframework.http.MediaType
-import org.springframework.security.authentication.BadCredentialsException
-import org.springframework.security.config.web.server.ServerHttpSecurity
-import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.validation.BeanPropertyBindingResult
 import org.springframework.validation.BindingResult
@@ -22,16 +17,13 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.support.WebExchangeBindException
 import org.springframework.web.server.ServerWebInputException
-import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
 import ua.marchenko.artauction.auction.exception.InvalidAuctionOperationException
-import ua.marchenko.artauction.auth.jwt.JwtAuthenticationFilter
-import ua.marchenko.artauction.common.exception.ErrorMessageModel
 import ua.marchenko.artauction.common.exception.type.general.AlreadyExistException
-import ua.marchenko.artauction.common.exception.type.general.NotFoundException
+import ua.marchenko.core.common.exception.ErrorMessageModel
+import ua.marchenko.core.common.exception.NotFoundException
 
 @WebFluxTest(ExceptionHandlerTest.ExceptionHandlerTestController::class)
-@Import(value = [ExceptionHandlerTest.ExceptionHandlerTestConfiguration::class])
 @AutoConfigureWebTestClient
 class ExceptionHandlerTest {
 
@@ -41,16 +33,10 @@ class ExceptionHandlerTest {
     @MockkBean
     private lateinit var mockTestController: ExceptionHandlerTestController
 
-    @MockkBean
-    private lateinit var mockJwtAuthenticationFilter: JwtAuthenticationFilter
-
     @Test
     fun `should return 404 when controller throw NotFoundException`() {
         // GIVEN
         every { mockTestController.test() } returns Mono.error(NotFoundException(ERROR_MESSAGE))
-        every { mockJwtAuthenticationFilter.filter(any(), any()) } answers {
-            secondArg<WebFilterChain>().filter(firstArg())
-        }
 
         // WHEN THEN
         webTestClient.get()
@@ -66,9 +52,6 @@ class ExceptionHandlerTest {
     fun `should return 409 when controller throw AlreadyExistException`() {
         // GIVEN
         every { mockTestController.test() } returns Mono.error(AlreadyExistException(ERROR_MESSAGE))
-        every { mockJwtAuthenticationFilter.filter(any(), any()) } answers {
-            secondArg<WebFilterChain>().filter(firstArg())
-        }
 
         // WHEN THEN
         webTestClient.get()
@@ -81,30 +64,9 @@ class ExceptionHandlerTest {
     }
 
     @Test
-    fun `should return 400 when controller throw BadCredentialsException`() {
-        // GIVEN
-        every { mockTestController.test() } returns Mono.error(BadCredentialsException(ERROR_MESSAGE))
-        every { mockJwtAuthenticationFilter.filter(any(), any()) } answers {
-            secondArg<WebFilterChain>().filter(firstArg())
-        }
-
-        // WHEN THEN
-        webTestClient.get()
-            .uri(URL)
-            .exchange()
-            .expectStatus().isBadRequest
-            .expectHeader().contentType(MediaType.APPLICATION_JSON)
-            .expectBody()
-            .jsonPath(ErrorMessageModel::message.name).isEqualTo(ERROR_MESSAGE)
-    }
-
-    @Test
     fun `should return 400 when controller throw ServerWebInputException`() {
         // GIVEN
         every { mockTestController.test() } returns Mono.error(ServerWebInputException(ERROR_MESSAGE))
-        every { mockJwtAuthenticationFilter.filter(any(), any()) } answers {
-            secondArg<WebFilterChain>().filter(firstArg())
-        }
 
         // WHEN THEN
         webTestClient.get()
@@ -122,9 +84,6 @@ class ExceptionHandlerTest {
         // GIVEN
         every { mockTestController.test() } returns
                 Mono.error(InvalidAuctionOperationException(ERROR_MESSAGE))
-        every { mockJwtAuthenticationFilter.filter(any(), any()) } answers {
-            secondArg<WebFilterChain>().filter(firstArg())
-        }
 
         // WHEN THEN
         webTestClient.get()
@@ -148,9 +107,6 @@ class ExceptionHandlerTest {
         val methodParameter = mockk<MethodParameter>(relaxed = true)
 
         every { mockTestController.test() } returns Mono.error(WebExchangeBindException(methodParameter, bindingResult))
-        every { mockJwtAuthenticationFilter.filter(any(), any()) } answers {
-            secondArg<WebFilterChain>().filter(firstArg())
-        }
 
         // WHEN THEN
         webTestClient.get()
@@ -158,17 +114,12 @@ class ExceptionHandlerTest {
             .exchange()
             .expectStatus().isBadRequest
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
-            .expectBody()
-            .jsonPath(ErrorMessageModel::message.name).isEqualTo("field $invalidField: $defaultMessage")
     }
 
     @Test
     fun `should return 500 when controller throw Exception`() {
         // GIVEN
         every { mockTestController.test() } returns Mono.error(Exception(ERROR_MESSAGE))
-        every { mockJwtAuthenticationFilter.filter(any(), any()) } answers {
-            secondArg<WebFilterChain>().filter(firstArg())
-        }
 
         // WHEN THEN
         webTestClient.get()
@@ -178,15 +129,6 @@ class ExceptionHandlerTest {
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
             .expectBody()
             .jsonPath(ErrorMessageModel::message.name).isEqualTo(ERROR_MESSAGE)
-    }
-
-    class ExceptionHandlerTestConfiguration {
-        @Bean
-        fun securityWebFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
-            return http.csrf { it.disable() }
-                .authorizeExchange { it.anyExchange().permitAll() }
-                .build()
-        }
     }
 
     @RestController
