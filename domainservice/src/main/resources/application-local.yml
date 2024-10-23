@@ -2,6 +2,3 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/art?authSource=admin
-
-nats:
-  uri: "nats://localhost:4222"

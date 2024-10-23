@@ -36,6 +36,9 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/master' }}
 
+      - name: Start docker container\
+        run: docker compose -f docker-compose-github-actions.yaml up -d
+
       - name: Run gradle build
         run: ./gradlew build --parallel
 

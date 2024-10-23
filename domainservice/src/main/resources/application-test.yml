@@ -1,2 +1,0 @@
-nats:
-  uri: nats://localhost:4222
