@@ -12,7 +12,9 @@ import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.core.artwork.enums.ArtworkStyle
 import ua.marchenko.gateway.artwork.mapper.toArtworkFullResponse
 import ua.marchenko.gateway.artwork.mapper.toArtworkResponse
+import ua.marchenko.gateway.artwork.mapper.toArtworksList
 import ua.marchenko.gateway.artwork.mapper.toCreateArtworkRequestProto
+import ua.marchenko.gateway.artwork.mapper.toFullArtworkList
 import ua.marchenko.gateway.user.toUserResponse
 import user.UserProtoFixture
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest as CreateArtworkRequestProto
@@ -142,10 +144,30 @@ class ArtworkProtoMapperTest {
     @Test
     fun `should throw IllegalStateException when the case in FindArtworkByIdFullResponseProto is not set failure`() {
         // GIVEN
-        val response = ArtworkProtoFixture.randomFailureGeneralFindArtworkByIdResponseProto()
+        val response = ArtworkProtoFixture.randomFailureGeneralFindArtworkFullByIdResponseProto()
 
         // WHEN THEN
-        val exception = assertThrows<IllegalStateException> { response.toArtworkResponse() }
+        val exception = assertThrows<IllegalStateException> { response.toArtworkFullResponse() }
+        assertEquals(ArtworkProtoFixture.ERROR_MESSAGE, exception.message)
+    }
+
+    @Test
+    fun `should throw IllegalStateException when the case in FindAllArtworkResponseProto is not set failure`() {
+        // GIVEN
+        val response = ArtworkProtoFixture.randomFailureGeneralFindAllArtworkResponseProto()
+
+        // WHEN THEN
+        val exception = assertThrows<IllegalStateException> { response.toArtworksList() }
+        assertEquals(ArtworkProtoFixture.ERROR_MESSAGE, exception.message)
+    }
+
+    @Test
+    fun `should throw IllegalStateException when the case in FindAllArtworkFullResponseProto is not set failure`() {
+        // GIVEN
+        val response = ArtworkProtoFixture.randomFailureGeneralFindAllArtworkFullResponseProto()
+
+        // WHEN THEN
+        val exception = assertThrows<IllegalStateException> { response.toFullArtworkList() }
         assertEquals(ArtworkProtoFixture.ERROR_MESSAGE, exception.message)
     }
 }

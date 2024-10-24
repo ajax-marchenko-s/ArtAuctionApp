@@ -15,11 +15,12 @@ fun MongoArtwork.Companion.random(
     id: String? = ObjectId().toHexString(),
     status: ArtworkStatus? = ArtworkStatus.VIEW,
     artistId: String? = ObjectId().toHexString(),
+    style: ArtworkStyle? = ArtworkStyle.POP_ART,
 ) = MongoArtwork(
     id = id?.toObjectId(),
     title = getRandomString(),
     description = getRandomString(),
-    style = ArtworkStyle.POP_ART,
+    style = style,
     width = 100,
     height = 100,
     status = status,

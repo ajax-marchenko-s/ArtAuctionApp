@@ -8,6 +8,7 @@ import java.time.LocalDateTime
 import org.bson.types.ObjectId
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
+import ua.marchenko.artauction.auction.model.MongoAuction.Bid
 import ua.marchenko.artauction.auction.model.projection.AuctionFull
 import ua.marchenko.artauction.auction.model.projection.AuctionFull.BidFull
 import ua.marchenko.artauction.common.mongodb.id.toObjectId
@@ -18,14 +19,16 @@ fun MongoAuction.Companion.random(
     id: String? = ObjectId().toHexString(),
     artwork: MongoArtwork? = MongoArtwork.random(),
     startBid: BigDecimal? = BigDecimal(100.0),
-    startedAt: LocalDateTime = LocalDateTime.now(),
-    finishedAt: LocalDateTime = LocalDateTime.now().plusDays(1),
+    startedAt: LocalDateTime? = LocalDateTime.now(),
+    finishedAt: LocalDateTime? = LocalDateTime.now().plusDays(1),
+    buyers: List<Bid>? = emptyList()
 ) = MongoAuction(
     id = id?.toObjectId(),
     artworkId = artwork?.id,
     startBid = startBid,
     startedAt = startedAt,
     finishedAt = finishedAt,
+    buyers = buyers,
 )
 
 fun MongoAuction.Bid.Companion.random(

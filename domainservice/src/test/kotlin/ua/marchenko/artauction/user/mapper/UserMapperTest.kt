@@ -28,9 +28,9 @@ class UserMapperTest {
     @Test
     fun `should set default values when User has null properties (except fields from bl)`() {
         //GIVEN
-        val user = MongoUser.random(role = null)
+        val user = MongoUser.random(name = null, lastName = null, email = null, role = null)
         val expectedUser =
-            UserResponse(user.id!!.toHexString(), user.name!!, user.lastName!!, user.email!!, Role.UNKNOWN)
+            UserResponse(user.id!!.toHexString(), DEFAULT_STRING, DEFAULT_STRING, DEFAULT_STRING, Role.UNKNOWN)
 
         //WHEN
         val result = user.toResponse()
@@ -63,5 +63,9 @@ class UserMapperTest {
 
         //THEN
         assertEquals(expectedUser, result)
+    }
+
+    companion object{
+        private const val DEFAULT_STRING = "unknown"
     }
 }

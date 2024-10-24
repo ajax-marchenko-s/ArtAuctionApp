@@ -67,16 +67,40 @@ object ArtworkProtoFixture {
         }
             .build()
 
+    fun randomFailureGeneralFindArtworkFullByIdResponseProto(): FindArtworkFullByIdResponseProto =
+        FindArtworkFullByIdResponseProto.newBuilder().also { builder ->
+            builder.failureBuilder.setMessage(ERROR_MESSAGE)
+        }
+            .build()
+
     fun randomSuccessFindAllArtworkResponseProto(): FindAllArtworkResponseProto =
         FindAllArtworkResponseProto.newBuilder().also { builder ->
             builder.successBuilder.addAllArtworks(listOf(randomArtworkProto(), randomArtworkProto()))
         }
             .build()
 
+    fun randomFailureGeneralFindAllArtworkResponseProto(): FindAllArtworkResponseProto =
+        FindAllArtworkResponseProto.newBuilder()
+            .setFailure(
+                FindAllArtworkResponseProto.Failure.newBuilder()
+                    .setMessage(ERROR_MESSAGE)
+                    .build()
+            )
+            .build()
+
     fun randomSuccessFindAllArtworkFullResponseProto(): FindAllArtworkFullResponseProto =
         FindAllArtworkFullResponseProto.newBuilder().also { builder ->
             builder.successBuilder.addAllArtworks(listOf(randomArtworkFullProto(), randomArtworkFullProto()))
         }
+            .build()
+
+    fun randomFailureGeneralFindAllArtworkFullResponseProto(): FindAllArtworkFullResponseProto =
+        FindAllArtworkFullResponseProto.newBuilder()
+            .setFailure(
+                FindAllArtworkFullResponseProto.Failure.newBuilder()
+                    .setMessage(ERROR_MESSAGE)
+                    .build()
+            )
             .build()
 
     private fun randomArtworkProto(

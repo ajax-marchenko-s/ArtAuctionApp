@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import ua.marchenko.artauction.auction.controller.dto.AuctionResponse
 import auction.random
 import java.math.BigDecimal
+import java.time.LocalDateTime
 import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import ua.marchenko.artauction.artwork.mapper.toFullResponse
@@ -38,14 +39,14 @@ class AuctionMapperTest {
     @Test
     fun `should set default values when Auction has null properties (except fields from bl)`() {
         // GIVEN
-        val auction = MongoAuction.random(startBid = null)
+        val auction = MongoAuction.random(startBid = null, startedAt = null, finishedAt = null, buyers = null)
         val expectedAuction = AuctionResponse(
-            auction.id!!.toHexString(),
-            auction.artworkId!!.toHexString(),
-            BigDecimal(0.0),
-            auction.buyers!!.map { it.toResponse() },
-            auction.startedAt!!,
-            auction.finishedAt!!
+            id = auction.id!!.toHexString(),
+            artworkId = auction.artworkId!!.toHexString(),
+            startBid = BigDecimal(0.0),
+            buyers = emptyList(),
+            startedAt = LocalDateTime.MIN,
+            finishedAt = LocalDateTime.MIN
         )
 
         //WHEN

@@ -9,14 +9,17 @@ import ua.marchenko.core.user.enums.Role
 
 fun MongoUser.Companion.random(
     id: String? = ObjectId().toHexString(),
-    role: Role? = Role.ARTIST,
+    name: String? = getRandomString(10),
+    lastName: String? = getRandomString(10),
     email: String? = getRandomString(10),
+    password: String? = getRandomString(10),
+    role: Role? = Role.ARTIST,
 ) = MongoUser(
     id = id?.toObjectId(),
-    name = getRandomString(),
-    lastName = getRandomString(),
+    name = name,
+    lastName = lastName,
     email = email,
-    password = getRandomString(),
+    password = password,
     role = role,
 )
 

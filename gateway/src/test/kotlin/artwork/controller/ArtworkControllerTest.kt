@@ -22,6 +22,7 @@ import ua.marchenko.gateway.artwork.mapper.toCreateArtworkRequestProto
 import ua.marchenko.gateway.artwork.mapper.toFullArtworkList
 import ua.marchenko.gateway.common.nats.NatsClient
 import ua.marchenko.internal.NatsSubject
+import ua.marchenko.internal.commonmodels.artwork.ArtworkStyle
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullRequest as FindAllArtworksFullRequestProto
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullResponse as FindAllArtworksFullResponseProto
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksRequest as FindAllArtworksRequestProto
@@ -67,7 +68,7 @@ class ArtworkControllerTest {
     fun `should return ArtworkResponse when artwork with this id exists`() {
         // GIVEN
         val id = getRandomString()
-        val response = randomSuccessFindArtworkByIdResponseProto()
+        val response = randomSuccessFindArtworkByIdResponseProto(style = ArtworkStyle.ARTWORK_STYLE_ABSTRACT)
         every {
             natsClient.doRequest(
                 subject = NatsSubject.ArtworkNatsSubject.FIND_BY_ID,
@@ -89,7 +90,7 @@ class ArtworkControllerTest {
     fun `should return ArtworkFullResponse when artwork with this id exists`() {
         // GIVEN
         val id = getRandomString()
-        val response = randomSuccessFindArtworkFullByIdResponseProto()
+        val response = randomSuccessFindArtworkFullByIdResponseProto(style = ArtworkStyle.ARTWORK_STYLE_CUBISM)
         every {
             natsClient.doRequest(
                 subject = NatsSubject.ArtworkNatsSubject.FIND_BY_ID_FULL,

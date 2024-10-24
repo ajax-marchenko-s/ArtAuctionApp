@@ -18,6 +18,7 @@ import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 import ua.marchenko.artauction.common.AbstractBaseNatsControllerTest
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.repository.UserRepository
+import ua.marchenko.core.artwork.enums.ArtworkStyle
 import ua.marchenko.core.user.enums.Role
 import ua.marchenko.core.user.exception.UserNotFoundException
 import ua.marchenko.internal.NatsSubject
@@ -96,7 +97,10 @@ class ArtworkNatsControllerTest : AbstractBaseNatsControllerTest() {
     fun `should save new artwork and return ArtworkResponse with data from CreateArtworkRequest`() {
         // GIVEN
         val savedArtist = userRepository.save(MongoUser.random(id = null, role = Role.ARTIST)).block()
-        val request = ArtworkProtoFixture.randomCreateArtworkRequestProto(artistId = savedArtist!!.id!!.toHexString())
+        val request = ArtworkProtoFixture.randomCreateArtworkRequestProto(
+            artistId = savedArtist!!.id!!.toHexString(),
+            style = ua.marchenko.internal.commonmodels.artwork.ArtworkStyle.ARTWORK_STYLE_ABSTRACT
+        )
         val expectedResponse = CreateArtworkResponseProto.newBuilder().also { builder ->
             builder.successBuilder.setArtwork(
                 ArtworkProto.newBuilder()
@@ -128,7 +132,10 @@ class ArtworkNatsControllerTest : AbstractBaseNatsControllerTest() {
     fun `should return CreateArtworkResponse Failure when there is no user with this id and role artist`() {
         // GIVEN
         val savedUser = userRepository.save(MongoUser.random(id = null, role = Role.BUYER)).block()
-        val request = ArtworkProtoFixture.randomCreateArtworkRequestProto(artistId = savedUser!!.id!!.toHexString())
+        val request = ArtworkProtoFixture.randomCreateArtworkRequestProto(
+            artistId = savedUser!!.id!!.toHexString(),
+            style = ua.marchenko.internal.commonmodels.artwork.ArtworkStyle.ARTWORK_STYLE_RENAISSANCE
+        )
         val expectedResponse = UserNotFoundException(
             "ID" to savedUser.id!!.toHexString(),
             "ROLE" to Role.ARTIST.name
@@ -150,7 +157,7 @@ class ArtworkNatsControllerTest : AbstractBaseNatsControllerTest() {
         // GIVEN
         val savedArtist = userRepository.save(MongoUser.random(id = null)).block()
         val artwork = artworkRepository.save(
-            MongoArtwork.random(id = null, artistId = savedArtist!!.id.toString())
+            MongoArtwork.random(id = null, artistId = savedArtist!!.id.toString(), style = ArtworkStyle.EXPRESSIONISM)
         ).block()!!.toFullArtwork(savedArtist)
         val request = FindArtworkByIdRequestProto.newBuilder().setId(artwork.id!!.toHexString()).build()
         val expectedResponse = FindArtworkFullByIdResponseProto.newBuilder()
@@ -197,8 +204,10 @@ class ArtworkNatsControllerTest : AbstractBaseNatsControllerTest() {
     fun `should return all artworks when they are exists`() {
         // GIVEN
         val artworks = listOf(
-            artworkRepository.save(MongoArtwork.random(id = null)).block()!!.toResponse().toArtworkProto(),
-            artworkRepository.save(MongoArtwork.random(id = null)).block()!!.toResponse().toArtworkProto(),
+            artworkRepository.save(MongoArtwork.random(id = null, style = ArtworkStyle.CUBISM)).block()!!.toResponse()
+                .toArtworkProto(),
+            artworkRepository.save(MongoArtwork.random(id = null, style = ArtworkStyle.SURREALISM)).block()!!
+                .toResponse().toArtworkProto(),
         )
         val request = FindAllArtworksRequestProto.newBuilder().setPage(0).setLimit(100).build()
 
@@ -219,9 +228,19 @@ class ArtworkNatsControllerTest : AbstractBaseNatsControllerTest() {
         // GIVEN
         val savedArtist = userRepository.save(MongoUser.random(id = null)).block()
         val artworks = listOf(
-            artworkRepository.save(MongoArtwork.random(artistId = savedArtist!!.id.toString())).block()!!
+            artworkRepository.save(
+                MongoArtwork.random(
+                    artistId = savedArtist!!.id.toString(),
+                    style = ArtworkStyle.REALISM
+                )
+            ).block()!!
                 .toFullArtwork(savedArtist).toFullResponse().toArtworkFullProto(),
-            artworkRepository.save(MongoArtwork.random(artistId = savedArtist.id.toString())).block()!!
+            artworkRepository.save(
+                MongoArtwork.random(
+                    artistId = savedArtist.id.toString(),
+                    style = ArtworkStyle.IMPRESSIONISM
+                )
+            ).block()!!
                 .toFullArtwork(savedArtist).toFullResponse().toArtworkFullProto(),
         )
         val request = FindAllArtworksFullRequestProto.newBuilder().setPage(0).setLimit(100).build()

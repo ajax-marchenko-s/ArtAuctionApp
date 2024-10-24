@@ -1,33 +1,43 @@
 package ua.marchenko.artauction.artwork.mapper
 
-import artwork.random
-import org.bson.types.ObjectId
-import org.junit.jupiter.api.Assertions.assertEquals
+import kotlin.test.assertEquals
 import org.junit.jupiter.api.Test
-import ua.marchenko.artauction.artwork.model.MongoArtwork
-import ua.marchenko.core.artwork.dto.ArtworkResponse
+import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullResponse
+import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksResponse
 
 class ArtworkMapperProtoTest {
 
     @Test
-    fun `should return CreateArtworkRequest`() {
+    fun `should build FindAllArtworksResponse with failure when called on throwable`() {
         // GIVEN
-        val mongoArtwork = MongoArtwork.random(artistId = ObjectId().toHexString())
-        val expectedArtwork = ArtworkResponse(
-            mongoArtwork.id!!.toHexString(),
-            mongoArtwork.title!!,
-            mongoArtwork.description!!,
-            mongoArtwork.style!!,
-            mongoArtwork.width!!,
-            mongoArtwork.height!!,
-            mongoArtwork.status!!,
-            mongoArtwork.artistId!!.toHexString()
-        )
+        val error = Throwable(ERROR_MESSAGE)
+        val expectedResponse = FindAllArtworksResponse.newBuilder().also { builder ->
+            builder.failureBuilder.message = ERROR_MESSAGE
+        }.build()
 
-        //WHEN
-        val result = mongoArtwork.toResponse()
+        // WHEN
+        val result = error.toFindAllArtworksFailureResponseProto()
 
         //THEN
-        assertEquals(expectedArtwork, result)
+        assertEquals(expectedResponse, result)
+    }
+
+    @Test
+    fun `should build FindAllArtworksFullResponse with failure when called on throwable`() {
+        // GIVEN
+        val error = Throwable(ERROR_MESSAGE)
+        val expectedResponse = FindAllArtworksFullResponse.newBuilder().also { builder ->
+            builder.failureBuilder.message = ERROR_MESSAGE
+        }.build()
+
+        // WHEN
+        val result = error.toFindAllArtworksFullFailureResponseProto()
+
+        //THEN
+        assertEquals(expectedResponse, result)
+    }
+
+    companion object {
+        private const val ERROR_MESSAGE = "error message"
     }
 }
