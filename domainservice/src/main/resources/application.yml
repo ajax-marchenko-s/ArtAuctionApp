@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: artauction
+  profiles:
+    active: local
+  main:
+    web-application-type: reactive
+
+mongock:
+  enabled: true
+  migration-scan-package: ua.marchenko.artauction.common.mongock.migration
+
+server:
+  port: 8081
+
+nats:
+  uri: ${NATS_CONNECTION}

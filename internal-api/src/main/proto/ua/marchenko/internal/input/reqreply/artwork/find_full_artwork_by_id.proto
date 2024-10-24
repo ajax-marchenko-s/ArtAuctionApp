@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "ua/marchenko/internal/commonmodels/artwork/artwork_full.proto";
+import "ua/marchenko/internal/commonmodels/error.proto";
+
+option java_package = "ua.marchenko.internal.input.reqreply.artwork";
+option java_multiple_files = true;
+
+message FindArtworkFullByIdRequest {
+  string id = 1;
+}
+
+message FindArtworkFullByIdResponse {
+
+  oneof response {
+    Success success = 1;
+    Failure failure = 2;
+  }
+
+  message Success {
+    ArtworkFull artwork = 1;
+  }
+
+  message Failure {
+    string message = 100;
+
+    oneof error {
+      Error not_found_by_id = 1;
+    }
+  }
+}
