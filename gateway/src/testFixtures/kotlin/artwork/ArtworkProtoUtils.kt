@@ -16,8 +16,8 @@ import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullResponse 
 object ArtworkProtoFixture {
 
     fun randomSuccessCreateArtworkResponseProto(
-        style: ArtworkStyleProto = ArtworkStyleProto.POP_ART,
-        status: ArtworkStatusProto = ArtworkStatusProto.ON_AUCTION,
+        style: ArtworkStyleProto = ArtworkStyleProto.ARTWORK_STYLE_POP_ART,
+        status: ArtworkStatusProto = ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION,
     ): CreateArtworkResponseProto =
         CreateArtworkResponseProto.newBuilder()
             .setSuccess(
@@ -37,8 +37,8 @@ object ArtworkProtoFixture {
             .build()
 
     fun randomSuccessFindArtworkByIdResponseProto(
-        style: ArtworkStyleProto = ArtworkStyleProto.POP_ART,
-        status: ArtworkStatusProto = ArtworkStatusProto.ON_AUCTION,
+        style: ArtworkStyleProto = ArtworkStyleProto.ARTWORK_STYLE_POP_ART,
+        status: ArtworkStatusProto = ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION,
     ): FindArtworkByIdResponseProto =
         FindArtworkByIdResponseProto.newBuilder()
             .setSuccess(
@@ -58,8 +58,8 @@ object ArtworkProtoFixture {
             .build()
 
     fun randomSuccessFindArtworkFullByIdResponseProto(
-        style: ArtworkStyleProto = ArtworkStyleProto.POP_ART,
-        status: ArtworkStatusProto = ArtworkStatusProto.ON_AUCTION,
+        style: ArtworkStyleProto = ArtworkStyleProto.ARTWORK_STYLE_POP_ART,
+        status: ArtworkStatusProto = ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION,
         artist: UserProto = UserProtoFixture.randomUserProto()
     ): FindArtworkFullByIdResponseProto =
         FindArtworkFullByIdResponseProto.newBuilder().also { builder ->
@@ -80,8 +80,8 @@ object ArtworkProtoFixture {
             .build()
 
     private fun randomArtworkProto(
-        style: ArtworkStyleProto = ArtworkStyleProto.POP_ART,
-        status: ArtworkStatusProto = ArtworkStatusProto.ON_AUCTION,
+        style: ArtworkStyleProto = ArtworkStyleProto.ARTWORK_STYLE_POP_ART,
+        status: ArtworkStatusProto = ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION,
     ): ArtworkProto =
         ArtworkProto.newBuilder()
             .setId(getRandomString())
@@ -95,8 +95,8 @@ object ArtworkProtoFixture {
             .build()
 
     private fun randomArtworkFullProto(
-        style: ArtworkStyleProto = ArtworkStyleProto.POP_ART,
-        status: ArtworkStatusProto = ArtworkStatusProto.ON_AUCTION,
+        style: ArtworkStyleProto = ArtworkStyleProto.ARTWORK_STYLE_POP_ART,
+        status: ArtworkStatusProto = ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION,
         artist: UserProto = UserProtoFixture.randomUserProto()
     ): ArtworkFullProto =
         ArtworkFullProto.newBuilder()

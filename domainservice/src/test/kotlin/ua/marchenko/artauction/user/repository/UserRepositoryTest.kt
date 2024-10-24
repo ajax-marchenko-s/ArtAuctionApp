@@ -110,7 +110,7 @@ class UserRepositoryTest : AbstractBaseIntegrationTest {
         val users = listOf(userRepository.save(MongoUser.random(id = null)).block())
 
         // WHEN
-        val result = userRepository.findAll(0, 100).collectList()
+        val result = userRepository.findAll(page = 0, limit = 100).collectList()
 
         // THEN
         result.test()

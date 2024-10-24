@@ -3,9 +3,6 @@ package ua.marchenko.artauction.artwork.controller
 import artwork.ArtworkProtoFixture
 import artwork.random
 import artwork.toFullArtwork
-import com.google.protobuf.GeneratedMessage
-import io.nats.client.Connection
-import com.google.protobuf.Parser
 import getRandomString
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -18,7 +15,7 @@ import ua.marchenko.artauction.artwork.mapper.toFullResponse
 import ua.marchenko.artauction.artwork.mapper.toResponse
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
-import ua.marchenko.artauction.common.AbstractBaseIntegrationTest
+import ua.marchenko.artauction.common.AbstractBaseNatsControllerTest
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.repository.UserRepository
 import ua.marchenko.core.user.enums.Role
@@ -38,10 +35,7 @@ import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullResponse 
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksRequest as FindAllArtworksRequestProto
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksResponse as FindAllArtworksResponseProto
 
-class ArtworkNatsControllerTest : AbstractBaseIntegrationTest {
-
-    @Autowired
-    private lateinit var natsConnection: Connection
+class ArtworkNatsControllerTest : AbstractBaseNatsControllerTest() {
 
     @Autowired
     private lateinit var artworkRepository: ArtworkRepository
@@ -54,8 +48,14 @@ class ArtworkNatsControllerTest : AbstractBaseIntegrationTest {
         // GIVEN
         val artwork = artworkRepository.save(MongoArtwork.random()).block()!!
         val request = FindArtworkByIdRequestProto.newBuilder().setId(artwork.id!!.toHexString()).build()
-        val expectedResponse = FindArtworkByIdResponseProto.newBuilder()
-            .also { builder -> builder.successBuilder.setArtwork(artwork.toResponse().toArtworkProto()) }.build()
+        val expectedResponse = FindArtworkByIdResponseProto.newBuilder().also { builder ->
+            builder.successBuilder.setArtwork(
+                artwork
+                    .toResponse()
+                    .toArtworkProto()
+            )
+        }
+            .build()
 
         // WHEN
         val result = doRequest(
@@ -103,7 +103,7 @@ class ArtworkNatsControllerTest : AbstractBaseIntegrationTest {
                     .setTitle(request.title)
                     .setDescription(request.description)
                     .setStyle(request.style)
-                    .setStatus(ArtworkStatusProto.VIEW)
+                    .setStatus(ArtworkStatusProto.ARTWORK_STATUS_VIEW)
                     .setWidth(request.width)
                     .setHeight(request.height)
                     .setArtistId(request.artistId)
@@ -119,7 +119,7 @@ class ArtworkNatsControllerTest : AbstractBaseIntegrationTest {
 
         // THEN
         assertEquals(
-            expectedResponse.toBuilder().successBuilder.artworkBuilder.build(),
+            expectedResponse.success.artwork,
             result.toBuilder().successBuilder.artworkBuilder.clearId().build()
         )
     }
@@ -141,7 +141,7 @@ class ArtworkNatsControllerTest : AbstractBaseIntegrationTest {
             parser = CreateArtworkResponseProto.parser()
         )
 
-        //THEN
+        // THEN
         assertEquals(expectedResponse, result)
     }
 
@@ -236,18 +236,6 @@ class ArtworkNatsControllerTest : AbstractBaseIntegrationTest {
         // THEN
         val foundArtworks = result.success.artworksList
         assertTrue(foundArtworks.containsAll(artworks), "Artworks $artworks not found in returned list")
-    }
-
-    private fun <RequestT : GeneratedMessage, ResponseT : GeneratedMessage> doRequest(
-        subject: String,
-        request: RequestT,
-        parser: Parser<ResponseT>,
-    ): ResponseT {
-        val response = natsConnection.request(
-            subject,
-            request.toByteArray()
-        )
-        return parser.parseFrom(response.get().data)
     }
 
     companion object {

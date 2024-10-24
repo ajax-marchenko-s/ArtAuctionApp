@@ -2,6 +2,7 @@ package ua.marchenko.artauction.artwork.controller.nats
 
 import com.google.protobuf.Parser
 import io.nats.client.Connection
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Controller
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
@@ -26,15 +27,21 @@ class AddArtworkNatsController(
 
     override val queueGroup: String = QUEUE_GROUP
 
+    override val responseType: CreateArtworkResponseProto = CreateArtworkResponseProto.getDefaultInstance()
+
     override val parser: Parser<CreateArtworkRequestProto> = CreateArtworkRequestProto.parser()
 
     override fun handle(request: CreateArtworkRequestProto): Mono<CreateArtworkResponseProto> {
         return artworkService.save(request.toCreateArtworkRequest().toMongo())
             .map { it.toResponse().toCreateArtworkSuccessResponseProto() }
-            .onErrorResume { it.toCreateArtworkFailureResponseProto().toMono() }
+            .onErrorResume {
+                log.error("Error in CreateArtwork", it)
+                it.toCreateArtworkFailureResponseProto().toMono()
+            }
     }
 
     companion object {
         private const val QUEUE_GROUP = "artwork"
+        private val log = LoggerFactory.getLogger(AddArtworkNatsController::class.java)
     }
 }

@@ -133,7 +133,7 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
         )
 
         // WHEN
-        val result = auctionRepository.findAll().collectList()
+        val result = auctionRepository.findAll(page = 0, limit = 100).collectList()
 
         // THEN
         result.test()
@@ -163,7 +163,7 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
         )
 
         // WHEN
-        val result = auctionRepository.findFullAll().collectList()
+        val result = auctionRepository.findFullAll(page = 0, limit = 100).collectList()
 
         // THEN
         result.test()

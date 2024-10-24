@@ -16,4 +16,6 @@ interface NatsController<RequestT : GeneratedMessage, ResponseT : GeneratedMessa
     val parser: Parser<RequestT>
 
     fun handle(request: RequestT): Mono<ResponseT>
+
+    val responseType: ResponseT
 }

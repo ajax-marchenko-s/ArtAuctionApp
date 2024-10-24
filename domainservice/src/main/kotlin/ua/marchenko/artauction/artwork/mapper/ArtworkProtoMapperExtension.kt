@@ -26,13 +26,13 @@ fun CreateArtworkRequestProto.toCreateArtworkRequest(): CreateArtworkRequest =
 
 fun ArtworkResponse.toCreateArtworkSuccessResponseProto(): CreateArtworkResponseProto {
     return CreateArtworkResponseProto.newBuilder().also { builder ->
-        builder.successBuilder.setArtwork(this.toArtworkProto())
+        builder.successBuilder.setArtwork(toArtworkProto())
     }.build()
 }
 
 fun Throwable.toCreateArtworkFailureResponseProto(): CreateArtworkResponseProto {
     return CreateArtworkResponseProto.newBuilder().also { builder ->
-        builder.failureBuilder.setMessage(this.message.orEmpty())
+        builder.failureBuilder.message = message.orEmpty()
         if (this is UserNotFoundException) {
             builder.failureBuilder.artistNotFoundBuilder
         }
@@ -41,13 +41,13 @@ fun Throwable.toCreateArtworkFailureResponseProto(): CreateArtworkResponseProto 
 
 fun ArtworkResponse.toFindArtworkByIdSuccessResponseProto(): FindArtworkByIdResponseProto {
     return FindArtworkByIdResponseProto.newBuilder().also { builder ->
-        builder.successBuilder.setArtwork(this.toArtworkProto())
+        builder.successBuilder.setArtwork(toArtworkProto())
     }.build()
 }
 
 fun Throwable.toFindArtworkByIdFailureResponseProto(): FindArtworkByIdResponseProto {
     return FindArtworkByIdResponseProto.newBuilder().also { builder ->
-        builder.failureBuilder.setMessage(message.orEmpty())
+        builder.failureBuilder.message = message.orEmpty()
         if (this is ArtworkNotFoundException) {
             builder.failureBuilder.notFoundByIdBuilder
         }
@@ -56,25 +56,25 @@ fun Throwable.toFindArtworkByIdFailureResponseProto(): FindArtworkByIdResponsePr
 
 fun List<ArtworkResponse>.toFindAllArtworksSuccessResponseProto(): FindAllArtworksResponseProto {
     return FindAllArtworksResponseProto.newBuilder().also { builder ->
-        builder.successBuilder.addAllArtworks(this.map { it.toArtworkProto() })
+        builder.successBuilder.addAllArtworks(map { it.toArtworkProto() })
     }.build()
 }
 
 fun Throwable.toFindAllArtworksFailureResponseProto(): FindAllArtworksResponseProto {
     return FindAllArtworksResponseProto.newBuilder().also { builder ->
-        builder.failureBuilder.setMessage(message.orEmpty())
+        builder.failureBuilder.message = message.orEmpty()
     }.build()
 }
 
 fun ArtworkFullResponse.toFindArtworkFullByIdSuccessResponseProto(): FindArtworkFullByIdResponseProto {
     return FindArtworkFullByIdResponseProto.newBuilder().also { builder ->
-        builder.successBuilder.setArtwork(this.toArtworkFullProto())
+        builder.successBuilder.setArtwork(toArtworkFullProto())
     }.build()
 }
 
 fun Throwable.toFindArtworkFullByIdFailureResponseProto(): FindArtworkFullByIdResponseProto {
     return FindArtworkFullByIdResponseProto.newBuilder().also { builder ->
-        builder.failureBuilder.setMessage(message.orEmpty())
+        builder.failureBuilder.message = message.orEmpty()
         if (this is ArtworkNotFoundException) {
             builder.failureBuilder.notFoundByIdBuilder
         }
@@ -89,42 +89,74 @@ fun List<ArtworkFullResponse>.toFindAllArtworksFullSuccessResponseProto(): FindA
 
 fun Throwable.toFindAllArtworksFullFailureResponseProto(): FindAllArtworksFullResponseProto {
     return FindAllArtworksFullResponseProto.newBuilder().also { builder ->
-        builder.failureBuilder.setMessage(message.orEmpty())
+        builder.failureBuilder.message = message.orEmpty()
     }.build()
 }
 
 fun ArtworkFullResponse.toArtworkFullProto(): ArtworkFullProto {
-    return ArtworkFullProto.newBuilder()
-        .setId(id)
-        .setTitle(title)
-        .setDescription(description)
-        .setWidth(width)
-        .setHeight(height)
-        .setStyle(style.toArtworkStyleProto())
-        .setStatus(status.toArtworkStatusProto())
-        .setArtist(artist.toUserProto())
+    return ArtworkFullProto.newBuilder().also {
+        it.id = id
+        it.title = title
+        it.description = description
+        it.width = width
+        it.height = height
+        it.style = style.toArtworkStyleProto()
+        it.status = status.toArtworkStatusProto()
+        it.artist = artist.toUserProto()
+    }
         .build()
 }
 
 fun ArtworkResponse.toArtworkProto(): ArtworkProto {
-    return ArtworkProto.newBuilder()
-        .setId(id)
-        .setTitle(title)
-        .setDescription(description)
-        .setArtistId(artistId)
-        .setWidth(width)
-        .setHeight(height)
-        .setStyle(style.toArtworkStyleProto())
-        .setStatus(status.toArtworkStatusProto())
+    return ArtworkProto.newBuilder().also {
+        it.id = id
+        it.title = title
+        it.description = description
+        it.width = width
+        it.height = height
+        it.style = style.toArtworkStyleProto()
+        it.status = status.toArtworkStatusProto()
+        it.artistId = artistId
+    }
         .build()
 }
 
-private fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle = runCatching { ArtworkStyle.valueOf(this.name) }
-    .getOrDefault(ArtworkStyle.UNKNOWN)
+fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {
+    return when (this) {
+        ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED -> ArtworkStyle.UNKNOWN
+        ArtworkStyleProto.ARTWORK_STYLE_REALISM -> ArtworkStyle.REALISM
+        ArtworkStyleProto.ARTWORK_STYLE_IMPRESSIONISM -> ArtworkStyle.IMPRESSIONISM
+        ArtworkStyleProto.ARTWORK_STYLE_EXPRESSIONISM -> ArtworkStyle.EXPRESSIONISM
+        ArtworkStyleProto.ARTWORK_STYLE_CUBISM -> ArtworkStyle.CUBISM
+        ArtworkStyleProto.ARTWORK_STYLE_SURREALISM -> ArtworkStyle.SURREALISM
+        ArtworkStyleProto.ARTWORK_STYLE_ABSTRACT -> ArtworkStyle.ABSTRACT
+        ArtworkStyleProto.ARTWORK_STYLE_POP_ART -> ArtworkStyle.POP_ART
+        ArtworkStyleProto.ARTWORK_STYLE_MINIMALISM -> ArtworkStyle.MINIMALISM
+        ArtworkStyleProto.ARTWORK_STYLE_RENAISSANCE -> ArtworkStyle.RENAISSANCE
+        ArtworkStyleProto.UNRECOGNIZED -> ArtworkStyle.UNKNOWN
+    }
+}
 
-private fun ArtworkStyle.toArtworkStyleProto(): ArtworkStyleProto = runCatching { ArtworkStyleProto.valueOf(this.name) }
-    .getOrDefault(ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED)
+fun ArtworkStyle.toArtworkStyleProto(): ArtworkStyleProto {
+    return when (this) {
+        ArtworkStyle.UNKNOWN -> ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED
+        ArtworkStyle.REALISM -> ArtworkStyleProto.ARTWORK_STYLE_REALISM
+        ArtworkStyle.IMPRESSIONISM -> ArtworkStyleProto.ARTWORK_STYLE_IMPRESSIONISM
+        ArtworkStyle.EXPRESSIONISM -> ArtworkStyleProto.ARTWORK_STYLE_EXPRESSIONISM
+        ArtworkStyle.CUBISM -> ArtworkStyleProto.ARTWORK_STYLE_CUBISM
+        ArtworkStyle.SURREALISM -> ArtworkStyleProto.ARTWORK_STYLE_SURREALISM
+        ArtworkStyle.ABSTRACT -> ArtworkStyleProto.ARTWORK_STYLE_ABSTRACT
+        ArtworkStyle.POP_ART -> ArtworkStyleProto.ARTWORK_STYLE_POP_ART
+        ArtworkStyle.MINIMALISM -> ArtworkStyleProto.ARTWORK_STYLE_MINIMALISM
+        ArtworkStyle.RENAISSANCE -> ArtworkStyleProto.ARTWORK_STYLE_RENAISSANCE
+    }
+}
 
-private fun ArtworkStatus.toArtworkStatusProto(): ArtworkStatusProto =
-    runCatching { ArtworkStatusProto.valueOf(this.name) }
-        .getOrDefault(ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED)
+fun ArtworkStatus.toArtworkStatusProto(): ArtworkStatusProto {
+    return when (this) {
+        ArtworkStatus.VIEW -> ArtworkStatusProto.ARTWORK_STATUS_VIEW
+        ArtworkStatus.UNKNOWN -> ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED
+        ArtworkStatus.SOLD -> ArtworkStatusProto.ARTWORK_STATUS_SOLD
+        ArtworkStatus.ON_AUCTION -> ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION
+    }
+}

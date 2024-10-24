@@ -8,7 +8,7 @@ import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest as Crea
 object ArtworkProtoFixture {
 
     fun randomCreateArtworkRequestProto(
-        style: ArtworkStyleProto = ArtworkStyleProto.POP_ART,
+        style: ArtworkStyleProto = ArtworkStyleProto.ARTWORK_STYLE_POP_ART,
         artistId: String = ObjectId.get().toHexString(),
     ): CreateArtworkRequestProto = CreateArtworkRequestProto.newBuilder()
         .setTitle(getRandomString())

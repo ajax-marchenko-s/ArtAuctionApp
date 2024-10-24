@@ -105,7 +105,7 @@ class ArtworkRepositoryTest : AbstractBaseIntegrationTest {
         )
 
         // WHEN
-        val result = artworkRepository.findFullAll(0, 100).collectList()
+        val result = artworkRepository.findFullAll(page = 0, limit = 100).collectList()
 
         // THEN
         result.test()
@@ -127,7 +127,7 @@ class ArtworkRepositoryTest : AbstractBaseIntegrationTest {
         )
 
         // WHEN
-        val result = artworkRepository.findAll(0, 100).collectList()
+        val result = artworkRepository.findAll(page = 0, limit = 100).collectList()
 
         // THEN
         result.test()

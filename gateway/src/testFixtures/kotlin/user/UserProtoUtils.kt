@@ -11,6 +11,6 @@ object UserProtoFixture {
             .setName(getRandomString())
             .setLastName(getRandomString())
             .setEmail(getRandomString())
-            .setRole(UserRoleProto.ARTIST)
+            .setRole(UserRoleProto.ROLE_ARTIST)
             .build()
 }

@@ -41,7 +41,8 @@ internal class MongoUserRepository(
     }
 
     override fun findByIdAndRole(id: String, role: Role): Mono<MongoUser> {
-        val query = Query.query(Criteria.where(MongoUser::id.name).`is`(id).and(MongoUser::role.name).`is`(role))
+        val query =
+            Query.query(Criteria.where(MongoUser::id.name).isEqualTo(id).and(MongoUser::role.name).isEqualTo(role))
         return reactiveMongoTemplate.findOne(query, MongoUser::class.java)
     }
 }

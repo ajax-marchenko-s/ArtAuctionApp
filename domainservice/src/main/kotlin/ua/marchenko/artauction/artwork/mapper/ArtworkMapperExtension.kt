@@ -33,5 +33,13 @@ fun ArtworkFull.toFullResponse() = ArtworkFullResponse(
     artist?.toResponse() ?: MongoUser().toResponse()
 )
 
-fun CreateArtworkRequest.toMongo(): MongoArtwork =
-    MongoArtwork(null, title, description, style, width, height, null, artistId.toObjectId())
+fun CreateArtworkRequest.toMongo(): MongoArtwork = MongoArtwork(
+    id = null,
+    title = title,
+    description = description,
+    style = style,
+    width = width,
+    height = height,
+    status = null,
+    artistId = artistId.toObjectId()
+)

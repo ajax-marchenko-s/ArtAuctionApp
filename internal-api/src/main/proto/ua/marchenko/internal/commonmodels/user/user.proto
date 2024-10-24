@@ -5,8 +5,8 @@ option java_multiple_files = true;
 
 enum UserRole {
   ROLE_UNSPECIFIED = 0;
-  ARTIST = 1;
-  BUYER = 2;
+  ROLE_ARTIST = 1;
+  ROLE_BUYER = 2;
 }
 
 message User {

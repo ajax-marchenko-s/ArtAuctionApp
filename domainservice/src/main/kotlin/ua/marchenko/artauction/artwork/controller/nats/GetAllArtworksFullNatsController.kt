@@ -2,6 +2,7 @@ package ua.marchenko.artauction.artwork.controller.nats
 
 import com.google.protobuf.Parser
 import io.nats.client.Connection
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Controller
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
@@ -26,15 +27,21 @@ class GetAllArtworksFullNatsController(
 
     override val parser: Parser<FindAllArtworksFullRequestProto> = FindAllArtworksFullRequestProto.parser()
 
+    override val responseType: FindAllArtworksFullResponseProto = FindAllArtworksFullResponseProto.getDefaultInstance()
+
     override fun handle(request: FindAllArtworksFullRequestProto): Mono<FindAllArtworksFullResponseProto> {
         return artworkService.getFullAll(request.page, request.limit)
             .map { it.toFullResponse() }
             .collectList()
             .map { it.toFindAllArtworksFullSuccessResponseProto() }
-            .onErrorResume { e -> e.toFindAllArtworksFullFailureResponseProto().toMono() }
+            .onErrorResume {
+                log.error("Error in FindAllArtworksFull", it)
+                it.toFindAllArtworksFullFailureResponseProto().toMono()
+            }
     }
 
     companion object {
         private const val QUEUE_GROUP = "artwork"
+        private val log = LoggerFactory.getLogger(GetAllArtworksFullNatsController::class.java)
     }
 }

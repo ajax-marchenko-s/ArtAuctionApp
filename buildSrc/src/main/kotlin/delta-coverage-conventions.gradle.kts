@@ -3,6 +3,7 @@ import io.github.surpsg.deltacoverage.gradle.DeltaCoverageConfiguration
 plugins {
     kotlin("jvm")
     id("io.github.surpsg.delta-coverage")
+    jacoco
 }
 
 configure<DeltaCoverageConfiguration> {

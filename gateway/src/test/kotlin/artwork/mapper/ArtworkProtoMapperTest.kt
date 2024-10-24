@@ -31,7 +31,7 @@ class ArtworkProtoMapperTest {
             .setDescription(request.description)
             .setWidth(request.width)
             .setHeight(request.height)
-            .setStyle(ArtworkStyleProto.POP_ART)
+            .setStyle(ArtworkStyleProto.ARTWORK_STYLE_POP_ART)
             .setArtistId(request.artistId)
             .build()
 
@@ -46,8 +46,8 @@ class ArtworkProtoMapperTest {
     fun `should build ArtworkResponse from CreateArtworkResponseProto when the case is success`() {
         // GIVEN
         val response = ArtworkProtoFixture.randomSuccessCreateArtworkResponseProto(
-            style = ArtworkStyleProto.POP_ART,
-            status = ArtworkStatusProto.ON_AUCTION,
+            style = ArtworkStyleProto.ARTWORK_STYLE_POP_ART,
+            status = ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION,
         )
         val expectedResponse = ArtworkResponse(
             id = response.success.artwork.id,
@@ -81,8 +81,8 @@ class ArtworkProtoMapperTest {
     fun `should build ArtworkResponse from FindArtworkByIdResponseProto when the case is success`() {
         // GIVEN
         val response = ArtworkProtoFixture.randomSuccessFindArtworkByIdResponseProto(
-            style = ArtworkStyleProto.POP_ART,
-            status = ArtworkStatusProto.ON_AUCTION,
+            style = ArtworkStyleProto.ARTWORK_STYLE_POP_ART,
+            status = ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION,
         )
         val expectedResponse = ArtworkResponse(
             id = response.success.artwork.id,
@@ -117,8 +117,8 @@ class ArtworkProtoMapperTest {
         // GIVEN
         val artist = UserProtoFixture.randomUserProto()
         val response = ArtworkProtoFixture.randomSuccessFindArtworkFullByIdResponseProto(
-            style = ArtworkStyleProto.POP_ART,
-            status = ArtworkStatusProto.ON_AUCTION,
+            style = ArtworkStyleProto.ARTWORK_STYLE_POP_ART,
+            status = ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION,
             artist = artist
         )
         val expectedResponse = ArtworkFullResponse(
