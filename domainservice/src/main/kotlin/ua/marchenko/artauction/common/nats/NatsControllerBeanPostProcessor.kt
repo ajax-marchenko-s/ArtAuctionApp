@@ -51,7 +51,7 @@ class NatsControllerBeanPostProcessor(private val dispatcher: Dispatcher) : Bean
                 .build()
             setField(failureDescriptor, failure)
         }.build()
-        return (response as? ResponseT)?.toMono() ?: Mono.error(throwable)
+        return (response as? ResponseT)?.toMono() ?: throwable.toMono()
     }
 
     companion object {
