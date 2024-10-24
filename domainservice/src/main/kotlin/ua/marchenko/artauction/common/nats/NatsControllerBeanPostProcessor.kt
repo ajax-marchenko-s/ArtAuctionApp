@@ -27,9 +27,9 @@ class NatsControllerBeanPostProcessor(private val dispatcher: Dispatcher) : Bean
                 .flatMap { parsedData ->
                     controller.handle(parsedData)
                 }
-                .onErrorResume { throwable ->
-                    log.error("Error:", throwable)
-                    onParsingError(throwable, controller.responseType)
+                .onErrorResume {
+                    log.error("Error:", it)
+                    onParsingError(it, controller.responseType)
                 }
                 .subscribeOn(Schedulers.boundedElastic())
                 .subscribe { response ->
