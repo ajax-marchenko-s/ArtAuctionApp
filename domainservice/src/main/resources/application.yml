@@ -14,4 +14,4 @@ server:
   port: 8081
 
 nats:
-  uri: "nats://localhost:4222"
+  uri: ${NATS_CONNECTION}
