@@ -1,9 +1,10 @@
 syntax = "proto3";
 
+package ua.marchenko.internal.input.reqreply.artwork;
+
 import "ua/marchenko/internal/commonmodels/artwork/artwork.proto";
 import "ua/marchenko/internal/commonmodels/error.proto";
 
-option java_package = "ua.marchenko.internal.input.reqreply.artwork";
 option java_multiple_files = true;
 
 message FindArtworkByIdRequest {
@@ -18,14 +19,14 @@ message FindArtworkByIdResponse {
   }
 
   message Success {
-    Artwork artwork = 1;
+    commonmodels.artwork.Artwork artwork = 1;
   }
 
   message Failure {
     string message = 100;
 
     oneof error {
-      Error not_found_by_id = 1;
+      commonmodels.Error not_found_by_id = 1;
     }
   }
 }

@@ -8,7 +8,6 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 import ua.marchenko.artauction.artwork.mapper.toFindArtworkFullByIdFailureResponseProto
 import ua.marchenko.artauction.artwork.mapper.toFindArtworkFullByIdSuccessResponseProto
-import ua.marchenko.artauction.artwork.mapper.toFullResponse
 import ua.marchenko.artauction.artwork.service.ArtworkService
 import ua.marchenko.artauction.common.nats.NatsController
 import ua.marchenko.internal.NatsSubject
@@ -31,7 +30,7 @@ class GetArtworkFullByIdNatsController(
 
     override fun handle(request: FindArtworkFullByIdRequestProto): Mono<FindArtworkFullByIdResponseProto> {
         return artworkService.getFullById(request.id)
-            .map { it.toFullResponse().toFindArtworkFullByIdSuccessResponseProto() }
+            .map { it.toFindArtworkFullByIdSuccessResponseProto() }
             .onErrorResume {
                 log.error("Error in FindArtworkFullById", it)
                 it.toFindArtworkFullByIdFailureResponseProto().toMono()

@@ -1,6 +1,7 @@
 syntax = "proto3";
 
-option java_package = "ua.marchenko.internal.commonmodels";
+package ua.marchenko.internal.commonmodels;
+
 option java_multiple_files = true;
 
 message Error {}

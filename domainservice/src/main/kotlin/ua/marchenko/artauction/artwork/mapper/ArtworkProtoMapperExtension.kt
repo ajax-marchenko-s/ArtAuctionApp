@@ -2,10 +2,11 @@
 
 package ua.marchenko.artauction.artwork.mapper
 
+import ua.marchenko.artauction.artwork.model.MongoArtwork
+import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.core.artwork.exception.ArtworkNotFoundException
 import ua.marchenko.artauction.user.mapper.toUserProto
-import ua.marchenko.core.artwork.dto.ArtworkFullResponse
-import ua.marchenko.core.artwork.dto.ArtworkResponse
+import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.core.artwork.dto.CreateArtworkRequest
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.core.artwork.enums.ArtworkStyle
@@ -24,7 +25,7 @@ import ua.marchenko.internal.commonmodels.artwork.Artwork as ArtworkProto
 fun CreateArtworkRequestProto.toCreateArtworkRequest(): CreateArtworkRequest =
     CreateArtworkRequest(title, description, style.toArtworkStyle(), width, height, artistId)
 
-fun ArtworkResponse.toCreateArtworkSuccessResponseProto(): CreateArtworkResponseProto {
+fun MongoArtwork.toCreateArtworkSuccessResponseProto(): CreateArtworkResponseProto {
     return CreateArtworkResponseProto.newBuilder().also { builder ->
         builder.successBuilder.setArtwork(toArtworkProto())
     }.build()
@@ -39,7 +40,7 @@ fun Throwable.toCreateArtworkFailureResponseProto(): CreateArtworkResponseProto 
     }.build()
 }
 
-fun ArtworkResponse.toFindArtworkByIdSuccessResponseProto(): FindArtworkByIdResponseProto {
+fun MongoArtwork.toFindArtworkByIdSuccessResponseProto(): FindArtworkByIdResponseProto {
     return FindArtworkByIdResponseProto.newBuilder().also { builder ->
         builder.successBuilder.setArtwork(toArtworkProto())
     }.build()
@@ -54,7 +55,7 @@ fun Throwable.toFindArtworkByIdFailureResponseProto(): FindArtworkByIdResponsePr
     }.build()
 }
 
-fun List<ArtworkResponse>.toFindAllArtworksSuccessResponseProto(): FindAllArtworksResponseProto {
+fun List<MongoArtwork>.toFindAllArtworksSuccessResponseProto(): FindAllArtworksResponseProto {
     return FindAllArtworksResponseProto.newBuilder().also { builder ->
         builder.successBuilder.addAllArtworks(map { it.toArtworkProto() })
     }.build()
@@ -66,7 +67,7 @@ fun Throwable.toFindAllArtworksFailureResponseProto(): FindAllArtworksResponsePr
     }.build()
 }
 
-fun ArtworkFullResponse.toFindArtworkFullByIdSuccessResponseProto(): FindArtworkFullByIdResponseProto {
+fun ArtworkFull.toFindArtworkFullByIdSuccessResponseProto(): FindArtworkFullByIdResponseProto {
     return FindArtworkFullByIdResponseProto.newBuilder().also { builder ->
         builder.successBuilder.setArtwork(toArtworkFullProto())
     }.build()
@@ -81,7 +82,7 @@ fun Throwable.toFindArtworkFullByIdFailureResponseProto(): FindArtworkFullByIdRe
     }.build()
 }
 
-fun List<ArtworkFullResponse>.toFindAllArtworksFullSuccessResponseProto(): FindAllArtworksFullResponseProto {
+fun List<ArtworkFull>.toFindAllArtworksFullSuccessResponseProto(): FindAllArtworksFullResponseProto {
     return FindAllArtworksFullResponseProto.newBuilder().also { builder ->
         builder.successBuilder.addAllArtworks(this.map { it.toArtworkFullProto() })
     }.build()
@@ -93,30 +94,29 @@ fun Throwable.toFindAllArtworksFullFailureResponseProto(): FindAllArtworksFullRe
     }.build()
 }
 
-fun ArtworkFullResponse.toArtworkFullProto(): ArtworkFullProto {
+fun ArtworkFull.toArtworkFullProto(): ArtworkFullProto {
     return ArtworkFullProto.newBuilder().also {
-        it.id = id
-        it.title = title
-        it.description = description
-        it.width = width
-        it.height = height
-        it.style = style.toArtworkStyleProto()
-        it.status = status.toArtworkStatusProto()
-        it.artist = artist.toUserProto()
-    }
-        .build()
+        it.id = requireNotNull(id) { "artwork id cannot be null" }.toHexString()
+        it.title = title ?: "unknown"
+        it.description = description ?: "unknown"
+        it.width = width ?: 0
+        it.height = height ?: 0
+        it.style = (style ?: ArtworkStyle.UNKNOWN).toArtworkStyleProto()
+        it.status = (status ?: ArtworkStatus.UNKNOWN).toArtworkStatusProto()
+        it.artist = (artist ?: MongoUser()).toUserProto()
+    }.build()
 }
 
-fun ArtworkResponse.toArtworkProto(): ArtworkProto {
+fun MongoArtwork.toArtworkProto(): ArtworkProto {
     return ArtworkProto.newBuilder().also {
-        it.id = id
-        it.title = title
-        it.description = description
-        it.width = width
-        it.height = height
-        it.style = style.toArtworkStyleProto()
-        it.status = status.toArtworkStatusProto()
-        it.artistId = artistId
+        it.id = requireNotNull(id) { "artwork id cannot be null" }.toHexString()
+        it.title = title ?: "unknown"
+        it.description = description ?: "unknown"
+        it.width = width ?: 0
+        it.height = height ?: 0
+        it.style = (style ?: ArtworkStyle.UNKNOWN).toArtworkStyleProto()
+        it.status = (status ?: ArtworkStatus.UNKNOWN).toArtworkStatusProto()
+        it.artistId = artistId?.toHexString() ?: "unknown"
     }
         .build()
 }

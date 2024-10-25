@@ -23,14 +23,15 @@ import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullResponse 
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksResponse as FindAllArtworksResponseProto
 
 fun CreateArtworkRequest.toCreateArtworkRequestProto(): CreateArtworkRequestProto =
-    CreateArtworkRequestProto.newBuilder()
-        .setTitle(title)
-        .setDescription(description)
-        .setWidth(width)
-        .setHeight(height)
-        .setStyle(style.toArtworkStyleProto())
-        .setArtistId(artistId)
-        .build()
+    CreateArtworkRequestProto.newBuilder().also {
+        it.title = title
+        it.description = description
+        it.width = width
+        it.height = height
+        it.style = style.toArtworkStyleProto()
+        it.artistId = artistId
+
+    }.build()
 
 fun CreateArtworkResponseProto.toArtworkResponse(): ArtworkResponse {
     return when (responseCase!!) {

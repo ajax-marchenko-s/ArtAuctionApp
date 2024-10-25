@@ -10,7 +10,6 @@ import ua.marchenko.artauction.artwork.mapper.toCreateArtworkFailureResponseProt
 import ua.marchenko.artauction.artwork.mapper.toCreateArtworkRequest
 import ua.marchenko.artauction.artwork.mapper.toCreateArtworkSuccessResponseProto
 import ua.marchenko.artauction.artwork.mapper.toMongo
-import ua.marchenko.artauction.artwork.mapper.toResponse
 import ua.marchenko.artauction.artwork.service.ArtworkService
 import ua.marchenko.artauction.common.nats.NatsController
 import ua.marchenko.internal.NatsSubject
@@ -33,7 +32,7 @@ class AddArtworkNatsController(
 
     override fun handle(request: CreateArtworkRequestProto): Mono<CreateArtworkResponseProto> {
         return artworkService.save(request.toCreateArtworkRequest().toMongo())
-            .map { it.toResponse().toCreateArtworkSuccessResponseProto() }
+            .map { it.toCreateArtworkSuccessResponseProto() }
             .onErrorResume {
                 log.error("Error in CreateArtwork", it)
                 it.toCreateArtworkFailureResponseProto().toMono()

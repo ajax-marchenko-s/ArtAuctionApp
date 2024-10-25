@@ -1,15 +1,16 @@
 syntax = "proto3";
 
-import "ua/marchenko/internal/commonmodels/error.proto";
-import "ua/marchenko/internal/commonmodels/artwork/artwork.proto";
+package ua.marchenko.internal.input.reqreply.artwork;
 
-option java_package = "ua.marchenko.internal.input.reqreply.artwork";
+import "ua/marchenko/internal/commonmodels/artwork/artwork.proto";
+import "ua/marchenko/internal/commonmodels/error.proto";
+
 option java_multiple_files = true;
 
 message CreateArtworkRequest {
   string title = 1;
   string description = 2;
-  ArtworkStyle style = 3;
+  commonmodels.artwork.ArtworkStyle style = 3;
   uint32 width = 4;
   uint32 height = 5;
   string artistId = 6;
@@ -23,14 +24,14 @@ message CreateArtworkResponse {
   }
 
   message Success {
-    Artwork artwork = 1;
+    commonmodels.artwork.Artwork artwork = 1;
   }
 
   message Failure {
     string message = 100;
 
     oneof error {
-      Error artist_not_found = 1;
+      commonmodels.Error artist_not_found = 1;
     }
   }
 }

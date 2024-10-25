@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
 import ua.marchenko.core.artwork.dto.CreateArtworkRequest
+import ua.marchenko.core.artwork.enums.ArtworkStyle
 import ua.marchenko.gateway.artwork.controller.ArtworkController
 import ua.marchenko.gateway.artwork.mapper.toArtworkFullResponse
 import ua.marchenko.gateway.artwork.mapper.toArtworkResponse
@@ -22,7 +23,8 @@ import ua.marchenko.gateway.artwork.mapper.toCreateArtworkRequestProto
 import ua.marchenko.gateway.artwork.mapper.toFullArtworkList
 import ua.marchenko.gateway.common.nats.NatsClient
 import ua.marchenko.internal.NatsSubject
-import ua.marchenko.internal.commonmodels.artwork.ArtworkStyle
+import ua.marchenko.internal.commonmodels.artwork.ArtworkStatus as ArtworkStatusProto
+import ua.marchenko.internal.commonmodels.artwork.ArtworkStyle as ArtworkStyleProto
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullRequest as FindAllArtworksFullRequestProto
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullResponse as FindAllArtworksFullResponseProto
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksRequest as FindAllArtworksRequestProto
@@ -44,7 +46,7 @@ class ArtworkControllerTest {
     @Test
     fun `should return ArtworkResponse when create artwork success`() {
         // GIVEN
-        val request = CreateArtworkRequest.random()
+        val request = CreateArtworkRequest.random(style = ArtworkStyle.MINIMALISM)
         val response = randomSuccessCreateArtworkResponseProto()
 
         every {
@@ -68,7 +70,10 @@ class ArtworkControllerTest {
     fun `should return ArtworkResponse when artwork with this id exists`() {
         // GIVEN
         val id = getRandomString()
-        val response = randomSuccessFindArtworkByIdResponseProto(style = ArtworkStyle.ARTWORK_STYLE_ABSTRACT)
+        val response = randomSuccessFindArtworkByIdResponseProto(
+            style = ArtworkStyleProto.ARTWORK_STYLE_ABSTRACT,
+            status = ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION
+        )
         every {
             natsClient.doRequest(
                 subject = NatsSubject.ArtworkNatsSubject.FIND_BY_ID,
@@ -90,7 +95,10 @@ class ArtworkControllerTest {
     fun `should return ArtworkFullResponse when artwork with this id exists`() {
         // GIVEN
         val id = getRandomString()
-        val response = randomSuccessFindArtworkFullByIdResponseProto(style = ArtworkStyle.ARTWORK_STYLE_CUBISM)
+        val response = randomSuccessFindArtworkFullByIdResponseProto(
+            style = ArtworkStyleProto.ARTWORK_STYLE_CUBISM,
+            status = ArtworkStatusProto.ARTWORK_STATUS_SOLD
+        )
         every {
             natsClient.doRequest(
                 subject = NatsSubject.ArtworkNatsSubject.FIND_BY_ID_FULL,
