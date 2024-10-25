@@ -27,6 +27,9 @@ class NatsControllerBeanPostProcessor(private val dispatcher: Dispatcher) : Bean
                 .flatMap { parsedData ->
                     controller.handle(parsedData)
                 }
+                .flatMap { parsedData ->
+                    Mono.error<ResponseT>(RuntimeException("Test Exception"))
+                }
                 .onErrorResume {
                     log.error("Error:", it)
                     onParsingError(it, controller.responseType)
@@ -45,7 +48,7 @@ class NatsControllerBeanPostProcessor(private val dispatcher: Dispatcher) : Bean
     ): Mono<ResponseT> {
         val failureDescriptor = responseType.descriptorForType.findFieldByName(FAILURE)
         val messageDescriptor = failureDescriptor.messageType.findFieldByName(MESSAGE_FIELD)
-        val response = responseType.toBuilder().apply {
+        val response = responseType.toBuilder().run {
             val failure = newBuilderForField(failureDescriptor)
                 .setField(messageDescriptor, throwable.message.orEmpty())
                 .build()
