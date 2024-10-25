@@ -27,9 +27,6 @@ class NatsControllerBeanPostProcessor(private val dispatcher: Dispatcher) : Bean
                 .flatMap { parsedData ->
                     controller.handle(parsedData)
                 }
-                .flatMap { parsedData ->
-                    Mono.error<ResponseT>(RuntimeException("Test Exception"))
-                }
                 .onErrorResume {
                     log.error("Error:", it)
                     onParsingError(it, controller.responseType)
