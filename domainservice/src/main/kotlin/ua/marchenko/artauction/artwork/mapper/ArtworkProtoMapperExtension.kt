@@ -4,10 +4,10 @@ package ua.marchenko.artauction.artwork.mapper
 
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
+import ua.marchenko.artauction.common.mongodb.id.toObjectId
 import ua.marchenko.core.artwork.exception.ArtworkNotFoundException
 import ua.marchenko.artauction.user.mapper.toUserProto
 import ua.marchenko.artauction.user.model.MongoUser
-import ua.marchenko.core.artwork.dto.CreateArtworkRequest
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.core.artwork.enums.ArtworkStyle
 import ua.marchenko.core.user.exception.UserNotFoundException
@@ -22,8 +22,16 @@ import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse as Cre
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest as CreateArtworkRequestProto
 import ua.marchenko.internal.commonmodels.artwork.Artwork as ArtworkProto
 
-fun CreateArtworkRequestProto.toCreateArtworkRequest(): CreateArtworkRequest =
-    CreateArtworkRequest(title, description, style.toArtworkStyle(), width, height, artistId)
+fun CreateArtworkRequestProto.toMongo(): MongoArtwork = MongoArtwork(
+    id = null,
+    title = title,
+    description = description,
+    style = style.toArtworkStyle(),
+    width = width,
+    height = height,
+    status = null,
+    artistId = artistId.toObjectId()
+)
 
 fun MongoArtwork.toCreateArtworkSuccessResponseProto(): CreateArtworkResponseProto {
     return CreateArtworkResponseProto.newBuilder().also { builder ->
@@ -121,7 +129,7 @@ fun MongoArtwork.toArtworkProto(): ArtworkProto {
         .build()
 }
 
-fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {
+private fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {
     return when (this) {
         ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED -> ArtworkStyle.UNKNOWN
         ArtworkStyleProto.ARTWORK_STYLE_REALISM -> ArtworkStyle.REALISM
@@ -137,7 +145,7 @@ fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {
     }
 }
 
-fun ArtworkStyle.toArtworkStyleProto(): ArtworkStyleProto {
+private fun ArtworkStyle.toArtworkStyleProto(): ArtworkStyleProto {
     return when (this) {
         ArtworkStyle.UNKNOWN -> ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED
         ArtworkStyle.REALISM -> ArtworkStyleProto.ARTWORK_STYLE_REALISM
@@ -152,7 +160,7 @@ fun ArtworkStyle.toArtworkStyleProto(): ArtworkStyleProto {
     }
 }
 
-fun ArtworkStatus.toArtworkStatusProto(): ArtworkStatusProto {
+private fun ArtworkStatus.toArtworkStatusProto(): ArtworkStatusProto {
     return when (this) {
         ArtworkStatus.VIEW -> ArtworkStatusProto.ARTWORK_STATUS_VIEW
         ArtworkStatus.UNKNOWN -> ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED

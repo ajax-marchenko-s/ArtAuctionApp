@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 import ua.marchenko.artauction.artwork.mapper.toCreateArtworkFailureResponseProto
-import ua.marchenko.artauction.artwork.mapper.toCreateArtworkRequest
 import ua.marchenko.artauction.artwork.mapper.toCreateArtworkSuccessResponseProto
 import ua.marchenko.artauction.artwork.mapper.toMongo
 import ua.marchenko.artauction.artwork.service.ArtworkService
@@ -31,7 +30,7 @@ class AddArtworkNatsController(
     override val parser: Parser<CreateArtworkRequestProto> = CreateArtworkRequestProto.parser()
 
     override fun handle(request: CreateArtworkRequestProto): Mono<CreateArtworkResponseProto> {
-        return artworkService.save(request.toCreateArtworkRequest().toMongo())
+        return artworkService.save(request.toMongo())
             .map { it.toCreateArtworkSuccessResponseProto() }
             .onErrorResume {
                 log.error("Error in CreateArtwork", it)

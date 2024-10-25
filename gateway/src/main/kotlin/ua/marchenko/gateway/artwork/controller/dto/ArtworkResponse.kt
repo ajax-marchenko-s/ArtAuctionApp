@@ -1,4 +1,4 @@
-package ua.marchenko.core.artwork.dto
+package ua.marchenko.gateway.artwork.controller.dto
 
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.core.artwork.enums.ArtworkStyle

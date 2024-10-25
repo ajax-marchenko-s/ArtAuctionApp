@@ -13,9 +13,9 @@ import io.mockk.impl.annotations.MockK
 import org.junit.jupiter.api.Test
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
-import ua.marchenko.core.artwork.dto.CreateArtworkRequest
 import ua.marchenko.core.artwork.enums.ArtworkStyle
 import ua.marchenko.gateway.artwork.controller.ArtworkController
+import ua.marchenko.gateway.artwork.controller.dto.CreateArtworkRequest
 import ua.marchenko.gateway.artwork.mapper.toArtworkFullResponse
 import ua.marchenko.gateway.artwork.mapper.toArtworkResponse
 import ua.marchenko.gateway.artwork.mapper.toArtworksList

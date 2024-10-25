@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import ua.marchenko.core.artwork.dto.ArtworkFullResponse
-import ua.marchenko.core.artwork.dto.ArtworkResponse
-import ua.marchenko.core.artwork.dto.CreateArtworkRequest
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.core.artwork.enums.ArtworkStyle
+import ua.marchenko.gateway.artwork.controller.dto.ArtworkResponse
+import ua.marchenko.gateway.artwork.controller.dto.CreateArtworkRequest
 import ua.marchenko.gateway.artwork.mapper.toArtworkFullResponse
 import ua.marchenko.gateway.artwork.mapper.toArtworkResponse
 import ua.marchenko.gateway.artwork.mapper.toArtworksList
@@ -83,14 +83,14 @@ class ArtworkProtoMapperTest {
     fun `should build ArtworkResponse from FindArtworkByIdResponseProto when the case is success`() {
         // GIVEN
         val response = ArtworkProtoFixture.randomSuccessFindArtworkByIdResponseProto(
-            style = ArtworkStyleProto.ARTWORK_STYLE_POP_ART,
+            style = ArtworkStyleProto.ARTWORK_STYLE_SURREALISM,
             status = ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION,
         )
         val expectedResponse = ArtworkResponse(
             id = response.success.artwork.id,
             title = response.success.artwork.title,
             description = response.success.artwork.description,
-            style = ArtworkStyle.POP_ART,
+            style = ArtworkStyle.SURREALISM,
             width = response.success.artwork.width,
             height = response.success.artwork.height,
             status = ArtworkStatus.ON_AUCTION,
@@ -119,7 +119,7 @@ class ArtworkProtoMapperTest {
         // GIVEN
         val artist = UserProtoFixture.randomUserProto()
         val response = ArtworkProtoFixture.randomSuccessFindArtworkFullByIdResponseProto(
-            style = ArtworkStyleProto.ARTWORK_STYLE_POP_ART,
+            style = ArtworkStyleProto.ARTWORK_STYLE_REALISM,
             status = ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION,
             artist = artist
         )
@@ -127,7 +127,7 @@ class ArtworkProtoMapperTest {
             id = response.success.artwork.id,
             title = response.success.artwork.title,
             description = response.success.artwork.description,
-            style = ArtworkStyle.POP_ART,
+            style = ArtworkStyle.REALISM,
             width = response.success.artwork.width,
             height = response.success.artwork.height,
             status = ArtworkStatus.ON_AUCTION,

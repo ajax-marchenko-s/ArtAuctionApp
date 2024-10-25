@@ -2,98 +2,13 @@ package ua.marchenko.artauction.artwork.mapper
 
 import artwork.random
 import org.junit.jupiter.api.Assertions.assertEquals
-import ua.marchenko.artauction.artwork.model.MongoArtwork
 import kotlin.test.Test
-import org.bson.types.ObjectId
-import org.junit.jupiter.api.assertThrows
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
-import ua.marchenko.artauction.common.mongodb.id.toObjectId
 import ua.marchenko.artauction.user.mapper.toResponse
 import ua.marchenko.core.artwork.dto.ArtworkFullResponse
-import ua.marchenko.core.artwork.dto.ArtworkResponse
-import ua.marchenko.core.artwork.dto.CreateArtworkRequest
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 
 class ArtworkMapperTest {
-
-    @Test
-    fun `should return ArtworkResponse when Artwork has not null properties (except fields from business logic)`() {
-        // GIVEN
-        val mongoArtwork = MongoArtwork.random(artistId = ObjectId().toHexString())
-        val expectedArtwork = ArtworkResponse(
-            mongoArtwork.id!!.toHexString(),
-            mongoArtwork.title!!,
-            mongoArtwork.description!!,
-            mongoArtwork.style!!,
-            mongoArtwork.width!!,
-            mongoArtwork.height!!,
-            mongoArtwork.status!!,
-            mongoArtwork.artistId!!.toHexString()
-        )
-
-        //WHEN
-        val result = mongoArtwork.toResponse()
-
-        //THEN
-        assertEquals(expectedArtwork, result)
-    }
-
-    @Test
-    fun `should return ArtworkResponse with default values when Artwork has null properties (except fields from bl)`() {
-        // GIVEN
-        val mongoArtwork = MongoArtwork.random(status = null)
-        val expectedArtwork = ArtworkResponse(
-            mongoArtwork.id!!.toHexString(),
-            mongoArtwork.title!!,
-            mongoArtwork.description!!,
-            mongoArtwork.style!!,
-            mongoArtwork.width!!,
-            mongoArtwork.height!!,
-            ArtworkStatus.UNKNOWN,
-            mongoArtwork.artistId!!.toHexString()
-        )
-
-        //WHEN
-        val result = mongoArtwork.toResponse()
-
-        //THEN
-        assertEquals(expectedArtwork, result)
-    }
-
-    @Test
-    fun `should throw exception when Artwork id is null`() {
-        // GIVEN
-        val mongoArtwork = MongoArtwork.random(id = null)
-
-        // WHEN THEN
-        val exception = assertThrows<IllegalArgumentException> {
-            mongoArtwork.toResponse()
-        }
-        assertEquals("artwork id cannot be null", exception.message)
-    }
-
-    @Test
-    fun `should return Artwork`() {
-        // GIVEN
-        val artwork = CreateArtworkRequest.random()
-        val expectedMongoArtwork =
-            MongoArtwork(
-                null,
-                artwork.title,
-                artwork.description,
-                artwork.style,
-                artwork.width,
-                artwork.height,
-                null,
-                artwork.artistId.toObjectId()
-            )
-
-        //WHEN
-        val result = artwork.toMongo()
-
-        //THEN
-        assertEquals(expectedMongoArtwork, result)
-    }
 
     @Test
     fun `should return ArtworkFullResponse when ArtworkFull has all non-null properties`() {

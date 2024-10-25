@@ -19,8 +19,8 @@ import ua.marchenko.gateway.artwork.mapper.toFullArtworkList
 import ua.marchenko.gateway.common.nats.NatsClient
 import ua.marchenko.internal.NatsSubject
 import ua.marchenko.core.artwork.dto.ArtworkFullResponse
-import ua.marchenko.core.artwork.dto.ArtworkResponse
-import ua.marchenko.core.artwork.dto.CreateArtworkRequest
+import ua.marchenko.gateway.artwork.controller.dto.ArtworkResponse
+import ua.marchenko.gateway.artwork.controller.dto.CreateArtworkRequest
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse as CreateArtworkResponseProto
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksRequest as FindAllArtworksRequestProto
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullRequest as FindAllArtworksFullRequestProto

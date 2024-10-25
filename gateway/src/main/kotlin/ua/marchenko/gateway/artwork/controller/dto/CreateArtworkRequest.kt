@@ -1,4 +1,4 @@
-package ua.marchenko.core.artwork.dto
+package ua.marchenko.gateway.artwork.controller.dto
 
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank

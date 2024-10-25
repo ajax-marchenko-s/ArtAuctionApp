@@ -4,12 +4,12 @@ package ua.marchenko.gateway.artwork.mapper
 
 import ua.marchenko.core.artwork.exception.ArtworkNotFoundException
 import ua.marchenko.gateway.user.toUserResponse
-import ua.marchenko.core.artwork.dto.ArtworkFullResponse
-import ua.marchenko.core.artwork.dto.ArtworkResponse
-import ua.marchenko.core.artwork.dto.CreateArtworkRequest
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.core.artwork.enums.ArtworkStyle
 import ua.marchenko.core.user.exception.UserNotFoundException
+import ua.marchenko.core.artwork.dto.ArtworkFullResponse
+import ua.marchenko.gateway.artwork.controller.dto.ArtworkResponse
+import ua.marchenko.gateway.artwork.controller.dto.CreateArtworkRequest
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest as CreateArtworkRequestProto
 import ua.marchenko.internal.commonmodels.artwork.ArtworkStyle as ArtworkStyleProto
@@ -120,7 +120,7 @@ fun ArtworkFullProto.toArtworkFullResponse(): ArtworkFullResponse =
         artist = artist.toUserResponse()
     )
 
-fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {
+private fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {
     return when (this) {
         ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED -> ArtworkStyle.UNKNOWN
         ArtworkStyleProto.ARTWORK_STYLE_REALISM -> ArtworkStyle.REALISM
@@ -136,7 +136,7 @@ fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {
     }
 }
 
-fun ArtworkStyle.toArtworkStyleProto(): ArtworkStyleProto {
+private fun ArtworkStyle.toArtworkStyleProto(): ArtworkStyleProto {
     return when (this) {
         ArtworkStyle.UNKNOWN -> ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED
         ArtworkStyle.REALISM -> ArtworkStyleProto.ARTWORK_STYLE_REALISM
@@ -151,7 +151,7 @@ fun ArtworkStyle.toArtworkStyleProto(): ArtworkStyleProto {
     }
 }
 
-fun ArtworkStatusProto.toArtworkStatus(): ArtworkStatus {
+private fun ArtworkStatusProto.toArtworkStatus(): ArtworkStatus {
     return when (this) {
         ArtworkStatusProto.ARTWORK_STATUS_VIEW -> ArtworkStatus.VIEW
         ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED -> ArtworkStatus.UNKNOWN
