@@ -21,7 +21,6 @@ import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.service.UserService
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.core.artwork.exception.ArtworkNotFoundException
-import ua.marchenko.core.user.enums.Role
 import user.random
 
 class ArtworkServiceTest {
@@ -146,7 +145,7 @@ class ArtworkServiceTest {
         val artworkToSave = MongoArtwork.random(status = null, artistId = artistId)
         val expectedArtwork = artworkToSave.copy(status = ArtworkStatus.VIEW)
 
-        every { mockUserService.getByIdAndRole(artistId, Role.ARTIST) } returns user.toMono()
+        every { mockUserService.getById(artistId) } returns user.toMono()
         every { mockArtworkRepository.save(expectedArtwork) } returns expectedArtwork.toMono()
 
         // WHEN
@@ -157,7 +156,7 @@ class ArtworkServiceTest {
             .expectNext(expectedArtwork)
             .verifyComplete()
         verifyOrder {
-            mockUserService.getByIdAndRole(artistId, Role.ARTIST)
+            mockUserService.getById(artistId)
             mockArtworkRepository.save(expectedArtwork)
         }
     }

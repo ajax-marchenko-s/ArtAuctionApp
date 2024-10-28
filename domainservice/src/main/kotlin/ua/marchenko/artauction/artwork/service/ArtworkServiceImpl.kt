@@ -12,7 +12,6 @@ import ua.marchenko.artauction.common.annotation.profiling.annotation.CustomProf
 import reactor.kotlin.core.publisher.switchIfEmpty
 import ua.marchenko.artauction.user.service.UserService
 import ua.marchenko.core.artwork.enums.ArtworkStatus
-import ua.marchenko.core.user.enums.Role
 
 @Service
 class ArtworkServiceImpl(
@@ -34,7 +33,7 @@ class ArtworkServiceImpl(
     override fun save(artwork: MongoArtwork): Mono<MongoArtwork> {
         val artistId =
             artwork.artistId?.toHexString() ?: return Mono.error(IllegalArgumentException("Artist ID cannot be null"))
-        return userService.getByIdAndRole(artistId, Role.ARTIST)
+        return userService.getById(artistId)
             .flatMap { artworkRepository.save(artwork.copy(status = ArtworkStatus.VIEW)) }
     }
 

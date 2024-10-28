@@ -18,7 +18,6 @@ import ua.marchenko.artauction.auction.model.MongoAuction
 import ua.marchenko.artauction.common.AbstractBaseIntegrationTest
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.repository.UserRepository
-import ua.marchenko.core.user.enums.Role
 import user.random
 
 class AuctionRepositoryTest : AbstractBaseIntegrationTest {
@@ -82,7 +81,7 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
         val savedArtist = userRepository.save(MongoUser.random(id = null)).block()
         val savedArtworkFull = artworkRepository.save(MongoArtwork(artistId = savedArtist!!.id))
             .block()!!.toFullArtwork(savedArtist)
-        val savedBuyer = userRepository.save(MongoUser.random(id = null, role = Role.BUYER)).block()
+        val savedBuyer = userRepository.save(MongoUser.random(id = null)).block()
         val buyers = listOf(MongoAuction.Bid.random(buyerId = savedBuyer!!.id!!.toHexString()))
 
         val auction = auctionRepository.save(
@@ -147,7 +146,7 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
         val savedArtist = userRepository.save(MongoUser.random(id = null)).block()
         val savedArtworkFull = artworkRepository.save(MongoArtwork(artistId = savedArtist!!.id))
             .block()!!.toFullArtwork(savedArtist)
-        val savedBuyer = userRepository.save(MongoUser.random(id = null, role = Role.BUYER)).block()
+        val savedBuyer = userRepository.save(MongoUser.random(id = null)).block()
         val buyers = listOf(MongoAuction.Bid.random(buyerId = savedBuyer!!.id!!.toHexString()))
 
         val auctions = listOf(

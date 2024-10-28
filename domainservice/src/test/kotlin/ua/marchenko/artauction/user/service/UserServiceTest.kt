@@ -18,7 +18,6 @@ import ua.marchenko.artauction.user.mapper.toMongo
 import ua.marchenko.core.user.exception.UserNotFoundException
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.repository.UserRepository
-import ua.marchenko.core.user.enums.Role
 import user.random
 
 class UserServiceTest {
@@ -32,7 +31,7 @@ class UserServiceTest {
     @Test
     fun `should return a list of users when users are exist`() {
         // GIVEN
-        val users = listOf(MongoUser.random(role = Role.ARTIST), MongoUser.random(role = Role.BUYER))
+        val users = listOf(MongoUser.random(), MongoUser.random())
         every { mockUserRepository.findAll() } returns users.toFlux()
 
         // WHEN
