@@ -29,6 +29,8 @@ class UserServiceImpl(private val userRepository: UserRepository) : UserService 
                 ex.toUserAlreadyExistsException()
             }
 
+    override fun existById(id: String): Mono<Boolean> = userRepository.existsById(id)
+
     private fun DuplicateKeyException.toUserAlreadyExistsException(): UserAlreadyExistsException {
         val errorMessage = this.message
         val pattern = Pattern.compile("dup key: \\{ (.*?): \"(.*?)\"")

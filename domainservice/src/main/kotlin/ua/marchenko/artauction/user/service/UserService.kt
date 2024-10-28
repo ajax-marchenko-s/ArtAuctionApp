@@ -9,4 +9,5 @@ interface UserService {
     fun getById(id: String): Mono<MongoUser>
     fun getByEmail(email: String): Mono<MongoUser>
     fun save(user: MongoUser): Mono<MongoUser>
+    fun existById(id: String): Mono<Boolean>
 }

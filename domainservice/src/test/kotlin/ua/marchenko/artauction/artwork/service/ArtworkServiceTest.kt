@@ -17,11 +17,9 @@ import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
-import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.service.UserService
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.core.artwork.exception.ArtworkNotFoundException
-import user.random
 
 class ArtworkServiceTest {
 
@@ -141,11 +139,10 @@ class ArtworkServiceTest {
     fun `should set status and call userService before calling repository method`() {
         // GIVEN
         val artistId = ObjectId().toHexString()
-        val user = MongoUser.random(id = artistId)
         val artworkToSave = MongoArtwork.random(status = null, artistId = artistId)
         val expectedArtwork = artworkToSave.copy(status = ArtworkStatus.VIEW)
 
-        every { mockUserService.getById(artistId) } returns user.toMono()
+        every { mockUserService.existById(artistId) } returns true.toMono()
         every { mockArtworkRepository.save(expectedArtwork) } returns expectedArtwork.toMono()
 
         // WHEN
@@ -156,7 +153,7 @@ class ArtworkServiceTest {
             .expectNext(expectedArtwork)
             .verifyComplete()
         verifyOrder {
-            mockUserService.getById(artistId)
+            mockUserService.existById(artistId)
             mockArtworkRepository.save(expectedArtwork)
         }
     }

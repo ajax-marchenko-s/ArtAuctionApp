@@ -34,8 +34,8 @@ internal class MongoUserRepository(
         return reactiveMongoTemplate.find(query, MongoUser::class.java)
     }
 
-    override fun existsByEmail(email: String): Mono<Boolean> {
-        val query = Query(Criteria.where(MongoUser::email.name).isEqualTo(email))
+    override fun existsById(id: String): Mono<Boolean> {
+        val query = Query(Criteria.where(MongoUser::id.name).isEqualTo(id))
         return reactiveMongoTemplate.exists(query, MongoUser::class.java)
     }
 }

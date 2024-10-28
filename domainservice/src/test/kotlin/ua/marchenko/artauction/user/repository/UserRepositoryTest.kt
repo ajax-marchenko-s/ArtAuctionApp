@@ -56,27 +56,27 @@ class UserRepositoryTest : AbstractBaseIntegrationTest {
     }
 
     @Test
-    fun `should return true when user with given email exists`() {
+    fun `should return true when user with given id exists`() {
         // GIVEN
         val savedUser = userRepository.save(MongoUser.random(id = null)).block()
 
         // WHEN
-        val result = userRepository.existsByEmail(savedUser!!.email!!)
+        val result = userRepository.existsById(savedUser!!.id!!.toHexString())
 
         // THEN
         result.test()
-            .assertNext { assertTrue(it, "User with email ${savedUser.email} must exist") }
+            .assertNext { assertTrue(it, "User with id ${savedUser.id} must exist") }
             .verifyComplete()
     }
 
     @Test
-    fun `should return false when user with given email does not exists`() {
+    fun `should return false when user with given id does not exists`() {
         // WHEN
-        val result = userRepository.existsByEmail(getRandomEmail())
+        val result = userRepository.existsById(ObjectId().toHexString())
 
         // THEN
         result.test()
-            .assertNext { assertFalse(it, "User with given email must not exist") }
+            .assertNext { assertFalse(it, "User with given id must not exist") }
             .verifyComplete()
     }
 
