@@ -19,47 +19,33 @@ object ArtworkProtoFixture {
         style: ArtworkStyleProto = ArtworkStyleProto.ARTWORK_STYLE_POP_ART,
         status: ArtworkStatusProto = ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION,
     ): CreateArtworkResponseProto =
-        CreateArtworkResponseProto.newBuilder()
-            .setSuccess(
-                CreateArtworkResponseProto.Success.newBuilder()
-                    .setArtwork(randomArtworkProto(style = style, status = status))
-                    .build()
-            )
-            .build()
+        CreateArtworkResponseProto.newBuilder().also { builder ->
+            builder.successBuilder.setArtwork(randomArtworkProto(style = style, status = status))
+        }.build()
 
     fun randomFailureGeneralCreateArtworkResponseProto(): CreateArtworkResponseProto =
         CreateArtworkResponseProto.newBuilder().also { builder ->
             builder.failureBuilder.message = ERROR_MESSAGE
-        }
-            .build()
+        }.build()
 
     fun randomFailureUserNotFoundCreateArtworkResponseProto(): CreateArtworkResponseProto =
         CreateArtworkResponseProto.newBuilder().also { builder ->
             builder.failureBuilder.userNotFoundBuilder
             builder.failureBuilder.message = ERROR_MESSAGE
-        }
-            .build()
+        }.build()
 
     fun randomSuccessFindArtworkByIdResponseProto(
         style: ArtworkStyleProto = ArtworkStyleProto.ARTWORK_STYLE_POP_ART,
         status: ArtworkStatusProto = ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION,
     ): FindArtworkByIdResponseProto =
-        FindArtworkByIdResponseProto.newBuilder()
-            .setSuccess(
-                FindArtworkByIdResponseProto.Success.newBuilder()
-                    .setArtwork(randomArtworkProto(style = style, status = status))
-                    .build()
-            )
-            .build()
+        FindArtworkByIdResponseProto.newBuilder().also { builder ->
+            builder.successBuilder.setArtwork(randomArtworkProto(style = style, status = status))
+        }.build()
 
     fun randomFailureGeneralFindArtworkByIdResponseProto(): FindArtworkByIdResponseProto =
-        FindArtworkByIdResponseProto.newBuilder()
-            .setFailure(
-                FindArtworkByIdResponseProto.Failure.newBuilder()
-                    .setMessage(ERROR_MESSAGE)
-                    .build()
-            )
-            .build()
+        FindArtworkByIdResponseProto.newBuilder().also { builder ->
+            builder.failureBuilder.message = ERROR_MESSAGE
+        }.build()
 
     fun randomSuccessFindArtworkFullByIdResponseProto(
         style: ArtworkStyleProto = ArtworkStyleProto.ARTWORK_STYLE_POP_ART,
@@ -68,75 +54,63 @@ object ArtworkProtoFixture {
     ): FindArtworkFullByIdResponseProto =
         FindArtworkFullByIdResponseProto.newBuilder().also { builder ->
             builder.successBuilder.setArtwork(randomArtworkFullProto(style = style, status = status, artist = artist))
-        }
-            .build()
+        }.build()
 
     fun randomFailureGeneralFindArtworkFullByIdResponseProto(): FindArtworkFullByIdResponseProto =
         FindArtworkFullByIdResponseProto.newBuilder().also { builder ->
             builder.failureBuilder.setMessage(ERROR_MESSAGE)
-        }
-            .build()
+        }.build()
 
     fun randomSuccessFindAllArtworkResponseProto(): FindAllArtworkResponseProto =
         FindAllArtworkResponseProto.newBuilder().also { builder ->
             builder.successBuilder.addAllArtworks(listOf(randomArtworkProto(), randomArtworkProto()))
-        }
-            .build()
+        }.build()
 
     fun randomFailureGeneralFindAllArtworkResponseProto(): FindAllArtworkResponseProto =
-        FindAllArtworkResponseProto.newBuilder()
-            .setFailure(
-                FindAllArtworkResponseProto.Failure.newBuilder()
-                    .setMessage(ERROR_MESSAGE)
-                    .build()
-            )
-            .build()
+        FindAllArtworkResponseProto.newBuilder().also { builder ->
+            builder.failureBuilder.message = ERROR_MESSAGE
+        }.build()
 
     fun randomSuccessFindAllArtworkFullResponseProto(): FindAllArtworkFullResponseProto =
         FindAllArtworkFullResponseProto.newBuilder().also { builder ->
             builder.successBuilder.addAllArtworks(listOf(randomArtworkFullProto(), randomArtworkFullProto()))
-        }
-            .build()
+        }.build()
 
     fun randomFailureGeneralFindAllArtworkFullResponseProto(): FindAllArtworkFullResponseProto =
-        FindAllArtworkFullResponseProto.newBuilder()
-            .setFailure(
-                FindAllArtworkFullResponseProto.Failure.newBuilder()
-                    .setMessage(ERROR_MESSAGE)
-                    .build()
-            )
-            .build()
+        FindAllArtworkFullResponseProto.newBuilder().also { builder ->
+            builder.failureBuilder.message = ERROR_MESSAGE
+        }.build()
 
     private fun randomArtworkProto(
         style: ArtworkStyleProto = ArtworkStyleProto.ARTWORK_STYLE_POP_ART,
         status: ArtworkStatusProto = ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION,
     ): ArtworkProto =
-        ArtworkProto.newBuilder()
-            .setId(getRandomString())
-            .setTitle(getRandomString())
-            .setDescription(getRandomString())
-            .setStyle(style)
-            .setStatus(status)
-            .setWidth(100)
-            .setHeight(150)
-            .setArtistId(getRandomString())
-            .build()
+        ArtworkProto.newBuilder().also {
+            it.id = getRandomString()
+            it.title = getRandomString()
+            it.description = getRandomString()
+            it.style = style
+            it.status = status
+            it.width = 100
+            it.height = 150
+            it.artistId = getRandomString()
+        }.build()
 
     private fun randomArtworkFullProto(
         style: ArtworkStyleProto = ArtworkStyleProto.ARTWORK_STYLE_POP_ART,
         status: ArtworkStatusProto = ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION,
         artist: UserProto = UserProtoFixture.randomUserProto()
     ): ArtworkFullProto =
-        ArtworkFullProto.newBuilder()
-            .setId(getRandomString())
-            .setTitle(getRandomString())
-            .setDescription(getRandomString())
-            .setStyle(style)
-            .setStatus(status)
-            .setWidth(100)
-            .setHeight(150)
-            .setArtist(artist)
-            .build()
+        ArtworkFullProto.newBuilder().also {
+            it.id = getRandomString()
+            it.title = getRandomString()
+            it.description = getRandomString()
+            it.style = style
+            it.status = status
+            it.width = 100
+            it.height = 150
+            it.artist = artist
+        }.build()
 
     const val ERROR_MESSAGE = "Error message"
 }

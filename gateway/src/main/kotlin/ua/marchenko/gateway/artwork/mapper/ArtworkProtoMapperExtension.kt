@@ -30,7 +30,6 @@ fun CreateArtworkRequest.toCreateArtworkRequestProto(): CreateArtworkRequestProt
         it.height = height
         it.style = style.toArtworkStyleProto()
         it.artistId = artistId
-
     }.build()
 
 fun CreateArtworkResponseProto.toArtworkResponse(): ArtworkResponse {

@@ -42,10 +42,9 @@ class GetArtworkFullByIdNatsControllerTest : AbstractBaseNatsControllerTest() {
             )
         ).block()!!.toFullArtwork(savedArtist)
         val request = FindArtworkByIdRequest.newBuilder().setId(artwork.id!!.toHexString()).build()
-        val expectedResponse = FindArtworkFullByIdResponse.newBuilder()
-            .also { builder ->
-                builder.successBuilder.setArtwork(artwork.toArtworkFullProto())
-            }.build()
+        val expectedResponse = FindArtworkFullByIdResponse.newBuilder().also { builder ->
+            builder.successBuilder.setArtwork(artwork.toArtworkFullProto())
+        }.build()
 
         // WHEN
         val result = doRequest(
@@ -63,13 +62,12 @@ class GetArtworkFullByIdNatsControllerTest : AbstractBaseNatsControllerTest() {
         // GIVEN
         val id = getRandomString()
         val request = FindArtworkFullByIdRequest.newBuilder().setId(id).build()
-        val expectedResponse = FindArtworkFullByIdResponse.newBuilder()
-            .also { builder ->
-                builder.failureBuilder.setMessage(ERROR_MESSAGE_TEMPLATE.format(id))
-                builder.failureBuilder.setNotFoundById(
-                    Error.getDefaultInstance()
-                )
-            }.build()
+        val expectedResponse = FindArtworkFullByIdResponse.newBuilder().also { builder ->
+            builder.failureBuilder.setMessage(ERROR_MESSAGE_TEMPLATE.format(id))
+            builder.failureBuilder.setNotFoundById(
+                Error.getDefaultInstance()
+            )
+        }.build()
 
         // WHEN
         val result = doRequest(

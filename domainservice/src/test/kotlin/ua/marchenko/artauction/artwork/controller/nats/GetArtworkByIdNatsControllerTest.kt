@@ -45,11 +45,10 @@ class GetArtworkByIdNatsControllerTest : AbstractBaseNatsControllerTest() {
         // GIVEN
         val id = getRandomString()
         val request = FindArtworkByIdRequest.newBuilder().setId(id).build()
-        val expectedResponse = FindArtworkByIdResponse.newBuilder()
-            .also { builder ->
-                builder.failureBuilder.setMessage(ERROR_MESSAGE_TEMPLATE.format(id))
-                builder.failureBuilder.setNotFoundById(Error.getDefaultInstance())
-            }.build()
+        val expectedResponse = FindArtworkByIdResponse.newBuilder().also { builder ->
+            builder.failureBuilder.setMessage(ERROR_MESSAGE_TEMPLATE.format(id))
+            builder.failureBuilder.setNotFoundById(Error.getDefaultInstance())
+        }.build()
 
         // WHEN
         val result = doRequest(

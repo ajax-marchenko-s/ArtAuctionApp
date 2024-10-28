@@ -125,8 +125,7 @@ fun MongoArtwork.toArtworkProto(): ArtworkProto {
         it.style = (style ?: ArtworkStyle.UNKNOWN).toArtworkStyleProto()
         it.status = (status ?: ArtworkStatus.UNKNOWN).toArtworkStatusProto()
         it.artistId = artistId?.toHexString() ?: "unknown"
-    }
-        .build()
+    }.build()
 }
 
 fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {

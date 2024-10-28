@@ -10,12 +10,12 @@ object ArtworkProtoFixture {
     fun randomCreateArtworkRequestProto(
         style: ArtworkStyleProto = ArtworkStyleProto.ARTWORK_STYLE_POP_ART,
         artistId: String = ObjectId.get().toHexString(),
-    ): CreateArtworkRequestProto = CreateArtworkRequestProto.newBuilder()
-        .setTitle(getRandomString())
-        .setDescription(getRandomString())
-        .setStyle(style)
-        .setWidth(100)
-        .setHeight(150)
-        .setArtistId(artistId)
-        .build()
+    ): CreateArtworkRequestProto = CreateArtworkRequestProto.newBuilder().also {
+        it.title = getRandomString()
+        it.description = getRandomString()
+        it.artistId = artistId
+        it.style = style
+        it.width = 100
+        it.height = 150
+    }.build()
 }
