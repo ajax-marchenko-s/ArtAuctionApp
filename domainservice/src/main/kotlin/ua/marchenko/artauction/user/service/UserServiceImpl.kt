@@ -1,14 +1,15 @@
 package ua.marchenko.artauction.user.service
 
+import java.util.regex.Pattern
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
 import ua.marchenko.artauction.user.exception.UserAlreadyExistsException
-import ua.marchenko.core.user.exception.UserNotFoundException
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.repository.UserRepository
+import ua.marchenko.core.user.exception.UserNotFoundException
 
 @Service
 class UserServiceImpl(private val userRepository: UserRepository) : UserService {
@@ -24,7 +25,18 @@ class UserServiceImpl(private val userRepository: UserRepository) : UserService 
 
     override fun save(user: MongoUser): Mono<MongoUser> =
         userRepository.save(user)
-            .onErrorMap(DuplicateKeyException::class.java) {
-                UserAlreadyExistsException(userEmail = user.email ?: "")
+            .onErrorMap(DuplicateKeyException::class.java) { ex ->
+                ex.toUserAlreadyExistsException()
             }
+
+    private fun DuplicateKeyException.toUserAlreadyExistsException(): UserAlreadyExistsException {
+        val errorMessage = this.message
+        val pattern = Pattern.compile("dup key: \\{ (.*?): \"(.*?)\"")
+        val matcher = pattern.matcher(errorMessage)
+        return if (matcher.find()) {
+            UserAlreadyExistsException(matcher.group(1), matcher.group(2))
+        } else {
+            UserAlreadyExistsException("unknown property", "unknown value")
+        }
+    }
 }
