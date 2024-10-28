@@ -31,7 +31,7 @@ message CreateArtworkResponse {
     string message = 100;
 
     oneof error {
-      commonmodels.Error artist_not_found = 1;
+      commonmodels.Error user_not_found = 1;
     }
   }
 }

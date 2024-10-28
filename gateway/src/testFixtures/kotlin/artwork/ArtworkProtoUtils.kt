@@ -27,13 +27,17 @@ object ArtworkProtoFixture {
             )
             .build()
 
-    fun randomFailureCreateArtworkResponseProto(): CreateArtworkResponseProto =
-        CreateArtworkResponseProto.newBuilder()
-            .setFailure(
-                CreateArtworkResponseProto.Failure.newBuilder()
-                    .setMessage(ERROR_MESSAGE)
-                    .build()
-            )
+    fun randomFailureGeneralCreateArtworkResponseProto(): CreateArtworkResponseProto =
+        CreateArtworkResponseProto.newBuilder().also { builder ->
+            builder.failureBuilder.message = ERROR_MESSAGE
+        }
+            .build()
+
+    fun randomFailureUserNotFoundCreateArtworkResponseProto(): CreateArtworkResponseProto =
+        CreateArtworkResponseProto.newBuilder().also { builder ->
+            builder.failureBuilder.userNotFoundBuilder
+            builder.failureBuilder.message = ERROR_MESSAGE
+        }
             .build()
 
     fun randomSuccessFindArtworkByIdResponseProto(

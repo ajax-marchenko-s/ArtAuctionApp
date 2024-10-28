@@ -39,7 +39,7 @@ fun CreateArtworkResponseProto.toArtworkResponse(): ArtworkResponse {
         CreateArtworkResponseProto.ResponseCase.RESPONSE_NOT_SET -> error("Response not set")
         CreateArtworkResponseProto.ResponseCase.FAILURE -> {
             when (failure.errorCase!!) {
-                CreateArtworkResponse.Failure.ErrorCase.ARTIST_NOT_FOUND ->
+                CreateArtworkResponse.Failure.ErrorCase.USER_NOT_FOUND ->
                     throw UserNotFoundException(value = failure.message)
 
                 CreateArtworkResponse.Failure.ErrorCase.ERROR_NOT_SET -> error(failure.message)
@@ -120,9 +120,10 @@ fun ArtworkFullProto.toArtworkFullResponse(): ArtworkFullResponse =
         artist = artist.toUserResponse()
     )
 
-private fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {
+fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {
     return when (this) {
-        ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED -> ArtworkStyle.UNKNOWN
+        ArtworkStyleProto.UNRECOGNIZED -> ArtworkStyle.UNKNOWN
+        ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED -> ArtworkStyle.NOT_SPECIFIED
         ArtworkStyleProto.ARTWORK_STYLE_REALISM -> ArtworkStyle.REALISM
         ArtworkStyleProto.ARTWORK_STYLE_IMPRESSIONISM -> ArtworkStyle.IMPRESSIONISM
         ArtworkStyleProto.ARTWORK_STYLE_EXPRESSIONISM -> ArtworkStyle.EXPRESSIONISM
@@ -132,13 +133,13 @@ private fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {
         ArtworkStyleProto.ARTWORK_STYLE_POP_ART -> ArtworkStyle.POP_ART
         ArtworkStyleProto.ARTWORK_STYLE_MINIMALISM -> ArtworkStyle.MINIMALISM
         ArtworkStyleProto.ARTWORK_STYLE_RENAISSANCE -> ArtworkStyle.RENAISSANCE
-        ArtworkStyleProto.UNRECOGNIZED -> ArtworkStyle.UNKNOWN
     }
 }
 
-private fun ArtworkStyle.toArtworkStyleProto(): ArtworkStyleProto {
+fun ArtworkStyle.toArtworkStyleProto(): ArtworkStyleProto {
     return when (this) {
-        ArtworkStyle.UNKNOWN -> ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED
+        ArtworkStyle.UNKNOWN -> ArtworkStyleProto.UNRECOGNIZED
+        ArtworkStyle.NOT_SPECIFIED -> ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED
         ArtworkStyle.REALISM -> ArtworkStyleProto.ARTWORK_STYLE_REALISM
         ArtworkStyle.IMPRESSIONISM -> ArtworkStyleProto.ARTWORK_STYLE_IMPRESSIONISM
         ArtworkStyle.EXPRESSIONISM -> ArtworkStyleProto.ARTWORK_STYLE_EXPRESSIONISM
@@ -151,12 +152,12 @@ private fun ArtworkStyle.toArtworkStyleProto(): ArtworkStyleProto {
     }
 }
 
-private fun ArtworkStatusProto.toArtworkStatus(): ArtworkStatus {
+fun ArtworkStatusProto.toArtworkStatus(): ArtworkStatus {
     return when (this) {
+        ArtworkStatusProto.UNRECOGNIZED -> ArtworkStatus.UNKNOWN
+        ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED -> ArtworkStatus.NOT_SPECIFIED
         ArtworkStatusProto.ARTWORK_STATUS_VIEW -> ArtworkStatus.VIEW
-        ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED -> ArtworkStatus.UNKNOWN
         ArtworkStatusProto.ARTWORK_STATUS_SOLD -> ArtworkStatus.SOLD
         ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION -> ArtworkStatus.ON_AUCTION
-        ArtworkStatusProto.UNRECOGNIZED -> ArtworkStatus.UNKNOWN
     }
 }

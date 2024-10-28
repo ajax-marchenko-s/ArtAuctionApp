@@ -3,19 +3,28 @@ package artwork.mapper
 import artwork.ArtworkProtoFixture
 import artwork.random
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import ua.marchenko.core.artwork.dto.ArtworkFullResponse
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.core.artwork.enums.ArtworkStyle
+import ua.marchenko.core.user.exception.UserNotFoundException
 import ua.marchenko.gateway.artwork.controller.dto.ArtworkResponse
 import ua.marchenko.gateway.artwork.controller.dto.CreateArtworkRequest
 import ua.marchenko.gateway.artwork.mapper.toArtworkFullResponse
 import ua.marchenko.gateway.artwork.mapper.toArtworkResponse
+import ua.marchenko.gateway.artwork.mapper.toArtworkStatus
+import ua.marchenko.gateway.artwork.mapper.toArtworkStyle
+import ua.marchenko.gateway.artwork.mapper.toArtworkStyleProto
 import ua.marchenko.gateway.artwork.mapper.toArtworksList
 import ua.marchenko.gateway.artwork.mapper.toCreateArtworkRequestProto
 import ua.marchenko.gateway.artwork.mapper.toFullArtworkList
 import ua.marchenko.gateway.user.toUserResponse
+import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse
 import user.UserProtoFixture
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest as CreateArtworkRequestProto
 import ua.marchenko.internal.commonmodels.artwork.ArtworkStyle as ArtworkStyleProto
@@ -69,14 +78,16 @@ class ArtworkProtoMapperTest {
         assertEquals(expectedResponse, result)
     }
 
-    @Test
-    fun `should throw IllegalStateException when the case in CreateArtworkResponse is failure`() {
-        // GIVEN
-        val response = ArtworkProtoFixture.randomFailureCreateArtworkResponseProto()
-
+    @ParameterizedTest
+    @MethodSource("createArtworkResponseFailureData")
+    fun `should throw exception when the case in CreateArtworkResponse is failure`(
+        response: CreateArtworkResponse,
+        ex: Throwable
+    ) {
         // WHEN THEN
-        val exception = assertThrows<IllegalStateException> { response.toArtworkResponse() }
-        assertEquals(ArtworkProtoFixture.ERROR_MESSAGE, exception.message)
+        val exception = assertThrows<Throwable> { response.toArtworkResponse() }
+        assertTrue(ex::class.isInstance(exception), "Unexpected exception type thrown")
+        assertEquals(ex.message, exception.message)
     }
 
     @Test
@@ -169,5 +180,89 @@ class ArtworkProtoMapperTest {
         // WHEN THEN
         val exception = assertThrows<IllegalStateException> { response.toFullArtworkList() }
         assertEquals(ArtworkProtoFixture.ERROR_MESSAGE, exception.message)
+    }
+
+    @ParameterizedTest
+    @MethodSource("artworkStatusProtoToArtworkStatusData")
+    fun `should map ArtworkStatusProto to ArtworkStatus enum values`(
+        valueFrom: ArtworkStatusProto,
+        valueTo: ArtworkStatus,
+    ) {
+        // WHEN THEN
+        assertEquals(valueTo, valueFrom.toArtworkStatus())
+    }
+
+    @ParameterizedTest
+    @MethodSource("artworkStyleProtoToArtworkStyleData")
+    fun `should map ArtworkStyleProto to ArtworkStyle enum values`(
+        valueFrom: ArtworkStyleProto,
+        valueTo: ArtworkStyle,
+    ) {
+        // WHEN THEN
+        assertEquals(valueTo, valueFrom.toArtworkStyle())
+    }
+
+    @ParameterizedTest
+    @MethodSource("artworkStyleToArtworkStyleProtoData")
+    fun `should map ArtworkStyle to ArtworkStyleProto enum values`(
+        valueFrom: ArtworkStyle,
+        valueTo: ArtworkStyleProto,
+    ) {
+        // WHEN THEN
+        assertEquals(valueTo, valueFrom.toArtworkStyleProto())
+    }
+
+    companion object {
+        @JvmStatic
+        fun artworkStatusProtoToArtworkStatusData(): List<Arguments> =
+            listOf(
+                Arguments.of(ArtworkStatusProto.ARTWORK_STATUS_SOLD, ArtworkStatus.SOLD),
+                Arguments.of(ArtworkStatusProto.ARTWORK_STATUS_VIEW, ArtworkStatus.VIEW),
+                Arguments.of(ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION, ArtworkStatus.ON_AUCTION),
+                Arguments.of(ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED, ArtworkStatus.NOT_SPECIFIED),
+                Arguments.of(ArtworkStatusProto.UNRECOGNIZED, ArtworkStatus.UNKNOWN)
+            )
+
+        @JvmStatic
+        fun artworkStyleProtoToArtworkStyleData(): List<Arguments> = listOf(
+            Arguments.of(ArtworkStyleProto.UNRECOGNIZED, ArtworkStyle.UNKNOWN),
+            Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED, ArtworkStyle.NOT_SPECIFIED),
+            Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_REALISM, ArtworkStyle.REALISM),
+            Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_IMPRESSIONISM, ArtworkStyle.IMPRESSIONISM),
+            Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_EXPRESSIONISM, ArtworkStyle.EXPRESSIONISM),
+            Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_CUBISM, ArtworkStyle.CUBISM),
+            Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_SURREALISM, ArtworkStyle.SURREALISM),
+            Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_ABSTRACT, ArtworkStyle.ABSTRACT),
+            Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_POP_ART, ArtworkStyle.POP_ART),
+            Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_MINIMALISM, ArtworkStyle.MINIMALISM),
+            Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_RENAISSANCE, ArtworkStyle.RENAISSANCE)
+        )
+
+        @JvmStatic
+        fun artworkStyleToArtworkStyleProtoData(): List<Arguments> = listOf(
+            Arguments.of(ArtworkStyle.UNKNOWN, ArtworkStyleProto.UNRECOGNIZED),
+            Arguments.of(ArtworkStyle.NOT_SPECIFIED, ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED),
+            Arguments.of(ArtworkStyle.REALISM, ArtworkStyleProto.ARTWORK_STYLE_REALISM),
+            Arguments.of(ArtworkStyle.IMPRESSIONISM, ArtworkStyleProto.ARTWORK_STYLE_IMPRESSIONISM),
+            Arguments.of(ArtworkStyle.EXPRESSIONISM, ArtworkStyleProto.ARTWORK_STYLE_EXPRESSIONISM),
+            Arguments.of(ArtworkStyle.CUBISM, ArtworkStyleProto.ARTWORK_STYLE_CUBISM),
+            Arguments.of(ArtworkStyle.SURREALISM, ArtworkStyleProto.ARTWORK_STYLE_SURREALISM),
+            Arguments.of(ArtworkStyle.ABSTRACT, ArtworkStyleProto.ARTWORK_STYLE_ABSTRACT),
+            Arguments.of(ArtworkStyle.POP_ART, ArtworkStyleProto.ARTWORK_STYLE_POP_ART),
+            Arguments.of(ArtworkStyle.MINIMALISM, ArtworkStyleProto.ARTWORK_STYLE_MINIMALISM),
+            Arguments.of(ArtworkStyle.RENAISSANCE, ArtworkStyleProto.ARTWORK_STYLE_RENAISSANCE)
+        )
+
+        @JvmStatic
+        fun createArtworkResponseFailureData(): List<Arguments> = listOf(
+            Arguments.of(
+                ArtworkProtoFixture.randomFailureGeneralCreateArtworkResponseProto(),
+                IllegalStateException(ArtworkProtoFixture.ERROR_MESSAGE)
+            ),
+            Arguments.of(
+                ArtworkProtoFixture.randomFailureUserNotFoundCreateArtworkResponseProto(),
+                UserNotFoundException(value = ArtworkProtoFixture.ERROR_MESSAGE)
+            )
+        )
     }
 }

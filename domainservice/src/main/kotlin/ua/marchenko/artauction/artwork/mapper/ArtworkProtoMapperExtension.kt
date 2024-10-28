@@ -43,7 +43,7 @@ fun Throwable.toCreateArtworkFailureResponseProto(): CreateArtworkResponseProto 
     return CreateArtworkResponseProto.newBuilder().also { builder ->
         builder.failureBuilder.message = message.orEmpty()
         if (this is UserNotFoundException) {
-            builder.failureBuilder.artistNotFoundBuilder
+            builder.failureBuilder.userNotFoundBuilder
         }
     }.build()
 }
@@ -129,9 +129,10 @@ fun MongoArtwork.toArtworkProto(): ArtworkProto {
         .build()
 }
 
-private fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {
+fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {
     return when (this) {
-        ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED -> ArtworkStyle.UNKNOWN
+        ArtworkStyleProto.UNRECOGNIZED -> ArtworkStyle.UNKNOWN
+        ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED -> ArtworkStyle.NOT_SPECIFIED
         ArtworkStyleProto.ARTWORK_STYLE_REALISM -> ArtworkStyle.REALISM
         ArtworkStyleProto.ARTWORK_STYLE_IMPRESSIONISM -> ArtworkStyle.IMPRESSIONISM
         ArtworkStyleProto.ARTWORK_STYLE_EXPRESSIONISM -> ArtworkStyle.EXPRESSIONISM
@@ -141,13 +142,13 @@ private fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {
         ArtworkStyleProto.ARTWORK_STYLE_POP_ART -> ArtworkStyle.POP_ART
         ArtworkStyleProto.ARTWORK_STYLE_MINIMALISM -> ArtworkStyle.MINIMALISM
         ArtworkStyleProto.ARTWORK_STYLE_RENAISSANCE -> ArtworkStyle.RENAISSANCE
-        ArtworkStyleProto.UNRECOGNIZED -> ArtworkStyle.UNKNOWN
     }
 }
 
-private fun ArtworkStyle.toArtworkStyleProto(): ArtworkStyleProto {
+fun ArtworkStyle.toArtworkStyleProto(): ArtworkStyleProto {
     return when (this) {
-        ArtworkStyle.UNKNOWN -> ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED
+        ArtworkStyle.UNKNOWN -> ArtworkStyleProto.UNRECOGNIZED
+        ArtworkStyle.NOT_SPECIFIED -> ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED
         ArtworkStyle.REALISM -> ArtworkStyleProto.ARTWORK_STYLE_REALISM
         ArtworkStyle.IMPRESSIONISM -> ArtworkStyleProto.ARTWORK_STYLE_IMPRESSIONISM
         ArtworkStyle.EXPRESSIONISM -> ArtworkStyleProto.ARTWORK_STYLE_EXPRESSIONISM
@@ -160,10 +161,11 @@ private fun ArtworkStyle.toArtworkStyleProto(): ArtworkStyleProto {
     }
 }
 
-private fun ArtworkStatus.toArtworkStatusProto(): ArtworkStatusProto {
+fun ArtworkStatus.toArtworkStatusProto(): ArtworkStatusProto {
     return when (this) {
+        ArtworkStatus.UNKNOWN -> ArtworkStatusProto.UNRECOGNIZED
+        ArtworkStatus.NOT_SPECIFIED -> ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED
         ArtworkStatus.VIEW -> ArtworkStatusProto.ARTWORK_STATUS_VIEW
-        ArtworkStatus.UNKNOWN -> ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED
         ArtworkStatus.SOLD -> ArtworkStatusProto.ARTWORK_STATUS_SOLD
         ArtworkStatus.ON_AUCTION -> ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION
     }

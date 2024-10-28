@@ -5,4 +5,5 @@ enum class ArtworkStatus {
     ON_AUCTION,
     VIEW,
     UNKNOWN,
+    NOT_SPECIFIED
 }
