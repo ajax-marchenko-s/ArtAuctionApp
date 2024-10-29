@@ -1,5 +1,6 @@
 package artwork
 
+import getRandomInt
 import getRandomString
 import user.UserProtoFixture
 import ua.marchenko.internal.commonmodels.artwork.ArtworkStatus as ArtworkStatusProto
@@ -91,8 +92,8 @@ object ArtworkProtoFixture {
             it.description = getRandomString()
             it.style = style
             it.status = status
-            it.width = 100
-            it.height = 150
+            it.width = getRandomInt()
+            it.height = getRandomInt()
             it.artistId = getRandomString()
         }.build()
 
@@ -107,8 +108,8 @@ object ArtworkProtoFixture {
             it.description = getRandomString()
             it.style = style
             it.status = status
-            it.width = 100
-            it.height = 150
+            it.width = getRandomInt()
+            it.height = getRandomInt()
             it.artist = artist
         }.build()
 

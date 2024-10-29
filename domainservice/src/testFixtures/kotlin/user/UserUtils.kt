@@ -8,9 +8,9 @@ import ua.marchenko.artauction.user.model.MongoUser
 
 fun MongoUser.Companion.random(
     id: String? = ObjectId().toHexString(),
-    name: String? = getRandomString(10),
-    lastName: String? = getRandomString(10),
-    email: String? = getRandomString(10),
+    name: String? = getRandomString(),
+    lastName: String? = getRandomString(),
+    email: String? = getRandomString(),
 ) = MongoUser(id = id?.toObjectId(), name = name, lastName = lastName, email = email)
 
 fun CreateUserRequest.Companion.random() =

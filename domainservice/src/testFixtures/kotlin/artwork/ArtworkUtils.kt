@@ -1,5 +1,6 @@
 package artwork
 
+import getRandomInt
 import getRandomString
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import org.bson.types.ObjectId
@@ -20,8 +21,8 @@ fun MongoArtwork.Companion.random(
     title = getRandomString(),
     description = getRandomString(),
     style = style,
-    width = 100,
-    height = 100,
+    width = getRandomInt(),
+    height = getRandomInt(),
     status = status,
     artistId = artistId?.toObjectId(),
 )
@@ -34,8 +35,8 @@ fun ArtworkFull.Companion.random(
     title = getRandomString(),
     description = getRandomString(),
     style = ArtworkStyle.POP_ART,
-    width = 100,
-    height = 100,
+    width = getRandomInt(),
+    height = getRandomInt(),
     status = status,
     artist = MongoUser.random()
 )

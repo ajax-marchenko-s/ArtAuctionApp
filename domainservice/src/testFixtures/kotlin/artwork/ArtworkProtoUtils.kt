@@ -1,5 +1,6 @@
 package artwork
 
+import getRandomInt
 import getRandomString
 import org.bson.types.ObjectId
 import ua.marchenko.internal.commonmodels.artwork.ArtworkStyle as ArtworkStyleProto
@@ -15,7 +16,7 @@ object ArtworkProtoFixture {
         it.description = getRandomString()
         it.artistId = artistId
         it.style = style
-        it.width = 100
-        it.height = 150
+        it.width = getRandomInt()
+        it.height = getRandomInt()
     }.build()
 }
