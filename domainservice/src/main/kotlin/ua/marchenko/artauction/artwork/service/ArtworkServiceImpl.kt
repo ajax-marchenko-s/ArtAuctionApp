@@ -4,14 +4,14 @@ import java.util.concurrent.TimeUnit
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import ua.marchenko.core.artwork.exception.ArtworkNotFoundException
+import reactor.kotlin.core.publisher.switchIfEmpty
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 import ua.marchenko.artauction.common.annotation.profiling.annotation.CustomProfiling
-import reactor.kotlin.core.publisher.switchIfEmpty
 import ua.marchenko.artauction.user.service.UserService
 import ua.marchenko.core.artwork.enums.ArtworkStatus
+import ua.marchenko.core.artwork.exception.ArtworkNotFoundException
 import ua.marchenko.core.user.exception.UserNotFoundException
 
 @Service
@@ -35,9 +35,12 @@ class ArtworkServiceImpl(
         val artistId =
             artwork.artistId?.toHexString() ?: return Mono.error(IllegalArgumentException("Artist ID cannot be null"))
         return userService.existById(artistId)
-            .flatMap { exists ->
-                if (exists) artworkRepository.save(artwork.copy(status = ArtworkStatus.VIEW))
-                else Mono.error(UserNotFoundException(value = artistId))
+            .handle { exists, sink ->
+                if (exists) sink.next(artwork)
+                else sink.error(UserNotFoundException(value = artistId))
+            }
+            .flatMap { artworkToSave ->
+                artworkRepository.save(artworkToSave.copy(status = ArtworkStatus.VIEW))
             }
     }
 
