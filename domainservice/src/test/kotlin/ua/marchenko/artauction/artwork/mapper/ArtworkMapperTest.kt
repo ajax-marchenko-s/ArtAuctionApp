@@ -6,7 +6,6 @@ import kotlin.test.Test
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.user.mapper.toResponse
 import ua.marchenko.core.artwork.dto.ArtworkFullResponse
-import ua.marchenko.core.artwork.enums.ArtworkStatus
 
 class ArtworkMapperTest {
 
@@ -35,15 +34,15 @@ class ArtworkMapperTest {
     @Test
     fun `should return ArtworkFullResponse with default values when ArtworkFull has null properties`() {
         // GIVEN
-        val artworkFull = ArtworkFull.random(status = null)
+        val artworkFull = ArtworkFull.random(title = null)
         val expectedResponse = ArtworkFullResponse(
             artworkFull.id!!.toHexString(),
-            artworkFull.title!!,
+            "unknown",
             artworkFull.description!!,
             artworkFull.style!!,
             artworkFull.width!!,
             artworkFull.height!!,
-            ArtworkStatus.UNKNOWN,
+            artworkFull.status!!,
             artworkFull.artist!!.toResponse()
         )
 

@@ -22,16 +22,19 @@ import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse as Cre
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest as CreateArtworkRequestProto
 import ua.marchenko.internal.commonmodels.artwork.Artwork as ArtworkProto
 
-fun CreateArtworkRequestProto.toMongo(): MongoArtwork = MongoArtwork(
-    id = null,
-    title = title,
-    description = description,
-    style = style.toArtworkStyle(),
-    width = width,
-    height = height,
-    status = null,
-    artistId = artistId.toObjectId()
-)
+fun CreateArtworkRequestProto.toMongo(): MongoArtwork {
+    require(style != ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED) { "Artwork style must be specified." }
+    return MongoArtwork(
+        id = null,
+        title = title,
+        description = description,
+        style = style.toArtworkStyle(),
+        width = width,
+        height = height,
+        status = null,
+        artistId = artistId.toObjectId()
+    )
+}
 
 fun MongoArtwork.toCreateArtworkSuccessResponseProto(): CreateArtworkResponseProto {
     return CreateArtworkResponseProto.newBuilder().also { builder ->
@@ -109,8 +112,8 @@ fun ArtworkFull.toArtworkFullProto(): ArtworkFullProto {
         it.description = description ?: "unknown"
         it.width = width ?: 0
         it.height = height ?: 0
-        it.style = (style ?: ArtworkStyle.UNKNOWN).toArtworkStyleProto()
-        it.status = (status ?: ArtworkStatus.UNKNOWN).toArtworkStatusProto()
+        it.style = requireNotNull(style) { "artwork style cannot be null" }.toArtworkStyleProto()
+        it.status = requireNotNull(status) { "artwork status cannot be null" }.toArtworkStatusProto()
         it.artist = (artist ?: MongoUser()).toUserProto()
     }.build()
 }
@@ -122,16 +125,16 @@ fun MongoArtwork.toArtworkProto(): ArtworkProto {
         it.description = description ?: "unknown"
         it.width = width ?: 0
         it.height = height ?: 0
-        it.style = (style ?: ArtworkStyle.UNKNOWN).toArtworkStyleProto()
-        it.status = (status ?: ArtworkStatus.UNKNOWN).toArtworkStatusProto()
+        it.style = requireNotNull(style) { "artwork style cannot be null" }.toArtworkStyleProto()
+        it.status = requireNotNull(status) { "artwork status cannot be null" }.toArtworkStatusProto()
         it.artistId = artistId?.toHexString() ?: "unknown"
     }.build()
 }
 
-fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {
+fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle? {
     return when (this) {
         ArtworkStyleProto.UNRECOGNIZED -> ArtworkStyle.UNKNOWN
-        ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED -> ArtworkStyle.NOT_SPECIFIED
+        ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED -> null
         ArtworkStyleProto.ARTWORK_STYLE_REALISM -> ArtworkStyle.REALISM
         ArtworkStyleProto.ARTWORK_STYLE_IMPRESSIONISM -> ArtworkStyle.IMPRESSIONISM
         ArtworkStyleProto.ARTWORK_STYLE_EXPRESSIONISM -> ArtworkStyle.EXPRESSIONISM

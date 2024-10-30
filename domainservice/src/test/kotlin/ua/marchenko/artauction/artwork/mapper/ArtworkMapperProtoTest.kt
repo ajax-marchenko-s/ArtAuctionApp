@@ -49,7 +49,7 @@ class ArtworkMapperProtoTest {
     @MethodSource("artworkStyleProtoToArtworkStyleData")
     fun `should map ArtworkStyleProto to ArtworkStyle enum values`(
         valueFrom: ArtworkStyleProto,
-        valueTo: ArtworkStyle,
+        valueTo: ArtworkStyle?,
     ) {
         // WHEN THEN
         Assertions.assertEquals(valueTo, valueFrom.toArtworkStyle())
@@ -81,7 +81,7 @@ class ArtworkMapperProtoTest {
         @JvmStatic
         fun artworkStyleProtoToArtworkStyleData(): List<Arguments> = listOf(
             Arguments.of(ArtworkStyleProto.UNRECOGNIZED, ArtworkStyle.UNKNOWN),
-            Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED, ArtworkStyle.NOT_SPECIFIED),
+            Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED, null),
             Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_REALISM, ArtworkStyle.REALISM),
             Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_IMPRESSIONISM, ArtworkStyle.IMPRESSIONISM),
             Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_EXPRESSIONISM, ArtworkStyle.EXPRESSIONISM),

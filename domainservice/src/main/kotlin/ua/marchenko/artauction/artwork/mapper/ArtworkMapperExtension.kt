@@ -4,16 +4,14 @@ import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.user.mapper.toResponse
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.core.artwork.dto.ArtworkFullResponse
-import ua.marchenko.core.artwork.enums.ArtworkStatus
-import ua.marchenko.core.artwork.enums.ArtworkStyle
 
-fun ArtworkFull.toFullResponse() = ArtworkFullResponse(
+fun ArtworkFull.toFullResponse(): ArtworkFullResponse = ArtworkFullResponse(
     requireNotNull(id) { "artwork id cannot be null" }.toHexString(),
     title ?: "unknown",
     description ?: "unknown",
-    style ?: ArtworkStyle.UNKNOWN,
+    requireNotNull(style) { "artwork style cannot be null" },
     width ?: 0,
     height ?: 0,
-    status ?: ArtworkStatus.UNKNOWN,
+    requireNotNull(status) { "artwork status cannot be null" },
     artist?.toResponse() ?: MongoUser().toResponse()
 )

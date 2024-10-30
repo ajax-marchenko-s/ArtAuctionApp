@@ -95,8 +95,10 @@ fun FindAllArtworksFullResponseProto.toFullArtworkList(): List<ArtworkFullRespon
     }
 }
 
-fun ArtworkProto.toArtworkResponse(): ArtworkResponse =
-    ArtworkResponse(
+fun ArtworkProto.toArtworkResponse(): ArtworkResponse {
+    require(style != ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED) { "Artwork style must be specified." }
+    require(status != ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED) { "Artwork status must be specified." }
+    return ArtworkResponse(
         id = id,
         title = title,
         description = description,
@@ -106,9 +108,12 @@ fun ArtworkProto.toArtworkResponse(): ArtworkResponse =
         status = status.toArtworkStatus(),
         artistId = artistId
     )
+}
 
-fun ArtworkFullProto.toArtworkFullResponse(): ArtworkFullResponse =
-    ArtworkFullResponse(
+fun ArtworkFullProto.toArtworkFullResponse(): ArtworkFullResponse {
+    require(style != ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED) { "Artwork style must be specified." }
+    require(status != ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED) { "Artwork status must be specified." }
+    return ArtworkFullResponse(
         id = id,
         title = title,
         description = description,
@@ -118,6 +123,7 @@ fun ArtworkFullProto.toArtworkFullResponse(): ArtworkFullResponse =
         status = status.toArtworkStatus(),
         artist = artist.toUserResponse()
     )
+}
 
 fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {
     return when (this) {

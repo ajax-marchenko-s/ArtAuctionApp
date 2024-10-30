@@ -3,6 +3,7 @@ package ua.marchenko.gateway.artwork.controller.dto
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import ua.marchenko.core.artwork.enums.ArtworkStyle
+import ua.marchenko.gateway.common.validation.StyleNotInSubset
 
 data class CreateArtworkRequest(
 
@@ -12,6 +13,7 @@ data class CreateArtworkRequest(
     @field:NotBlank(message = "Artwork description cannot be blank")
     val description: String,
 
+    @field:StyleNotInSubset(excluded = [ArtworkStyle.UNKNOWN, ArtworkStyle.NOT_SPECIFIED])
     val style: ArtworkStyle,
 
     @field:Min(value = 1, message = "Artwork width must be greater than zero")

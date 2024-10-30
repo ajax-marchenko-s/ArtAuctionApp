@@ -29,10 +29,11 @@ fun MongoArtwork.Companion.random(
 
 fun ArtworkFull.Companion.random(
     id: String? = ObjectId().toHexString(),
-    status: ArtworkStatus? = ArtworkStatus.VIEW
+    status: ArtworkStatus? = ArtworkStatus.VIEW,
+    title: String? = getRandomString(),
 ) = ArtworkFull(
     id = id?.toObjectId(),
-    title = getRandomString(),
+    title = title,
     description = getRandomString(),
     style = ArtworkStyle.POP_ART,
     width = getRandomInt(),
