@@ -13,7 +13,7 @@ import reactor.kotlin.core.publisher.toMono
 @Component
 class NatsControllerBeanPostProcessor(private val dispatcher: Dispatcher) : BeanPostProcessor {
 
-    override fun postProcessBeforeInitialization(bean: Any, beanName: String): Any {
+    override fun postProcessAfterInitialization(bean: Any, beanName: String): Any {
         if (bean is NatsController<*, *>) {
             initializeNatsController(bean)
         }
@@ -29,7 +29,7 @@ class NatsControllerBeanPostProcessor(private val dispatcher: Dispatcher) : Bean
                 }
                 .onErrorResume {
                     log.error("Error:", it)
-                    onParsingError(it, controller.responseType)
+                    onParsingError(it, controller.defaultErrorResponse)
                 }
                 .subscribeOn(Schedulers.boundedElastic())
                 .subscribe { response ->
@@ -41,17 +41,17 @@ class NatsControllerBeanPostProcessor(private val dispatcher: Dispatcher) : Bean
 
     private fun <ResponseT : GeneratedMessage> onParsingError(
         throwable: Throwable,
-        responseType: ResponseT
+        defaultResponse: ResponseT
     ): Mono<ResponseT> {
-        val failureDescriptor = responseType.descriptorForType.findFieldByName(FAILURE)
+        val failureDescriptor = defaultResponse.descriptorForType.findFieldByName(FAILURE)
         val messageDescriptor = failureDescriptor.messageType.findFieldByName(MESSAGE_FIELD)
-        val response = responseType.toBuilder().run {
+        val response = defaultResponse.defaultInstanceForType.toBuilder().run {
             val failure = newBuilderForField(failureDescriptor)
                 .setField(messageDescriptor, throwable.message.orEmpty())
                 .build()
             setField(failureDescriptor, failure)
         }.build()
-        return (response as? ResponseT)?.toMono() ?: throwable.toMono()
+        return (response as? ResponseT)?.toMono() ?: defaultResponse.toMono()
     }
 
     companion object {

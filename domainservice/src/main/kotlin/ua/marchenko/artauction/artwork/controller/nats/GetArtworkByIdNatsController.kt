@@ -28,7 +28,9 @@ class GetArtworkByIdNatsController(
 
     override val parser: Parser<FindArtworkByIdRequestProto> = FindArtworkByIdRequestProto.parser()
 
-    override val responseType: FindArtworkByIdResponseProto = FindArtworkByIdResponseProto.getDefaultInstance()
+    override val defaultErrorResponse: FindArtworkByIdResponse =
+        FindArtworkByIdResponseProto.newBuilder().also { it.failureBuilder.message = "An unexpected error occurred" }
+            .build()
 
     override fun handle(request: FindArtworkByIdRequest): Mono<FindArtworkByIdResponse> {
         return artworkService.getById(request.id)

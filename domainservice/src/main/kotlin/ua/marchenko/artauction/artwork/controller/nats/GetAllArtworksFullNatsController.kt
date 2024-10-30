@@ -17,7 +17,7 @@ import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullResponse 
 @Controller
 class GetAllArtworksFullNatsController(
     private val artworkService: ArtworkService,
-    override val connection: Connection,
+    override val connection: Connection
 ) : NatsController<FindAllArtworksFullRequestProto, FindAllArtworksFullResponseProto> {
 
     override val subject: String = NatsSubject.ArtworkNatsSubject.FIND_ALL_FULL
@@ -26,7 +26,9 @@ class GetAllArtworksFullNatsController(
 
     override val parser: Parser<FindAllArtworksFullRequestProto> = FindAllArtworksFullRequestProto.parser()
 
-    override val responseType: FindAllArtworksFullResponseProto = FindAllArtworksFullResponseProto.getDefaultInstance()
+    override val defaultErrorResponse: FindAllArtworksFullResponseProto =
+        FindAllArtworksFullResponseProto.newBuilder()
+            .also { it.failureBuilder.message = "An unexpected error occurred" }.build()
 
     override fun handle(request: FindAllArtworksFullRequestProto): Mono<FindAllArtworksFullResponseProto> {
         return artworkService.getFullAll(request.page, request.limit)
