@@ -1,10 +1,12 @@
 package ua.marchenko.artauction.auction.repository.impl
 
+import org.bson.Document
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Aggregation
 import org.springframework.data.mongodb.core.aggregation.Aggregation.group
 import org.springframework.data.mongodb.core.aggregation.Aggregation.lookup
 import org.springframework.data.mongodb.core.aggregation.Aggregation.match
+import org.springframework.data.mongodb.core.aggregation.Aggregation.addFields
 import org.springframework.data.mongodb.core.aggregation.Aggregation.project
 import org.springframework.data.mongodb.core.aggregation.Aggregation.replaceRoot
 import org.springframework.data.mongodb.core.aggregation.Aggregation.unwind
@@ -12,6 +14,8 @@ import org.springframework.data.mongodb.core.aggregation.Fields
 import org.springframework.data.mongodb.core.aggregation.FieldsExposingAggregationOperation
 import org.springframework.data.mongodb.core.aggregation.ObjectOperators
 import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.aggregation.ComparisonOperators
+import org.springframework.data.mongodb.core.aggregation.ConditionalOperators
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.stereotype.Repository
@@ -89,16 +93,22 @@ internal class MongoAuctionRepository(
 
     private fun aggregateFullBuyers(): Array<FieldsExposingAggregationOperation> {
         return listOf(
-            unwind(MongoAuction::buyers.name),
+            unwind(MongoAuction::buyers.name, true),
             lookup(
                 MongoUser.COLLECTION,
                 "${MongoAuction::buyers.name}.${MongoAuction.Bid::buyerId.name}",
                 Fields.UNDERSCORE_ID,
                 "${MongoAuction::buyers.name}.${AuctionFull.BidFull::buyer.name}"
             ),
-            unwind("${MongoAuction::buyers.name}.${AuctionFull.BidFull::buyer.name}"),
+            unwind("${MongoAuction::buyers.name}.${AuctionFull.BidFull::buyer.name}", true),
             group(Fields.UNDERSCORE_ID)
-                .push(MongoAuction::buyers.name).`as`(MongoAuction::buyers.name)
+                .push(
+                    ConditionalOperators.`when`(
+                        ComparisonOperators.Eq.valueOf(MongoAuction::buyers.name).equalToValue(Document())
+                    )
+                        .then(DEFAULT)
+                        .otherwise("\$${MongoAuction::buyers.name}")
+                ).`as`(MongoAuction::buyers.name)
                 .first(Aggregation.ROOT).`as`("mainData"),
             replaceRoot().withValueOf(
                 ObjectOperators.valueOf("mainData")
@@ -106,9 +116,18 @@ internal class MongoAuctionRepository(
                         mapOf(MongoAuction::buyers.name to "\$${MongoAuction::buyers.name}")
                     )
             ),
-            project().andExclude(
-                "${MongoAuction::buyers.name}.${MongoAuction.Bid::buyerId.name}"
-            ),
+            addFields()
+                .addField(MongoAuction::buyers.name)
+                .withValue(
+                    ConditionalOperators.Cond.`when`(
+                        ComparisonOperators.Eq.valueOf(MongoAuction::buyers.name).equalToValue(listOf(DEFAULT))
+                    ).then(listOf<Any>()).otherwise("\$${MongoAuction::buyers.name}")
+                ).build(),
+            project().andExclude("${MongoAuction::buyers.name}.${MongoAuction.Bid::buyerId.name}"),
         ).toTypedArray()
+    }
+
+    companion object {
+        private const val DEFAULT = "DEFAULT"
     }
 }
