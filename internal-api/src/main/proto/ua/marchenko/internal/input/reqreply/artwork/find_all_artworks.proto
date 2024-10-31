@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package ua.marchenko.internal.input.reqreply.artwork;
+
+import "ua/marchenko/internal/commonmodels/artwork/artwork.proto";
+
+option java_multiple_files = true;
+
+message FindAllArtworksRequest {
+  uint32 page = 1;
+  uint32 limit = 2;
+}
+
+message FindAllArtworksResponse {
+
+  oneof response {
+    Success success = 1;
+    Failure failure = 2;
+  }
+
+  message Success {
+    repeated commonmodels.artwork.Artwork artworks = 1;
+  }
+
+  message Failure {
+    string message = 100;
+  }
+}

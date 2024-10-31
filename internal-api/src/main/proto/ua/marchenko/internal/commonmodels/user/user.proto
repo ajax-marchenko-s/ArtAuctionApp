@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package ua.marchenko.internal.commonmodels.user;
+
+option java_multiple_files = true;
+
+message User {
+  string id = 1;
+  string name = 2;
+  string lastName = 3;
+  string email = 4;
+  UserRole role = 5;
+}
+
+enum UserRole {
+  ROLE_UNSPECIFIED = 0;
+  ROLE_ARTIST = 1;
+  ROLE_BUYER = 2;
+}
