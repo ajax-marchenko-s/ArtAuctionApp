@@ -5,12 +5,15 @@ import io.nats.client.Dispatcher
 import io.nats.client.MessageHandler
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.BeanPostProcessor
+import org.springframework.core.Ordered
+import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import reactor.kotlin.core.publisher.toMono
 
 @Component
+@Order(Ordered.LOWEST_PRECEDENCE)
 class NatsControllerBeanPostProcessor(private val dispatcher: Dispatcher) : BeanPostProcessor {
 
     override fun postProcessAfterInitialization(bean: Any, beanName: String): Any {

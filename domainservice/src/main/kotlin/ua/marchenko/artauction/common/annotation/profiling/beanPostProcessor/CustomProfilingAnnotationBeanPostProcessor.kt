@@ -5,10 +5,13 @@ import java.lang.reflect.Proxy
 import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.BeanPostProcessor
+import org.springframework.core.Ordered
+import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 import ua.marchenko.artauction.common.annotation.profiling.annotation.CustomProfiling
 
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 class CustomProfilingAnnotationBeanPostProcessor : BeanPostProcessor {
 
     private val annotatedMethods: MutableMap<String, List<Method>> = mutableMapOf()
