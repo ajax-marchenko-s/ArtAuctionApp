@@ -11,8 +11,6 @@ import ua.marchenko.artauction.artwork.mapper.toFindArtworkByIdSuccessResponsePr
 import ua.marchenko.artauction.artwork.service.ArtworkService
 import ua.marchenko.artauction.common.nats.NatsController
 import ua.marchenko.internal.NatsSubject
-import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdRequest
-import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdResponse
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdRequest as FindArtworkByIdRequestProto
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdResponse as FindArtworkByIdResponseProto
 
@@ -28,11 +26,10 @@ class GetArtworkByIdNatsController(
 
     override val parser: Parser<FindArtworkByIdRequestProto> = FindArtworkByIdRequestProto.parser()
 
-    override val defaultErrorResponse: FindArtworkByIdResponse =
-        FindArtworkByIdResponseProto.newBuilder().also { it.failureBuilder.message = "An unexpected error occurred" }
-            .build()
+    override fun errorResponse(throwable: Throwable): FindArtworkByIdResponseProto =
+        throwable.toFindArtworkByIdFailureResponseProto()
 
-    override fun handle(request: FindArtworkByIdRequest): Mono<FindArtworkByIdResponse> {
+    override fun handle(request: FindArtworkByIdRequestProto): Mono<FindArtworkByIdResponseProto> {
         return artworkService.getById(request.id)
             .map { it.toFindArtworkByIdSuccessResponseProto() }
             .onErrorResume {

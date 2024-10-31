@@ -17,5 +17,5 @@ interface NatsController<RequestT : GeneratedMessage, ResponseT : GeneratedMessa
 
     fun handle(request: RequestT): Mono<ResponseT>
 
-    val defaultErrorResponse: ResponseT
+    fun errorResponse(throwable: Throwable): ResponseT
 }

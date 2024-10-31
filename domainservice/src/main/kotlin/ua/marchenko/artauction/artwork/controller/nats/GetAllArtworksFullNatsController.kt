@@ -26,9 +26,8 @@ class GetAllArtworksFullNatsController(
 
     override val parser: Parser<FindAllArtworksFullRequestProto> = FindAllArtworksFullRequestProto.parser()
 
-    override val defaultErrorResponse: FindAllArtworksFullResponseProto =
-        FindAllArtworksFullResponseProto.newBuilder()
-            .also { it.failureBuilder.message = "An unexpected error occurred" }.build()
+    override fun errorResponse(throwable: Throwable): FindAllArtworksFullResponseProto =
+        throwable.toFindAllArtworksFullFailureResponseProto()
 
     override fun handle(request: FindAllArtworksFullRequestProto): Mono<FindAllArtworksFullResponseProto> {
         return artworkService.getFullAll(request.page, request.limit)

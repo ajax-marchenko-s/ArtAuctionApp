@@ -13,7 +13,7 @@ data class CreateArtworkRequest(
     @field:NotBlank(message = "Artwork description cannot be blank")
     val description: String,
 
-    @field:StyleNotInSubset(excluded = [ArtworkStyle.UNKNOWN, ArtworkStyle.NOT_SPECIFIED])
+    @field:StyleNotInSubset(excluded = [ArtworkStyle.UNKNOWN])
     val style: ArtworkStyle,
 
     @field:Min(value = 1, message = "Artwork width must be greater than zero")

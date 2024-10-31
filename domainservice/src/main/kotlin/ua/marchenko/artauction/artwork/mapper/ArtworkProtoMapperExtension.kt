@@ -23,7 +23,6 @@ import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest as Crea
 import ua.marchenko.internal.commonmodels.artwork.Artwork as ArtworkProto
 
 fun CreateArtworkRequestProto.toMongo(): MongoArtwork {
-    require(style != ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED) { "Artwork style must be specified." }
     return MongoArtwork(
         id = null,
         title = title,
@@ -131,10 +130,9 @@ fun MongoArtwork.toArtworkProto(): ArtworkProto {
     }.build()
 }
 
-fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle? {
+fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {
     return when (this) {
         ArtworkStyleProto.UNRECOGNIZED -> ArtworkStyle.UNKNOWN
-        ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED -> null
         ArtworkStyleProto.ARTWORK_STYLE_REALISM -> ArtworkStyle.REALISM
         ArtworkStyleProto.ARTWORK_STYLE_IMPRESSIONISM -> ArtworkStyle.IMPRESSIONISM
         ArtworkStyleProto.ARTWORK_STYLE_EXPRESSIONISM -> ArtworkStyle.EXPRESSIONISM
@@ -144,13 +142,14 @@ fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle? {
         ArtworkStyleProto.ARTWORK_STYLE_POP_ART -> ArtworkStyle.POP_ART
         ArtworkStyleProto.ARTWORK_STYLE_MINIMALISM -> ArtworkStyle.MINIMALISM
         ArtworkStyleProto.ARTWORK_STYLE_RENAISSANCE -> ArtworkStyle.RENAISSANCE
+        ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED ->
+            throw IllegalArgumentException("Artwork style must be specified.")
     }
 }
 
 fun ArtworkStyle.toArtworkStyleProto(): ArtworkStyleProto {
     return when (this) {
         ArtworkStyle.UNKNOWN -> ArtworkStyleProto.UNRECOGNIZED
-        ArtworkStyle.NOT_SPECIFIED -> ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED
         ArtworkStyle.REALISM -> ArtworkStyleProto.ARTWORK_STYLE_REALISM
         ArtworkStyle.IMPRESSIONISM -> ArtworkStyleProto.ARTWORK_STYLE_IMPRESSIONISM
         ArtworkStyle.EXPRESSIONISM -> ArtworkStyleProto.ARTWORK_STYLE_EXPRESSIONISM
@@ -166,7 +165,6 @@ fun ArtworkStyle.toArtworkStyleProto(): ArtworkStyleProto {
 fun ArtworkStatus.toArtworkStatusProto(): ArtworkStatusProto {
     return when (this) {
         ArtworkStatus.UNKNOWN -> ArtworkStatusProto.UNRECOGNIZED
-        ArtworkStatus.NOT_SPECIFIED -> ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED
         ArtworkStatus.VIEW -> ArtworkStatusProto.ARTWORK_STATUS_VIEW
         ArtworkStatus.SOLD -> ArtworkStatusProto.ARTWORK_STATUS_SOLD
         ArtworkStatus.ON_AUCTION -> ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION

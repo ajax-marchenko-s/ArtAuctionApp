@@ -1,7 +1,7 @@
 package artwork
 
-import getRandomInt
 import getRandomString
+import kotlin.random.Random
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import org.bson.types.ObjectId
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
@@ -21,8 +21,8 @@ fun MongoArtwork.Companion.random(
     title = getRandomString(),
     description = getRandomString(),
     style = style,
-    width = getRandomInt(),
-    height = getRandomInt(),
+    width = Random.nextInt(10, 100),
+    height = Random.nextInt(10, 100),
     status = status,
     artistId = artistId?.toObjectId(),
 )
@@ -36,8 +36,8 @@ fun ArtworkFull.Companion.random(
     title = title,
     description = getRandomString(),
     style = ArtworkStyle.POP_ART,
-    width = getRandomInt(),
-    height = getRandomInt(),
+    width = Random.nextInt(10, 100),
+    height = Random.nextInt(10, 100),
     status = status,
     artist = MongoUser.random()
 )

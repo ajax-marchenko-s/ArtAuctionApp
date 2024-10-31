@@ -11,7 +11,6 @@ import ua.marchenko.artauction.artwork.mapper.toFindAllArtworksSuccessResponsePr
 import ua.marchenko.artauction.artwork.service.ArtworkService
 import ua.marchenko.artauction.common.nats.NatsController
 import ua.marchenko.internal.NatsSubject
-import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksResponse
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksRequest as FindAllArtworksRequestProto
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksResponse as FindAllArtworksResponseProto
 
@@ -27,9 +26,8 @@ class GetAllArtworksNatsController(
 
     override val parser: Parser<FindAllArtworksRequestProto> = FindAllArtworksRequestProto.parser()
 
-    override val defaultErrorResponse: FindAllArtworksResponse =
-        FindAllArtworksResponseProto.newBuilder().also { it.failureBuilder.message = "An unexpected error occurred" }
-            .build()
+    override fun errorResponse(throwable: Throwable): FindAllArtworksResponseProto =
+        throwable.toFindAllArtworksFailureResponseProto()
 
     override fun handle(request: FindAllArtworksRequestProto): Mono<FindAllArtworksResponseProto> {
         return artworkService.getAll(request.page, request.limit)

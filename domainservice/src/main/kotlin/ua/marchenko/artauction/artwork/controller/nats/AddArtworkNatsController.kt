@@ -25,11 +25,10 @@ class AddArtworkNatsController(
 
     override val queueGroup: String = QUEUE_GROUP
 
-    override val defaultErrorResponse: CreateArtworkResponseProto =
-        CreateArtworkResponseProto.newBuilder().also { it.failureBuilder.message = "An unexpected error occurred" }
-            .build()
-
     override val parser: Parser<CreateArtworkRequestProto> = CreateArtworkRequestProto.parser()
+
+    override fun errorResponse(throwable: Throwable): CreateArtworkResponseProto =
+        throwable.toCreateArtworkFailureResponseProto()
 
     override fun handle(request: CreateArtworkRequestProto): Mono<CreateArtworkResponseProto> {
         return artworkService.save(request.toMongo())

@@ -192,6 +192,15 @@ class ArtworkProtoMapperTest {
         assertEquals(valueTo, valueFrom.toArtworkStatus())
     }
 
+    @Test
+    fun `should throw exception when mapping ArtworkStatusProto_ARTWORK_STATUS_UNSPECIFIED to ArtworkStatus`() {
+        // GIVEN
+        val artworkStatusProto = ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED
+
+        // WHEN THEN
+        assertThrows<IllegalArgumentException> { artworkStatusProto.toArtworkStatus() }
+    }
+
     @ParameterizedTest
     @MethodSource("artworkStyleProtoToArtworkStyleData")
     fun `should map ArtworkStyleProto to ArtworkStyle enum values`(
@@ -200,6 +209,15 @@ class ArtworkProtoMapperTest {
     ) {
         // WHEN THEN
         assertEquals(valueTo, valueFrom.toArtworkStyle())
+    }
+
+    @Test
+    fun `should throw exception when mapping ArtworkStyleProto_ARTWORK_STYLE_UNSPECIFIED to ArtworkStyle`() {
+        // GIVEN
+        val artworkStyleProto = ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED
+
+        // WHEN THEN
+        assertThrows<IllegalArgumentException> { artworkStyleProto.toArtworkStyle() }
     }
 
     @ParameterizedTest
@@ -219,14 +237,12 @@ class ArtworkProtoMapperTest {
                 Arguments.of(ArtworkStatusProto.ARTWORK_STATUS_SOLD, ArtworkStatus.SOLD),
                 Arguments.of(ArtworkStatusProto.ARTWORK_STATUS_VIEW, ArtworkStatus.VIEW),
                 Arguments.of(ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION, ArtworkStatus.ON_AUCTION),
-                Arguments.of(ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED, ArtworkStatus.NOT_SPECIFIED),
                 Arguments.of(ArtworkStatusProto.UNRECOGNIZED, ArtworkStatus.UNKNOWN)
             )
 
         @JvmStatic
         fun artworkStyleProtoToArtworkStyleData(): List<Arguments> = listOf(
             Arguments.of(ArtworkStyleProto.UNRECOGNIZED, ArtworkStyle.UNKNOWN),
-            Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED, ArtworkStyle.NOT_SPECIFIED),
             Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_REALISM, ArtworkStyle.REALISM),
             Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_IMPRESSIONISM, ArtworkStyle.IMPRESSIONISM),
             Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_EXPRESSIONISM, ArtworkStyle.EXPRESSIONISM),
@@ -241,7 +257,6 @@ class ArtworkProtoMapperTest {
         @JvmStatic
         fun artworkStyleToArtworkStyleProtoData(): List<Arguments> = listOf(
             Arguments.of(ArtworkStyle.UNKNOWN, ArtworkStyleProto.UNRECOGNIZED),
-            Arguments.of(ArtworkStyle.NOT_SPECIFIED, ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED),
             Arguments.of(ArtworkStyle.REALISM, ArtworkStyleProto.ARTWORK_STYLE_REALISM),
             Arguments.of(ArtworkStyle.IMPRESSIONISM, ArtworkStyleProto.ARTWORK_STYLE_IMPRESSIONISM),
             Arguments.of(ArtworkStyle.EXPRESSIONISM, ArtworkStyleProto.ARTWORK_STYLE_EXPRESSIONISM),

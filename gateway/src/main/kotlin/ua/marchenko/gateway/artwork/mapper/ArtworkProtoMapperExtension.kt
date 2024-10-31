@@ -96,8 +96,6 @@ fun FindAllArtworksFullResponseProto.toFullArtworkList(): List<ArtworkFullRespon
 }
 
 fun ArtworkProto.toArtworkResponse(): ArtworkResponse {
-    require(style != ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED) { "Artwork style must be specified." }
-    require(status != ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED) { "Artwork status must be specified." }
     return ArtworkResponse(
         id = id,
         title = title,
@@ -111,8 +109,6 @@ fun ArtworkProto.toArtworkResponse(): ArtworkResponse {
 }
 
 fun ArtworkFullProto.toArtworkFullResponse(): ArtworkFullResponse {
-    require(style != ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED) { "Artwork style must be specified." }
-    require(status != ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED) { "Artwork status must be specified." }
     return ArtworkFullResponse(
         id = id,
         title = title,
@@ -128,7 +124,6 @@ fun ArtworkFullProto.toArtworkFullResponse(): ArtworkFullResponse {
 fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {
     return when (this) {
         ArtworkStyleProto.UNRECOGNIZED -> ArtworkStyle.UNKNOWN
-        ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED -> ArtworkStyle.NOT_SPECIFIED
         ArtworkStyleProto.ARTWORK_STYLE_REALISM -> ArtworkStyle.REALISM
         ArtworkStyleProto.ARTWORK_STYLE_IMPRESSIONISM -> ArtworkStyle.IMPRESSIONISM
         ArtworkStyleProto.ARTWORK_STYLE_EXPRESSIONISM -> ArtworkStyle.EXPRESSIONISM
@@ -138,13 +133,14 @@ fun ArtworkStyleProto.toArtworkStyle(): ArtworkStyle {
         ArtworkStyleProto.ARTWORK_STYLE_POP_ART -> ArtworkStyle.POP_ART
         ArtworkStyleProto.ARTWORK_STYLE_MINIMALISM -> ArtworkStyle.MINIMALISM
         ArtworkStyleProto.ARTWORK_STYLE_RENAISSANCE -> ArtworkStyle.RENAISSANCE
+        ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED ->
+            throw IllegalArgumentException("Artwork style must be specified.")
     }
 }
 
 fun ArtworkStyle.toArtworkStyleProto(): ArtworkStyleProto {
     return when (this) {
         ArtworkStyle.UNKNOWN -> ArtworkStyleProto.UNRECOGNIZED
-        ArtworkStyle.NOT_SPECIFIED -> ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED
         ArtworkStyle.REALISM -> ArtworkStyleProto.ARTWORK_STYLE_REALISM
         ArtworkStyle.IMPRESSIONISM -> ArtworkStyleProto.ARTWORK_STYLE_IMPRESSIONISM
         ArtworkStyle.EXPRESSIONISM -> ArtworkStyleProto.ARTWORK_STYLE_EXPRESSIONISM
@@ -160,9 +156,10 @@ fun ArtworkStyle.toArtworkStyleProto(): ArtworkStyleProto {
 fun ArtworkStatusProto.toArtworkStatus(): ArtworkStatus {
     return when (this) {
         ArtworkStatusProto.UNRECOGNIZED -> ArtworkStatus.UNKNOWN
-        ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED -> ArtworkStatus.NOT_SPECIFIED
         ArtworkStatusProto.ARTWORK_STATUS_VIEW -> ArtworkStatus.VIEW
         ArtworkStatusProto.ARTWORK_STATUS_SOLD -> ArtworkStatus.SOLD
         ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION -> ArtworkStatus.ON_AUCTION
+        ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED ->
+            throw IllegalArgumentException("Artwork status must be specified.")
     }
 }

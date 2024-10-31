@@ -1,7 +1,7 @@
 package artwork
 
-import getRandomInt
 import getRandomString
+import kotlin.random.Random
 import user.UserProtoFixture
 import ua.marchenko.internal.commonmodels.artwork.ArtworkStatus as ArtworkStatusProto
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse as CreateArtworkResponseProto
@@ -92,8 +92,8 @@ object ArtworkProtoFixture {
             it.description = getRandomString()
             it.style = style
             it.status = status
-            it.width = getRandomInt()
-            it.height = getRandomInt()
+            it.width = Random.nextInt(10, 100)
+            it.height = Random.nextInt(10, 100)
             it.artistId = getRandomString()
         }.build()
 
@@ -108,8 +108,8 @@ object ArtworkProtoFixture {
             it.description = getRandomString()
             it.style = style
             it.status = status
-            it.width = getRandomInt()
-            it.height = getRandomInt()
+            it.width = Random.nextInt(10, 100)
+            it.height = Random.nextInt(10, 100)
             it.artist = artist
         }.build()
 

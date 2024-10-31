@@ -11,5 +11,4 @@ enum class ArtworkStyle {
     MINIMALISM,
     RENAISSANCE,
     UNKNOWN,
-    NOT_SPECIFIED
 }

@@ -1,13 +1,17 @@
 package ua.marchenko.artauction.artwork.mapper
 
+import artwork.random
 import kotlin.test.assertEquals
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.core.artwork.enums.ArtworkStyle
+import ua.marchenko.internal.commonmodels.artwork.Artwork as ArtworkProto
 import ua.marchenko.internal.commonmodels.artwork.ArtworkStyle as ArtworkStyleProto
 import ua.marchenko.internal.commonmodels.artwork.ArtworkStatus as ArtworkStatusProto
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullResponse as FindAllArtworksFullResponseProto
@@ -45,6 +49,28 @@ class ArtworkMapperProtoTest {
         assertEquals(expectedResponse, result)
     }
 
+    @Test
+    fun `should return ArtworkProto when MongoArtwork has all non-null properties`() {
+        // GIVEN
+        val mongoArtwork = MongoArtwork.random()
+        val expectedArtworkProto = ArtworkProto.newBuilder().also {
+            it.id = mongoArtwork.id!!.toHexString()
+            it.title = mongoArtwork.title
+            it.description = mongoArtwork.description
+            it.width = mongoArtwork.width!!
+            it.height = mongoArtwork.height!!
+            it.style = mongoArtwork.style!!.toArtworkStyleProto()
+            it.status = mongoArtwork.status!!.toArtworkStatusProto()
+            it.artistId = mongoArtwork.artistId!!.toHexString()
+        }.build()
+
+        // WHEN
+        val result = mongoArtwork.toArtworkProto()
+
+        //THEN
+        assertEquals(expectedArtworkProto, result)
+    }
+
     @ParameterizedTest
     @MethodSource("artworkStyleProtoToArtworkStyleData")
     fun `should map ArtworkStyleProto to ArtworkStyle enum values`(
@@ -53,6 +79,15 @@ class ArtworkMapperProtoTest {
     ) {
         // WHEN THEN
         Assertions.assertEquals(valueTo, valueFrom.toArtworkStyle())
+    }
+
+    @Test
+    fun `should throw exception when mapping ArtworkStyleProto_ARTWORK_STYLE_UNSPECIFIED to ArtworkStyle`() {
+        // GIVEN
+        val artworkStyleProto = ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED
+
+        // WHEN THEN
+        assertThrows<IllegalArgumentException> { artworkStyleProto.toArtworkStyle() }
     }
 
     @ParameterizedTest
@@ -81,7 +116,6 @@ class ArtworkMapperProtoTest {
         @JvmStatic
         fun artworkStyleProtoToArtworkStyleData(): List<Arguments> = listOf(
             Arguments.of(ArtworkStyleProto.UNRECOGNIZED, ArtworkStyle.UNKNOWN),
-            Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED, null),
             Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_REALISM, ArtworkStyle.REALISM),
             Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_IMPRESSIONISM, ArtworkStyle.IMPRESSIONISM),
             Arguments.of(ArtworkStyleProto.ARTWORK_STYLE_EXPRESSIONISM, ArtworkStyle.EXPRESSIONISM),
@@ -96,7 +130,6 @@ class ArtworkMapperProtoTest {
         @JvmStatic
         fun artworkStyleToArtworkStyleProtoData(): List<Arguments> = listOf(
             Arguments.of(ArtworkStyle.UNKNOWN, ArtworkStyleProto.UNRECOGNIZED),
-            Arguments.of(ArtworkStyle.NOT_SPECIFIED, ArtworkStyleProto.ARTWORK_STYLE_UNSPECIFIED),
             Arguments.of(ArtworkStyle.REALISM, ArtworkStyleProto.ARTWORK_STYLE_REALISM),
             Arguments.of(ArtworkStyle.IMPRESSIONISM, ArtworkStyleProto.ARTWORK_STYLE_IMPRESSIONISM),
             Arguments.of(ArtworkStyle.EXPRESSIONISM, ArtworkStyleProto.ARTWORK_STYLE_EXPRESSIONISM),
@@ -111,7 +144,6 @@ class ArtworkMapperProtoTest {
         @JvmStatic
         fun artworkStatusToArtworkStatusProtoData(): List<Arguments> = listOf(
             Arguments.of(ArtworkStatus.UNKNOWN, ArtworkStatusProto.UNRECOGNIZED),
-            Arguments.of(ArtworkStatus.NOT_SPECIFIED, ArtworkStatusProto.ARTWORK_STATUS_UNSPECIFIED),
             Arguments.of(ArtworkStatus.SOLD, ArtworkStatusProto.ARTWORK_STATUS_SOLD),
             Arguments.of(ArtworkStatus.ON_AUCTION, ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION),
             Arguments.of(ArtworkStatus.VIEW, ArtworkStatusProto.ARTWORK_STATUS_VIEW),

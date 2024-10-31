@@ -29,7 +29,7 @@ class NatsControllerBeanPostProcessor(private val dispatcher: Dispatcher) : Bean
                 }
                 .onErrorResume {
                     log.error("Error:", it)
-                    onParsingError(it, controller.defaultErrorResponse)
+                    controller.errorResponse(it).toMono()
                 }
                 .subscribeOn(Schedulers.boundedElastic())
                 .subscribe { response ->
@@ -39,24 +39,7 @@ class NatsControllerBeanPostProcessor(private val dispatcher: Dispatcher) : Bean
         dispatcher.subscribe(controller.subject, controller.queueGroup, messageHandler)
     }
 
-    private fun <ResponseT : GeneratedMessage> onParsingError(
-        throwable: Throwable,
-        defaultResponse: ResponseT
-    ): Mono<ResponseT> {
-        val failureDescriptor = defaultResponse.descriptorForType.findFieldByName(FAILURE)
-        val messageDescriptor = failureDescriptor.messageType.findFieldByName(MESSAGE_FIELD)
-        val response = defaultResponse.defaultInstanceForType.toBuilder().run {
-            val failure = newBuilderForField(failureDescriptor)
-                .setField(messageDescriptor, throwable.message.orEmpty())
-                .build()
-            setField(failureDescriptor, failure)
-        }.build()
-        return (response as? ResponseT)?.toMono() ?: defaultResponse.toMono()
-    }
-
     companion object {
         private val log = LoggerFactory.getLogger(NatsControllerBeanPostProcessor::class.java)
-        private const val FAILURE = "failure"
-        private const val MESSAGE_FIELD = "message"
     }
 }

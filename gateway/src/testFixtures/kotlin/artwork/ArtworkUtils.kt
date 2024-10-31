@@ -1,7 +1,7 @@
 package artwork
 
-import getRandomInt
 import getRandomString
+import kotlin.random.Random
 import ua.marchenko.core.artwork.enums.ArtworkStyle
 import ua.marchenko.gateway.artwork.controller.dto.CreateArtworkRequest
 
@@ -10,7 +10,7 @@ fun CreateArtworkRequest.Companion.random(style: ArtworkStyle = ArtworkStyle.POP
         title = getRandomString(),
         description = getRandomString(),
         style = style,
-        width = getRandomInt(),
-        height = getRandomInt(),
+        width = Random.nextInt(10, 100),
+        height = Random.nextInt(10, 100),
         artistId = getRandomString()
     )

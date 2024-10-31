@@ -3,9 +3,9 @@ package auction
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.auction.model.MongoAuction
 import artwork.random
-import getRandomInt
 import java.math.BigDecimal
 import java.time.LocalDateTime
+import kotlin.random.Random
 import org.bson.types.ObjectId
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
@@ -34,7 +34,7 @@ fun MongoAuction.Companion.random(
 
 fun Bid.Companion.random(
     buyerId: String? = ObjectId().toHexString(),
-    bid: BigDecimal? = BigDecimal(getRandomInt())
+    bid: BigDecimal? = BigDecimal(Random.nextInt(10, 100))
 ) =
     Bid(
         buyerId = buyerId?.toObjectId(),
@@ -44,7 +44,7 @@ fun Bid.Companion.random(
 fun CreateAuctionRequest.Companion.random(artworkId: String = ObjectId().toHexString()) =
     CreateAuctionRequest(
         artworkId = artworkId,
-        startBid = BigDecimal(getRandomInt()),
+        startBid = BigDecimal(Random.nextInt(10, 100)),
         startedAt = LocalDateTime.now(),
         finishedAt = LocalDateTime.now(),
     )
@@ -55,7 +55,7 @@ fun AuctionFull.Companion.random(
 ) = AuctionFull(
     id = id?.toObjectId(),
     artwork = ArtworkFull.random(),
-    startBid = BigDecimal(getRandomInt()),
+    startBid = BigDecimal(Random.nextInt(10, 100)),
     buyers = buyers,
     startedAt = LocalDateTime.now(),
     finishedAt = LocalDateTime.now().plusDays(1),
@@ -63,5 +63,5 @@ fun AuctionFull.Companion.random(
 
 fun BidFull.Companion.random() = BidFull(
     buyer = MongoUser.random(),
-    bid = BigDecimal(getRandomInt()),
+    bid = BigDecimal(Random.nextInt(10, 100)),
 )
