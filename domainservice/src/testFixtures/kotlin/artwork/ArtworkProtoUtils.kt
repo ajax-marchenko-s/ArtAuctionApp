@@ -3,7 +3,7 @@ package artwork
 import getRandomString
 import kotlin.random.Random
 import org.bson.types.ObjectId
-import ua.marchenko.internal.commonmodels.artwork.ArtworkStyle as ArtworkStyleProto
+import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStyle as ArtworkStyleProto
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest as CreateArtworkRequestProto
 
 object ArtworkProtoFixture {

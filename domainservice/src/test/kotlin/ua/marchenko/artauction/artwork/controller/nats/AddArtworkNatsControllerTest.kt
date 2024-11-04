@@ -12,8 +12,8 @@ import ua.marchenko.artauction.user.repository.UserRepository
 import ua.marchenko.core.user.exception.UserNotFoundException
 import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.commonmodels.artwork.Artwork
-import ua.marchenko.internal.commonmodels.artwork.ArtworkStatus
-import ua.marchenko.internal.commonmodels.artwork.ArtworkStyle
+import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStatus
+import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStyle
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse
 import user.random
 
