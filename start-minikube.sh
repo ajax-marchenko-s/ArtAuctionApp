@@ -23,8 +23,6 @@ kubectl wait --for=condition=ready pod -l app=nats --timeout=200s
 kubectl apply -f k8s-configuration/artauction-configmap.yml
 kubectl apply -f k8s-configuration/artauction-deployment.yml
 
-kubectl apply -f k8s-configuration/mongo-express-deployment.yml
-
 kubectl apply -f k8s-configuration/gateway-configmap.yml
 kubectl apply -f k8s-configuration/gateway-deployment.yml
 
