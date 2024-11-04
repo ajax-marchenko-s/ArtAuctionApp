@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class NatsConnectionConfiguration(@Value("\${nats.uri}") val natsUri: String) {
+class NatsConnectionConfiguration(@Value("\${nats.uri}") private val natsUri: String) {
     @Bean
     fun connection(): Connection = Nats.connect(natsUri)
 }
