@@ -33,5 +33,4 @@ message Artwork {
     ARTWORK_STATUS_ON_AUCTION = 2;
     ARTWORK_STATUS_VIEW = 3;
   }
-
 }
