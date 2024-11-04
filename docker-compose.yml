@@ -2,15 +2,28 @@ version: '3.8'
 
 services:
   app:
+    image: domainservice
     container_name: app
     build:
-      context: .
+      context: domainservice
+      dockerfile: Dockerfile-domainservice
     ports:
-      - "8080:8080"
+      - "8081:8081"
     env_file:
       - .env
     depends_on:
       - mongo
+
+  gateway:
+    image: gateway
+    container_name: gateway
+    build:
+      context: gateway
+      dockerfile: Dockerfile-gateway
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
 
   mongo:
     image: mongo:latest
@@ -24,6 +37,13 @@ services:
       - mongo-data:/data/db
     env_file:
       - .env
+
+  nats:
+    container_name: nats-server
+    image: nats
+    ports:
+      - "4222:4222"
+      - "8222:8222"
 
 volumes:
   mongo-data:
