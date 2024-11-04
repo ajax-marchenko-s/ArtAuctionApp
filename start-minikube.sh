@@ -6,8 +6,8 @@ echo "Building project..."
 ./gradlew clean assemble
 
 echo "Building Docker images..."
-docker build -f ./domainservice/Dockerfile-domainservice -t domainservice ./domainservice
-docker build -f ./gateway/Dockerfile-gateway -t gateway ./gateway
+docker build -f ./domainservice/Dockerfile-domainservice -t domainservice:v1 ./domainservice
+docker build -f ./gateway/Dockerfile-gateway -t gateway:v1 ./gateway
 
 echo "Applying Kubernetes configurations..."
 kubectl apply -f k8s-configuration/mongo-secret.yml
