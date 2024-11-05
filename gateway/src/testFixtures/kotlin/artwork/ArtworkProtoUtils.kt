@@ -3,11 +3,11 @@ package artwork
 import getRandomString
 import kotlin.random.Random
 import user.UserProtoFixture
-import ua.marchenko.internal.commonmodels.artwork.ArtworkStatus as ArtworkStatusProto
+import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStatus as ArtworkStatusProto
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse as CreateArtworkResponseProto
 import ua.marchenko.internal.commonmodels.artwork.Artwork as ArtworkProto
 import ua.marchenko.internal.commonmodels.artwork.ArtworkFull as ArtworkFullProto
-import ua.marchenko.internal.commonmodels.artwork.ArtworkStyle as ArtworkStyleProto
+import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStyle as ArtworkStyleProto
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdResponse as FindArtworkByIdResponseProto
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkFullByIdResponse as FindArtworkFullByIdResponseProto
 import ua.marchenko.internal.commonmodels.user.User as UserProto

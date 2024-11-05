@@ -12,8 +12,8 @@ import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.core.artwork.enums.ArtworkStyle
 import ua.marchenko.internal.commonmodels.artwork.Artwork as ArtworkProto
-import ua.marchenko.internal.commonmodels.artwork.ArtworkStyle as ArtworkStyleProto
-import ua.marchenko.internal.commonmodels.artwork.ArtworkStatus as ArtworkStatusProto
+import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStyle as ArtworkStyleProto
+import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStatus as ArtworkStatusProto
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullResponse as FindAllArtworksFullResponseProto
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksResponse as FindAllArtworksResponseProto
 

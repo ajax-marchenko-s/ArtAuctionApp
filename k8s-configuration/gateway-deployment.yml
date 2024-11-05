@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  labels:
+    app: gateway
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      name: gateway
+      labels:
+        app: gateway
+    spec:
+      containers:
+        - name: gateway
+          image: gateway:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: general
+              containerPort: 8080
+              protocol: TCP
+            - name: remotedebugging
+              containerPort: 5005
+              protocol: TCP
+          env:
+            - name: NATS_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: gateway-configmap
+                  key: nats-uri
+            - name: JAVA_OPTS
+              valueFrom:
+                configMapKeyRef:
+                  name: artauction-configmap
+                  key: java-opts
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service
+spec:
+  selector:
+    app: gateway
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

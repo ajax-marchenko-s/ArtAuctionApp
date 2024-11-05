@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-configmap
+data:
+  nats-uri: "nats://nats-service:4222"
+  java-opts: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"

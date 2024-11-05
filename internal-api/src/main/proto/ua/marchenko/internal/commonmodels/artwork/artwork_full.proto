@@ -11,9 +11,9 @@ message ArtworkFull {
   string id = 1;
   string title = 2;
   string description = 3;
-  ArtworkStyle style = 4;
+  Artwork.ArtworkStyle style = 4;
   uint32 width = 5;
   uint32 height = 6;
-  ArtworkStatus status = 7;
+  Artwork.ArtworkStatus status = 7;
   commonmodels.user.User artist = 8;
 }

@@ -9,11 +9,4 @@ message User {
   string name = 2;
   string lastName = 3;
   string email = 4;
-  UserRole role = 5;
-}
-
-enum UserRole {
-  ROLE_UNSPECIFIED = 0;
-  ROLE_ARTIST = 1;
-  ROLE_BUYER = 2;
 }
