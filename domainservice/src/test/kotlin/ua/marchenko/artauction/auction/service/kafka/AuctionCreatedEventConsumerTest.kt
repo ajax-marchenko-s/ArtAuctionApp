@@ -22,6 +22,7 @@ import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.service.ArtworkService
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.auction.service.AuctionService
+import ua.marchenko.artauction.common.AbstractBaseIntegrationTest
 import ua.marchenko.artauction.common.kafka.common.createBasicKafkaConsumer
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.service.UserService
@@ -31,7 +32,7 @@ import user.random
 @SpringBootTest
 @ActiveProfiles("test")
 @Import(AuctionCreatedEventConsumerTest.AuctionCreatedEventConsumerTestConfiguration::class)
-class AuctionCreatedEventConsumerTest {
+class AuctionCreatedEventConsumerTest : AbstractBaseIntegrationTest {
 
     @Autowired
     private lateinit var artworkService: ArtworkService
