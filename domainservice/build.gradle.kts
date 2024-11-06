@@ -14,6 +14,8 @@ dependencies {
     implementation("io.mongock:mongodb-springdata-v4-driver:5.4.4")
     implementation("com.google.protobuf:protobuf-kotlin:4.28.2")
     implementation("io.nats:jnats:2.20.2")
+    implementation("org.springframework.kafka:spring-kafka")
+    implementation("io.projectreactor.kafka:reactor-kafka")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:testcontainers:1.19.0")

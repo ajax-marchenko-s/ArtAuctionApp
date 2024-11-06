@@ -5,6 +5,8 @@ spring:
     active: local
   main:
     web-application-type: reactive
+  kafka:
+    bootstrap-servers: "http://localhost:9092"
 
 mongock:
   enabled: true
