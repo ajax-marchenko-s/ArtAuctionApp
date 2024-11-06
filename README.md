@@ -10,6 +10,10 @@ So firstly artist could add new artwork to the platform and then (whenever he/sh
 - Registration: user service check if user with given email exist
 - Exception handlers: global exception handler (ExceptionController) could handle general and custom common exceptions (NotFoundException etc). For example artwork service could throw ArtworkNotFoundException, but ExceptionController would catch it like NotFoundException, because *ArtworkNotFoundException : NotFoundException*
 
+## Kafka Schema
+
+![img.png](img.png)
+
 ## Implemented
 - CREATE-READ operations for artwork, user and auction entities
 - Auth for user entity
