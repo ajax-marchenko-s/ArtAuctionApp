@@ -10,9 +10,7 @@ import reactor.kafka.sender.KafkaSender
 import reactor.kafka.sender.SenderOptions
 
 @Configuration
-class KafkaProducerConfiguration(
-    private val kafkaProperties: KafkaProperties,
-) {
+class KafkaProducerConfiguration(private val kafkaProperties: KafkaProperties) {
 
     @Bean
     fun basicKafkaProducer(): KafkaSender<String, ByteArray> {

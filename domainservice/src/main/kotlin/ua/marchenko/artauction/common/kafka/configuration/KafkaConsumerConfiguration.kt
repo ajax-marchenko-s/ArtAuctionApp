@@ -8,9 +8,7 @@ import ua.marchenko.artauction.common.kafka.common.createBasicKafkaConsumer
 import ua.marchenko.internal.KafkaTopic
 
 @Configuration
-class KafkaConsumerConfiguration(
-    private val kafkaProperties: KafkaProperties
-) {
+class KafkaConsumerConfiguration(private val kafkaProperties: KafkaProperties) {
 
     @Bean
     fun createdAuctionKafkaConsumer(): KafkaReceiver<String, ByteArray> =
