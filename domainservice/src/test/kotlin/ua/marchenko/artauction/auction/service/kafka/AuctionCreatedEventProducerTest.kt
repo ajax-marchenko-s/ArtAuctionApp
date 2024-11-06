@@ -8,10 +8,8 @@ import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
-import org.springframework.test.context.ActiveProfiles
 import reactor.core.scheduler.Schedulers
 import reactor.kafka.receiver.KafkaReceiver
 import ua.marchenko.artauction.artwork.model.MongoArtwork
@@ -29,9 +27,7 @@ import ua.marchenko.artauction.user.service.UserService
 import ua.marchenko.internal.KafkaTopic
 import user.random
 
-@ActiveProfiles("test")
 @Import(AuctionCreatedEventProducerTest.AuctionCreatedEventProducerTestConfiguration::class)
-@SpringBootTest
 class AuctionCreatedEventProducerTest : AbstractBaseIntegrationTest {
 
     @Autowired

@@ -17,7 +17,7 @@ class AuctionCreatedEventKafkaConsumer(
 ) {
 
     @EventListener(ApplicationReadyEvent::class)
-    fun listenToAuctionNotificationTopic() {
+    fun listenToCreatedAuctionTopic() {
         createdAuctionKafkaConsumer.receive()
             .flatMap { record ->
                 val event = AuctionCreatedEventProto.parseFrom(record.value()).toAuctionCreatedEvent()

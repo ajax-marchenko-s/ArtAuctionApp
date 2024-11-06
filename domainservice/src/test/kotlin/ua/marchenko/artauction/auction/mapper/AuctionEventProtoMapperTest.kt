@@ -13,7 +13,7 @@ class AuctionEventProtoMapperTest {
         // GIVEN
         val mongoAuction = MongoAuction.random()
         val expectedAuctionCreatedEventProto = AuctionCreatedEventProto.newBuilder().also {
-            it.auction=mongoAuction.toAuctionProto()
+            it.auction = mongoAuction.toAuctionProto()
         }.build()
 
         // WHEN

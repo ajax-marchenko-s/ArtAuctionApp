@@ -8,9 +8,9 @@ import ua.marchenko.artauction.auction.model.MongoAuction
 import ua.marchenko.internal.output.pubsub.auction.AuctionCreatedEvent as AuctionCreatedEventProto
 
 fun MongoAuction.toAuctionCreatedEventProto(): AuctionCreatedEventProto {
-    return AuctionCreatedEventProto.newBuilder().also { builder ->
-        builder.auction = toAuctionProto()
-        builder.timestamp = LocalDateTime.now().toTimestampProto()
+    return AuctionCreatedEventProto.newBuilder().also {
+        it.auction = toAuctionProto()
+        it.timestamp = LocalDateTime.now().toTimestampProto()
     }.build()
 }
 
@@ -23,10 +23,10 @@ fun AuctionCreatedEventProto.toAuctionCreatedEvent(): AuctionCreatedEvent {
 
 fun LocalDateTime.toTimestampProto(): TimestampProto {
     val instant = toInstant(ZoneOffset.UTC)
-    return TimestampProto.newBuilder()
-        .setSeconds(instant.epochSecond)
-        .setNanos(instant.nano)
-        .build()
+    return TimestampProto.newBuilder().also {
+        it.seconds = instant.epochSecond
+        it.nanos = instant.nano
+    }.build()
 }
 
 fun TimestampProto.toLocalDateTime(): LocalDateTime {

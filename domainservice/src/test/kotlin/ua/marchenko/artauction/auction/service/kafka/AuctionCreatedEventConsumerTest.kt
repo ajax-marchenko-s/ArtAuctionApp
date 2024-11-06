@@ -12,26 +12,15 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Import
-import org.springframework.test.context.ActiveProfiles
-import reactor.kafka.receiver.KafkaReceiver
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.service.ArtworkService
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.auction.service.AuctionService
 import ua.marchenko.artauction.common.AbstractBaseIntegrationTest
-import ua.marchenko.artauction.common.kafka.common.createBasicKafkaConsumer
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.service.UserService
-import ua.marchenko.internal.KafkaTopic
 import user.random
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Import(AuctionCreatedEventConsumerTest.AuctionCreatedEventConsumerTestConfiguration::class)
 class AuctionCreatedEventConsumerTest : AbstractBaseIntegrationTest {
 
     @Autowired
@@ -44,7 +33,7 @@ class AuctionCreatedEventConsumerTest : AbstractBaseIntegrationTest {
     private lateinit var auctionService: AuctionService
 
     @Autowired
-    private lateinit var auctionCreatedEventKafkaConsumerTest: AuctionCreatedEventKafkaConsumer
+    private lateinit var auctionCreatedEventKafkaConsumer: AuctionCreatedEventKafkaConsumer
 
     private lateinit var testLogAppender: ListAppender<ILoggingEvent>
 
@@ -64,7 +53,7 @@ class AuctionCreatedEventConsumerTest : AbstractBaseIntegrationTest {
             artworkService.save(MongoArtwork.random(id = null, artistId = user.id!!.toHexString())).block()!!
         val createAuctionRequest = CreateAuctionRequest.random(artworkId = artwork.id!!.toHexString())
 
-        auctionCreatedEventKafkaConsumerTest.listenToAuctionNotificationTopic()
+        auctionCreatedEventKafkaConsumer.listenToCreatedAuctionTopic()
 
         // WHEN
         auctionService.save(createAuctionRequest).subscribe()
@@ -83,25 +72,7 @@ class AuctionCreatedEventConsumerTest : AbstractBaseIntegrationTest {
             }
     }
 
-    class AuctionCreatedEventConsumerTestConfiguration(
-        private val kafkaProperties: KafkaProperties
-    ) {
-
-        @Bean
-        fun kafkaReceiverAuctionCreatedEventConsumerTest(): KafkaReceiver<String, ByteArray> {
-            return createBasicKafkaConsumer(kafkaProperties, setOf(KafkaTopic.AuctionKafkaTopic.CREATED), GROUP_ID)
-        }
-
-        @Bean
-        fun auctionCreatedEventKafkaConsumerTest(
-            kafkaReceiverAuctionCreatedEventConsumerTest: KafkaReceiver<String, ByteArray>
-        ): AuctionCreatedEventKafkaConsumer {
-            return AuctionCreatedEventKafkaConsumer(kafkaReceiverAuctionCreatedEventConsumerTest)
-        }
-    }
-
     companion object {
-        private const val GROUP_ID = "AuctionCreatedEventConsumerTestGroup"
         private const val PART_LOG_MESSAGE_TEMPLATE = "Received event: AuctionCreatedEvent"
     }
 }

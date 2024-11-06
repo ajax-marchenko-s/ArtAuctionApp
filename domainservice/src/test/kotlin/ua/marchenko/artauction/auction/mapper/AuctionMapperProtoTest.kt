@@ -45,8 +45,8 @@ class AuctionMapperProtoTest {
     }
 
     @ParameterizedTest
-    @MethodSource("errorMongoAuctionToErrorMessage")
-    fun `should map error MongoAuction to AuctionProto with throwing errors`(
+    @MethodSource("invalidMongoAuctionCasesWithExpectedErrorMessages")
+    fun `should throw IllegalArgumentException with correct message when invalid MongoAuction to Proto mapping`(
         mongoAuction: MongoAuction, errorMessage: String,
     ) {
         // WHEN THEN
@@ -73,8 +73,8 @@ class AuctionMapperProtoTest {
     }
 
     @ParameterizedTest
-    @MethodSource("errorMongoBidToErrorMessage")
-    fun `should map error Bid to BidProto with throwing errors`(
+    @MethodSource("invalidMongoBidCasesWithExpectedErrorMessages")
+    fun `should throw IllegalArgumentException with correct message when invalid Bid to Proto mapping`(
         mongoBid: MongoAuction.Bid, errorMessage: String,
     ) {
         // WHEN THEN
@@ -153,13 +153,13 @@ class AuctionMapperProtoTest {
 
     companion object {
         @JvmStatic
-        fun errorMongoBidToErrorMessage(): List<Arguments> = listOf(
+        fun invalidMongoBidCasesWithExpectedErrorMessages(): List<Arguments> = listOf(
             Arguments.of(MongoAuction.Bid.random(buyerId = null), "Buyer id cannot be null"),
             Arguments.of(MongoAuction.Bid.random(bid = null), "Bid cannot be null"),
         )
 
         @JvmStatic
-        fun errorMongoAuctionToErrorMessage(): List<Arguments> = listOf(
+        fun invalidMongoAuctionCasesWithExpectedErrorMessages(): List<Arguments> = listOf(
             Arguments.of(MongoAuction.random(id = null), "Auction id cannot be null"),
             Arguments.of(MongoAuction.random(artwork = MongoArtwork.random(id = null)), "Artwork id cannot be null"),
         )
