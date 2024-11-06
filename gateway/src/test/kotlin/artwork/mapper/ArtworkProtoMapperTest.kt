@@ -27,8 +27,8 @@ import ua.marchenko.gateway.user.toUserResponse
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse
 import user.UserProtoFixture
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest as CreateArtworkRequestProto
-import ua.marchenko.internal.commonmodels.artwork.ArtworkStyle as ArtworkStyleProto
-import ua.marchenko.internal.commonmodels.artwork.ArtworkStatus as ArtworkStatusProto
+import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStyle as ArtworkStyleProto
+import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStatus as ArtworkStatusProto
 
 class ArtworkProtoMapperTest {
 

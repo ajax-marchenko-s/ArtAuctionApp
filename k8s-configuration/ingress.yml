@@ -14,4 +14,11 @@ spec:
               service:
                 name: app-service
                 port:
+                  number: 8081
+          - path: /api/v1/artworks
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway-service
+                port:
                   number: 8080
