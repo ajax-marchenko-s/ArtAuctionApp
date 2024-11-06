@@ -20,7 +20,7 @@ import ua.marchenko.core.artwork.enums.ArtworkStatus
 class AuctionServiceImpl(
     private val auctionRepository: AuctionRepository,
     private val artworkService: ArtworkService,
-    private val auctionEventKafkaProducer: AuctionCreatedEventKafkaProducer
+    private val auctionEventKafkaProducer: AuctionCreatedEventKafkaProducer,
 ) : AuctionService {
 
     override fun getAll(page: Int, limit: Int): Flux<MongoAuction> = auctionRepository.findAll(page, limit)

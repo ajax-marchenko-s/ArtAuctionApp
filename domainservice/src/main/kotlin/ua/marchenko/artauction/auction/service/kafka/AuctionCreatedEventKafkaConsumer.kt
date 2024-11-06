@@ -13,7 +13,7 @@ import ua.marchenko.internal.output.pubsub.auction.AuctionCreatedEvent as Auctio
 
 @Component
 class AuctionCreatedEventKafkaConsumer(
-    private val createdAuctionKafkaConsumer: KafkaReceiver<String, ByteArray>
+    private val createdAuctionKafkaConsumer: KafkaReceiver<String, ByteArray>,
 ) {
 
     @EventListener(ApplicationReadyEvent::class)

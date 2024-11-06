@@ -49,7 +49,7 @@ fun BigDecimal.toBigDecimalProto(): BigDecimalProto {
 
 fun BigInteger.toBigIntegerProto(): BigIntegerProto {
     return BigIntegerProto.newBuilder().also {
-        it.value = ByteString.copyFrom(this.toByteArray())
+        it.value = ByteString.copyFrom(toByteArray())
     }.build()
 }
 

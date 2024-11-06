@@ -170,6 +170,7 @@ class AuctionServiceTest {
         result.test()
             .expectNext(auction.copy(id = newAuctionId))
             .verifyComplete()
+        verify(exactly = 1) { mockAuctionEventKafkaProducer.sendCreateAuctionEvent(auction.copy(id = newAuctionId)) }
     }
 
     @Test
