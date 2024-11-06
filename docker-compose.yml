@@ -15,6 +15,7 @@ services:
       SPRING_PROFILES_ACTIVE: prod
     depends_on:
       - mongo
+    profiles: [local]
 
   gateway:
     image: gateway
@@ -26,6 +27,7 @@ services:
       - .env
     ports:
       - "8080:8080"
+    profiles: [local]
 
   mongo:
     image: mongo:latest
@@ -39,6 +41,7 @@ services:
       - mongo-data:/data/db
     env_file:
       - .env
+    profiles: [local]
 
   nats:
     container_name: nats-server
@@ -46,6 +49,7 @@ services:
     ports:
       - "4222:4222"
       - "8222:8222"
+    profiles: [local, gh-actions]
 
   kafka:
     container_name: kafka
@@ -58,6 +62,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092'
       KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:29093'
       KAFKA_LISTENERS: 'PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092'
+    profiles: [local, gh-actions]
 
   kafka-ui:
     container_name: kafka-ui
@@ -71,6 +76,7 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
       KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry:8081
       DYNAMIC_CONFIG_ENABLED: true
+    profiles: [local]
 
 volumes:
   mongo-data:
