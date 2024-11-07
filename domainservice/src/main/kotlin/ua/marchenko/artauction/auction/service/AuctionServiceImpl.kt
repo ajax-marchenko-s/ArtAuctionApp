@@ -46,6 +46,7 @@ class AuctionServiceImpl(
             .flatMap { savedAuction ->
                 auctionEventKafkaProducer.sendCreateAuctionEvent(savedAuction)
                     .then(savedAuction.toMono())
+                    .onErrorReturn(savedAuction)
             }
     }
 }

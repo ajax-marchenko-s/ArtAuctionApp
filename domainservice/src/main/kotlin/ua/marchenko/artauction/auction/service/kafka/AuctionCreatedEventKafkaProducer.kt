@@ -1,6 +1,7 @@
 package ua.marchenko.artauction.auction.service.kafka
 
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import reactor.kafka.sender.KafkaSender
@@ -25,7 +26,11 @@ class AuctionCreatedEventKafkaProducer(private val kafkaSender: KafkaSender<Stri
                 null
             ).toMono()
         )
-            .doOnError { error -> println("Error sending message to Kafka: ${error.message}") }
+            .doOnError { log.error("Error sending message to Kafka", it) }
             .then(Unit.toMono())
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(AuctionCreatedEventKafkaProducer::class.java)
     }
 }
