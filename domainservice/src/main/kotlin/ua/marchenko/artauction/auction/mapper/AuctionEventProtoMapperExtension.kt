@@ -15,10 +15,7 @@ fun MongoAuction.toAuctionCreatedEventProto(): AuctionCreatedEventProto {
 }
 
 fun AuctionCreatedEventProto.toAuctionCreatedEvent(): AuctionCreatedEvent {
-    return AuctionCreatedEvent(
-        auction = auction.toMongoAuction(),
-        timestamp = timestamp.toLocalDateTime()
-    )
+    return AuctionCreatedEvent(auction.toMongoAuction(), timestamp.toLocalDateTime())
 }
 
 fun LocalDateTime.toTimestampProto(): TimestampProto {

@@ -34,10 +34,7 @@ fun AuctionProto.toMongoAuction(): MongoAuction {
 }
 
 fun BidProto.toBid(): MongoAuction.Bid {
-    return MongoAuction.Bid(
-        buyerId = buyerId.toObjectId(),
-        bid = bid.toBigDecimal()
-    )
+    return MongoAuction.Bid(buyerId.toObjectId(), bid.toBigDecimal())
 }
 
 fun BigDecimal.toBigDecimalProto(): BigDecimalProto {

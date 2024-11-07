@@ -12,7 +12,7 @@ message Artwork {
   uint32 width = 5;
   uint32 height = 6;
   ArtworkStatus status = 7;
-  string artistId = 8;
+  string artist_id = 8;
 
   enum ArtworkStyle {
     ARTWORK_STYLE_UNSPECIFIED = 0;

@@ -15,19 +15,21 @@ import ua.marchenko.internal.KafkaTopic
 class AuctionCreatedEventKafkaProducer(private val kafkaSender: KafkaSender<String, ByteArray>) {
 
     fun sendCreateAuctionEvent(auction: MongoAuction): Mono<Unit> {
-        val auctionEvent = auction.toAuctionCreatedEventProto()
-        return kafkaSender.send(
-            SenderRecord.create(
-                ProducerRecord(
-                    KafkaTopic.AuctionKafkaTopic.CREATED,
-                    auctionEvent.auction.artworkId,
-                    auctionEvent.toByteArray()
-                ),
-                null
-            ).toMono()
-        )
+        return kafkaSender.send(createAuctionCreatedSenderRecord(auction).toMono())
             .doOnError { log.error("Error sending message to Kafka", it) }
             .then(Unit.toMono())
+    }
+
+    private fun createAuctionCreatedSenderRecord(auction: MongoAuction): SenderRecord<String, ByteArray, Void> {
+        val auctionEvent = auction.toAuctionCreatedEventProto()
+        return SenderRecord.create(
+            ProducerRecord(
+                KafkaTopic.AuctionKafkaTopic.CREATED,
+                auctionEvent.auction.artworkId,
+                auctionEvent.toByteArray()
+            ),
+            null
+        )
     }
 
     companion object {
