@@ -6,6 +6,9 @@ import auction.random
 import com.google.protobuf.ByteString
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
 import kotlin.random.Random
 import kotlin.test.assertEquals
 import org.junit.jupiter.api.Assertions
@@ -27,18 +30,19 @@ class AuctionMapperProtoTest {
     @Test
     fun `should return AuctionProto when MongoAuction has all non-null properties`() {
         // GIVEN
+        val fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
         val mongoAuction = MongoAuction.random()
         val expectedAuctionProto = AuctionProto.newBuilder().also {
             it.id = mongoAuction.id!!.toHexString()
             it.artworkId = mongoAuction.artworkId!!.toHexString()
             it.startBid = mongoAuction.startBid!!.toBigDecimalProto()
-            it.startedAt = mongoAuction.startedAt!!.toTimestampProto()
-            it.finishedAt = mongoAuction.finishedAt!!.toTimestampProto()
+            it.startedAt = mongoAuction.startedAt!!.toTimestampProto(fixedClock)
+            it.finishedAt = mongoAuction.finishedAt!!.toTimestampProto(fixedClock)
             it.addAllBuyers(mongoAuction.buyers!!.map { it.toBidProto() })
         }.build()
 
         // WHEN
-        val result = mongoAuction.toAuctionProto()
+        val result = mongoAuction.toAuctionProto(fixedClock)
 
         // THEN
         assertEquals(expectedAuctionProto, result)
@@ -49,9 +53,12 @@ class AuctionMapperProtoTest {
     fun `should throw IllegalArgumentException with correct message when invalid MongoAuction to Proto mapping`(
         mongoAuction: MongoAuction, errorMessage: String,
     ) {
+        // GIVEN
+        val fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+
         // WHEN THEN
         val exception = assertThrows<IllegalArgumentException> {
-            mongoAuction.toAuctionProto()
+            mongoAuction.toAuctionProto(fixedClock)
         }
         Assertions.assertEquals(errorMessage, exception.message)
     }
@@ -118,18 +125,19 @@ class AuctionMapperProtoTest {
     @Test
     fun `should return MongoAuction from AuctionProto`() {
         // GIVEN
+        val fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
         val protoAuction = AuctionProtoFixture.randomAuctionProto()
         val expectedAuction = MongoAuction(
             id = protoAuction.id.toObjectId(),
             artworkId = protoAuction.artworkId.toObjectId(),
             startBid = protoAuction.startBid.toBigDecimal(),
-            startedAt = protoAuction.startedAt.toLocalDateTime(),
-            finishedAt = protoAuction.finishedAt.toLocalDateTime(),
+            startedAt = protoAuction.startedAt.toLocalDateTime(fixedClock),
+            finishedAt = protoAuction.finishedAt.toLocalDateTime(fixedClock),
             buyers = protoAuction.buyersList.map { it.toBid() }
         )
 
         // WHEN
-        val result = protoAuction.toMongoAuction()
+        val result = protoAuction.toMongoAuction(fixedClock)
 
         // THEN
         assertEquals(expectedAuction, result)

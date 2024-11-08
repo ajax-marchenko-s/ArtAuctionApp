@@ -2,7 +2,10 @@ package ua.marchenko.artauction.auction.service.kafka
 
 import artwork.random
 import auction.random
+import java.time.Clock
 import java.time.Duration
+import java.time.Instant
+import java.time.ZoneId
 import kotlin.test.assertTrue
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Test
@@ -45,6 +48,7 @@ class AuctionCreatedEventProducerTest : AbstractBaseIntegrationTest {
     @Test
     fun `should send message to CreatedAuction topic when creating auction`() {
         // GIVEN
+        val fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
         val receivedMessages = mutableListOf<AuctionCreatedEvent>()
         val user = userService.save(MongoUser.random(id = null)).block()!!
         val artwork =
@@ -53,7 +57,9 @@ class AuctionCreatedEventProducerTest : AbstractBaseIntegrationTest {
 
         kafkaReceiverAuctionCreatedEventProducerTest.receive()
             .doOnNext { record ->
-                receivedMessages.add(AuctionCreatedEventProto.parseFrom(record.value()).toAuctionCreatedEvent())
+                receivedMessages.add(
+                    AuctionCreatedEventProto.parseFrom(record.value()).toAuctionCreatedEvent(fixedClock)
+                )
             }
             .subscribeOn(Schedulers.boundedElastic())
             .subscribe()

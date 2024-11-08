@@ -1,5 +1,6 @@
 package ua.marchenko.artauction.auction.service.kafka
 
+import java.time.Clock
 import org.slf4j.LoggerFactory
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.event.EventListener
@@ -14,13 +15,14 @@ import ua.marchenko.internal.output.pubsub.auction.AuctionCreatedEvent as Auctio
 @Component
 class AuctionCreatedEventKafkaConsumer(
     private val createdAuctionKafkaConsumer: KafkaReceiver<String, ByteArray>,
+    private val clock: Clock,
 ) {
 
     @EventListener(ApplicationReadyEvent::class)
     fun listenToCreatedAuctionTopic() {
         createdAuctionKafkaConsumer.receive()
             .flatMap { record ->
-                val event = AuctionCreatedEventProto.parseFrom(record.value()).toAuctionCreatedEvent()
+                val event = AuctionCreatedEventProto.parseFrom(record.value()).toAuctionCreatedEvent(clock)
                 processAuctionEvent(event).toMono()
                     .doFinally { record.receiverOffset().acknowledge() }
             }
