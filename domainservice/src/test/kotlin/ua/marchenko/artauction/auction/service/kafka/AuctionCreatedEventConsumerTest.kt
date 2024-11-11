@@ -32,9 +32,6 @@ class AuctionCreatedEventConsumerTest : AbstractBaseIntegrationTest {
     @Autowired
     private lateinit var auctionService: AuctionService
 
-    @Autowired
-    private lateinit var auctionCreatedEventKafkaConsumer: AuctionCreatedEventKafkaConsumer
-
     private lateinit var testLogAppender: ListAppender<ILoggingEvent>
 
     @BeforeEach
@@ -52,8 +49,6 @@ class AuctionCreatedEventConsumerTest : AbstractBaseIntegrationTest {
         val artwork =
             artworkService.save(MongoArtwork.random(id = null, artistId = user.id!!.toHexString())).block()!!
         val createAuctionRequest = CreateAuctionRequest.random(artworkId = artwork.id!!.toHexString())
-
-        auctionCreatedEventKafkaConsumer.listenToCreatedAuctionTopic()
 
         // WHEN
         auctionService.save(createAuctionRequest).subscribe()

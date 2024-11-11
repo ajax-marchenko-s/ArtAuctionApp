@@ -4,8 +4,6 @@ import artwork.random
 import auction.random
 import java.time.Clock
 import java.time.Duration
-import java.time.Instant
-import java.time.ZoneId
 import kotlin.test.assertTrue
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Test
@@ -43,22 +41,24 @@ class AuctionCreatedEventProducerTest : AbstractBaseIntegrationTest {
     private lateinit var auctionService: AuctionService
 
     @Autowired
-    private lateinit var kafkaReceiverAuctionCreatedEventProducerTest: KafkaReceiver<String, ByteArray>
+    private lateinit var kafkaTestConsumer: KafkaReceiver<String, ByteArray>
+
+    @Autowired
+    private lateinit var clock: Clock
 
     @Test
     fun `should send message to CreatedAuction topic when creating auction`() {
         // GIVEN
-        val fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
         val receivedMessages = mutableListOf<AuctionCreatedEvent>()
         val user = userService.save(MongoUser.random(id = null)).block()!!
         val artwork =
             artworkService.save(MongoArtwork.random(id = null, artistId = user.id!!.toHexString())).block()!!
         val createAuctionRequest = CreateAuctionRequest.random(artworkId = artwork.id!!.toHexString())
 
-        kafkaReceiverAuctionCreatedEventProducerTest.receive()
+        kafkaTestConsumer.receive()
             .doOnNext { record ->
                 receivedMessages.add(
-                    AuctionCreatedEventProto.parseFrom(record.value()).toAuctionCreatedEvent(fixedClock)
+                    AuctionCreatedEventProto.parseFrom(record.value()).toAuctionCreatedEvent(clock)
                 )
             }
             .subscribeOn(Schedulers.boundedElastic())
@@ -82,7 +82,7 @@ class AuctionCreatedEventProducerTest : AbstractBaseIntegrationTest {
         private val kafkaProperties: KafkaProperties
     ) {
         @Bean
-        fun kafkaReceiverAuctionCreatedEventProducerTest(): KafkaReceiver<String, ByteArray> {
+        fun kafkaTestConsumer(): KafkaReceiver<String, ByteArray> {
             return createBasicKafkaConsumer(kafkaProperties, setOf(KafkaTopic.AuctionKafkaTopic.CREATED), GROUP_ID)
         }
     }
