@@ -9,6 +9,7 @@ import kotlin.random.Random
 import org.bson.types.ObjectId
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
+import ua.marchenko.artauction.auction.domain.AuctionCreatedEvent
 import ua.marchenko.artauction.auction.model.MongoAuction.Bid
 import ua.marchenko.artauction.auction.model.projection.AuctionFull
 import ua.marchenko.artauction.auction.model.projection.AuctionFull.BidFull
@@ -64,4 +65,9 @@ fun AuctionFull.Companion.random(
 fun BidFull.Companion.random() = BidFull(
     buyer = MongoUser.random(),
     bid = BigDecimal(Random.nextInt(10, 100)),
+)
+
+fun AuctionCreatedEvent.Companion.random() = AuctionCreatedEvent(
+    auction = MongoAuction.random(),
+    timestamp = LocalDateTime.now(),
 )

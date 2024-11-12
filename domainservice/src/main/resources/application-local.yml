@@ -2,3 +2,5 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/art?authSource=admin
+  kafka:
+    bootstrap-servers: "http://localhost:9092"

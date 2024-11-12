@@ -13,7 +13,7 @@ message CreateArtworkRequest {
   commonmodels.artwork.Artwork.ArtworkStyle style = 3;
   uint32 width = 4;
   uint32 height = 5;
-  string artistId = 6;
+  string artist_id = 6;
 }
 
 message CreateArtworkResponse {

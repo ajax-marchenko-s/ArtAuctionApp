@@ -9,6 +9,7 @@ import auction.random
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
+import io.mockk.verify
 import kotlin.test.Test
 import org.bson.types.ObjectId
 import reactor.core.publisher.Flux
@@ -22,6 +23,7 @@ import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.auction.mapper.toMongo
 import ua.marchenko.artauction.auction.model.MongoAuction
 import ua.marchenko.artauction.auction.model.projection.AuctionFull
+import ua.marchenko.artauction.auction.service.kafka.AuctionCreatedEventKafkaProducer
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 
 class AuctionServiceTest {
@@ -31,6 +33,9 @@ class AuctionServiceTest {
 
     @MockK
     private lateinit var mockArtworkService: ArtworkService
+
+    @MockK
+    private lateinit var mockAuctionEventKafkaProducer: AuctionCreatedEventKafkaProducer
 
     @InjectMockKs
     private lateinit var auctionService: AuctionServiceImpl
@@ -154,6 +159,9 @@ class AuctionServiceTest {
             )
         } returns artwork.toMono()
         every { mockAuctionRepository.save(auction) } returns auction.copy(id = newAuctionId).toMono()
+        every {
+            mockAuctionEventKafkaProducer.sendCreateAuctionEvent(auction.copy(id = newAuctionId))
+        } returns Unit.toMono()
 
         //WHEN
         val result = auctionService.save(auctionRequest)
@@ -162,6 +170,7 @@ class AuctionServiceTest {
         result.test()
             .expectNext(auction.copy(id = newAuctionId))
             .verifyComplete()
+        verify(exactly = 1) { mockAuctionEventKafkaProducer.sendCreateAuctionEvent(auction.copy(id = newAuctionId)) }
     }
 
     @Test
@@ -183,5 +192,6 @@ class AuctionServiceTest {
         // THEN
         result.test()
             .verifyError(InvalidAuctionOperationException::class)
+        verify(exactly = 0) { mockAuctionEventKafkaProducer.sendCreateAuctionEvent(any()) }
     }
 }
