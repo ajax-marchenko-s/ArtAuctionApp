@@ -11,7 +11,7 @@ import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 import ua.marchenko.artauction.common.AbstractBaseNatsControllerTest
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.internal.NatsSubject
-import ua.marchenko.internal.commonmodels.Error
+import ua.marchenko.commonmodels.Error
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdRequest
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdResponse
 

@@ -8,8 +8,8 @@ import kotlin.random.Random
 import org.bson.types.ObjectId
 import ua.marchenko.artauction.auction.mapper.toBigDecimalProto
 import ua.marchenko.artauction.auction.mapper.toTimestampProto
-import ua.marchenko.internal.commonmodels.auction.Auction as AuctionProto
-import ua.marchenko.internal.commonmodels.auction.Auction.Bid as BidProto
+import ua.marchenko.commonmodels.auction.Auction as AuctionProto
+import ua.marchenko.commonmodels.auction.Auction.Bid as BidProto
 
 object AuctionProtoFixture {
 

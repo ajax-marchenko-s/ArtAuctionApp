@@ -3,7 +3,7 @@ syntax = "proto3";
 package ua.marchenko.internal.input.reqreply.artwork;
 
 import "ua/marchenko/internal/commonmodels/artwork/artwork_full.proto";
-import "ua/marchenko/internal/commonmodels/error.proto";
+import "ua/marchenko/commonmodels/error.proto";
 
 option java_multiple_files = true;
 
@@ -26,7 +26,7 @@ message FindArtworkFullByIdResponse {
     string message = 100;
 
     oneof error {
-      commonmodels.Error not_found_by_id = 1;
+      ua.marchenko.commonmodels.Error not_found_by_id = 1;
     }
   }
 }

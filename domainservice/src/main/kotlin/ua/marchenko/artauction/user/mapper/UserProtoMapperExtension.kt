@@ -1,7 +1,7 @@
 package ua.marchenko.artauction.user.mapper
 
 import ua.marchenko.artauction.user.model.MongoUser
-import ua.marchenko.internal.commonmodels.user.User as UserProto
+import ua.marchenko.commonmodels.user.User as UserProto
 
 fun MongoUser.toUserProto(): UserProto {
     return UserProto.newBuilder().also {

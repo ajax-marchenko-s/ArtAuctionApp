@@ -1,10 +1,12 @@
 plugins {
     id("spring-conventions")
+    id("grpc-conventions")
 }
 
 dependencies {
     implementation(project(":core"))
     implementation(project(":internal-api"))
+    implementation(project(":grpc-api"))
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive:3.3.2")
     implementation("org.springframework.boot:spring-boot-starter-validation:3.3.2")
@@ -16,6 +18,8 @@ dependencies {
     implementation("io.nats:jnats:2.20.2")
     implementation("org.springframework.kafka:spring-kafka")
     implementation("io.projectreactor.kafka:reactor-kafka")
+    implementation("net.devh:grpc-server-spring-boot-starter:3.1.0.RELEASE")
+    implementation("net.devh:grpc-spring-boot-starter:3.1.0.RELEASE")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:testcontainers:1.19.0")

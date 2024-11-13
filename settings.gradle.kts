@@ -1,2 +1,2 @@
 rootProject.name = "artauction"
-include("internal-api", "gateway", "core", "domainservice")
+include("common-proto", "core", "domainservice", "gateway", "grpc-api", "internal-api")

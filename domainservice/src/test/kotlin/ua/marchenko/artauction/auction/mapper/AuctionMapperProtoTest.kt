@@ -20,10 +20,10 @@ import org.junit.jupiter.params.provider.MethodSource
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.auction.model.MongoAuction
 import ua.marchenko.artauction.common.mongodb.id.toObjectId
-import ua.marchenko.internal.commonmodels.general.BigDecimal as BigDecimalProto
-import ua.marchenko.internal.commonmodels.general.BigDecimal.BigInteger as BigIntegerProto
-import ua.marchenko.internal.commonmodels.auction.Auction as AuctionProto
-import ua.marchenko.internal.commonmodels.auction.Auction.Bid as BidProto
+import ua.marchenko.commonmodels.general.BigDecimal as BigDecimalProto
+import ua.marchenko.commonmodels.general.BigDecimal.BigInteger as BigIntegerProto
+import ua.marchenko.commonmodels.auction.Auction as AuctionProto
+import ua.marchenko.commonmodels.auction.Auction.Bid as BidProto
 
 class AuctionMapperProtoTest {
 
