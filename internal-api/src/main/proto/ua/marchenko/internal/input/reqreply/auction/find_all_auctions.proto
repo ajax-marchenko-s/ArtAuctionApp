@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package ua.marchenko.internal.input.reqreply.auction;
+
+import "ua/marchenko/commonmodels/auction/auction.proto";
+
+option java_multiple_files = true;
+
+message FindAllAuctionsRequest {
+  uint32 page = 1;
+  uint32 limit = 2;
+}
+
+message FindAllAuctionsResponse {
+
+  oneof response {
+    Success success = 1;
+    Failure failure = 2;
+  }
+
+  message Success {
+    repeated ua.marchenko.commonmodels.auction.Auction auctions = 1;
+  }
+
+  message Failure {
+    string message = 100;
+  }
+}

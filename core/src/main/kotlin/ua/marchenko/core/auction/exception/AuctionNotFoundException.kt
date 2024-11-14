@@ -1,4 +1,4 @@
-package ua.marchenko.artauction.auction.exception
+package ua.marchenko.core.auction.exception
 
 import ua.marchenko.core.common.exception.NotFoundException
 
