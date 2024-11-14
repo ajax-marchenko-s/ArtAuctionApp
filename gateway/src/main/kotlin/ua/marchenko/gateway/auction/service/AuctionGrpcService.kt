@@ -6,11 +6,11 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
 import ua.marchenko.commonmodels.auction.Auction
-import ua.marchenko.gateway.auction.service.mapper.toAuctionProtoList
-import ua.marchenko.gateway.auction.service.mapper.toCreateAuctionRequestProtoInternal
-import ua.marchenko.gateway.auction.service.mapper.toCreateAuctionResponseProtoGrpc
-import ua.marchenko.gateway.auction.service.mapper.toFindAuctionByIdRequestProtoInternal
-import ua.marchenko.gateway.auction.service.mapper.toFindAuctionByIdResponseProtoGrpc
+import ua.marchenko.gateway.auction.mapper.toAuctionProtoList
+import ua.marchenko.gateway.auction.mapper.toCreateAuctionRequestProtoInternal
+import ua.marchenko.gateway.auction.mapper.toCreateAuctionResponseProtoGrpc
+import ua.marchenko.gateway.auction.mapper.toFindAuctionByIdRequestProtoInternal
+import ua.marchenko.gateway.auction.mapper.toFindAuctionByIdResponseProtoGrpc
 import ua.marchenko.gateway.common.nats.NatsClient
 import ua.marchenko.grpcapi.input.reqreply.auction.CreateAuctionRequest as CreateAuctionRequestProtoGrpc
 import ua.marchenko.grpcapi.input.reqreply.auction.CreateAuctionResponse as CreateAuctionResponseProtoGrpc

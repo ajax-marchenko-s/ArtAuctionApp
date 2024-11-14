@@ -4,6 +4,7 @@ import com.google.protobuf.GeneratedMessage
 import com.google.protobuf.Parser
 import io.nats.client.Connection
 import io.nats.client.Dispatcher
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -33,7 +34,12 @@ class NatsClient(
         }
         return sink.asFlux()
             .doFinally {
+                log.info("Unsubscribe from NATS")
                 dispatcher.unsubscribe(subscription)
             }
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(NatsClient::class.java)
     }
 }

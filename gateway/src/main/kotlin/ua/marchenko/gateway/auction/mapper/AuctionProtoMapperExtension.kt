@@ -1,5 +1,7 @@
-package ua.marchenko.gateway.auction.service.mapper
+package ua.marchenko.gateway.auction.mapper
 
+import ua.marchenko.core.auction.exception.AuctionNotFoundException
+import ua.marchenko.core.auction.exception.InvalidAuctionOperationException
 import ua.marchenko.commonmodels.auction.Auction as AuctionProto
 import ua.marchenko.grpcapi.input.reqreply.auction.FindAuctionByIdResponse as FindAuctionByIdResponseProtoGrpc
 import ua.marchenko.internal.input.reqreply.auction.FindAuctionByIdResponse as FindAuctionByIdResponseProtoInternal
@@ -25,7 +27,7 @@ fun FindAuctionByIdResponseProtoInternal.toFindAuctionByIdResponseProtoGrpc(): F
         FindAuctionByIdResponseProtoInternal.ResponseCase.FAILURE -> {
             when (failure.errorCase!!) {
                 FindAuctionByIdResponseProtoInternal.Failure.ErrorCase.NOT_FOUND_BY_ID ->
-                    failure.toFindAuctionByIdFailureResponseProtoGrpc()
+                    throw AuctionNotFoundException(message = failure.message)
 
                 FindAuctionByIdResponseProtoInternal.Failure.ErrorCase.ERROR_NOT_SET ->
                     error(failure.message)
@@ -53,7 +55,7 @@ fun CreateAuctionResponseProtoInternal.toCreateAuctionResponseProtoGrpc(): Creat
         CreateAuctionResponseProtoInternal.ResponseCase.FAILURE -> {
             when (failure.errorCase!!) {
                 CreateAuctionResponseProtoInternal.Failure.ErrorCase.INVALID_AUCTION_OPERATION ->
-                    failure.toCreateAuctionFailureResponseProtoGrpc()
+                    throw InvalidAuctionOperationException(failure.message)
 
                 CreateAuctionResponseProtoInternal.Failure.ErrorCase.ERROR_NOT_SET ->
                     error(failure.message)
@@ -65,8 +67,8 @@ fun CreateAuctionResponseProtoInternal.toCreateAuctionResponseProtoGrpc(): Creat
 fun FindAllAuctionsResponseProtoInternal.toAuctionProtoList(): List<AuctionProto> {
     return when (responseCase!!) {
         FindAllAuctionsResponseProtoInternal.ResponseCase.SUCCESS -> success.auctionsList
-        FindAllAuctionsResponseProtoInternal.ResponseCase.FAILURE -> emptyList()
-        FindAllAuctionsResponseProtoInternal.ResponseCase.RESPONSE_NOT_SET -> emptyList()
+        FindAllAuctionsResponseProtoInternal.ResponseCase.FAILURE -> error(failure.message)
+        FindAllAuctionsResponseProtoInternal.ResponseCase.RESPONSE_NOT_SET -> error("Response not set")
     }
 }
 
@@ -76,29 +78,9 @@ private fun AuctionProto.toFindAuctionByIdSuccessResponseProtoGrpc(): FindAuctio
     }.build()
 }
 
-private fun FindAuctionByIdResponseProtoInternal.Failure.toFindAuctionByIdFailureResponseProtoGrpc():
-        FindAuctionByIdResponseProtoGrpc {
-    return FindAuctionByIdResponseProtoGrpc.newBuilder().also { builder ->
-        builder.failureBuilder.message = message.orEmpty()
-        if (errorCase == FindAuctionByIdResponseProtoInternal.Failure.ErrorCase.NOT_FOUND_BY_ID) {
-            builder.failureBuilder.notFoundByIdBuilder
-        }
-    }.build()
-}
-
 private fun AuctionProto.toCreateAuctionSuccessResponseProtoGrpc():
         CreateAuctionResponseProtoGrpc {
     return CreateAuctionResponseProtoGrpc.newBuilder().also { builder ->
         builder.successBuilder.auction = this
-    }.build()
-}
-
-private fun CreateAuctionResponseProtoInternal.Failure.toCreateAuctionFailureResponseProtoGrpc():
-        CreateAuctionResponseProtoGrpc {
-    return CreateAuctionResponseProtoGrpc.newBuilder().also { builder ->
-        builder.failureBuilder.message = message.orEmpty()
-        if (errorCase == CreateAuctionResponseProtoInternal.Failure.ErrorCase.INVALID_AUCTION_OPERATION) {
-            builder.failureBuilder.invalidAuctionOperationBuilder
-        }
     }.build()
 }

@@ -8,19 +8,20 @@ import java.math.BigInteger
 import java.time.Clock
 import java.time.LocalDateTime
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
-import ua.marchenko.artauction.auction.exception.AuctionNotFoundException
-import ua.marchenko.artauction.auction.exception.InvalidAuctionOperationException
+import ua.marchenko.core.auction.exception.InvalidAuctionOperationException
 import ua.marchenko.artauction.auction.model.MongoAuction
 import ua.marchenko.artauction.common.mongodb.id.toObjectId
-import ua.marchenko.grpcapi.input.reqreply.auction.CreateAuctionResponse as CreateAuctionResponseProtoGrpc
-import ua.marchenko.grpcapi.input.reqreply.auction.CreateAuctionRequest as CreateAuctionRequestProtoGrpc
-import ua.marchenko.grpcapi.input.reqreply.auction.FindAuctionByIdResponse as FindAuctionByIdResponseProtoGrpc
+import ua.marchenko.core.auction.exception.AuctionNotFoundException
+import ua.marchenko.internal.input.reqreply.auction.CreateAuctionResponse as CreateAuctionResponseProto
+import ua.marchenko.internal.input.reqreply.auction.CreateAuctionRequest as CreateAuctionRequestProto
+import ua.marchenko.internal.input.reqreply.auction.FindAuctionByIdResponse as FindAuctionByIdResponseProto
+import ua.marchenko.internal.input.reqreply.auction.FindAllAuctionsResponse as FindAllAuctionsResponseProto
 import ua.marchenko.commonmodels.auction.Auction.Bid as BidProto
 import ua.marchenko.commonmodels.auction.Auction as AuctionProto
 import ua.marchenko.commonmodels.general.BigDecimal as BigDecimalProto
 import ua.marchenko.commonmodels.general.BigDecimal.BigInteger as BigIntegerProto
 
-fun CreateAuctionRequestProtoGrpc.toCreateAuctionRequest(clock: Clock): CreateAuctionRequest =
+fun CreateAuctionRequestProto.toCreateAuctionRequest(clock: Clock): CreateAuctionRequest =
     CreateAuctionRequest(
         artworkId = artworkId,
         startBid = startBid.toBigDecimal(),
@@ -28,14 +29,29 @@ fun CreateAuctionRequestProtoGrpc.toCreateAuctionRequest(clock: Clock): CreateAu
         finishedAt = finishedAt.toLocalDateTime(clock)
     )
 
-fun MongoAuction.toCreateAuctionSuccessResponseProto(clock: Clock): CreateAuctionResponseProtoGrpc {
-    return CreateAuctionResponseProtoGrpc.newBuilder().also { builder ->
+fun MongoAuction.toFindAuctionByIdSuccessResponseProto(clock: Clock): FindAuctionByIdResponseProto {
+    return FindAuctionByIdResponseProto.newBuilder().also { builder ->
         builder.successBuilder.setAuction(toAuctionProto(clock))
     }.build()
 }
 
-fun Throwable.toCreateAuctionFailureResponseProto(): CreateAuctionResponseProtoGrpc {
-    return CreateAuctionResponseProtoGrpc.newBuilder().also { builder ->
+fun Throwable.toFindAuctionByIdFailureResponseProto(): FindAuctionByIdResponseProto {
+    return FindAuctionByIdResponseProto.newBuilder().also { builder ->
+        builder.failureBuilder.message = message.orEmpty()
+        if (this is AuctionNotFoundException) {
+            builder.failureBuilder.notFoundByIdBuilder
+        }
+    }.build()
+}
+
+fun MongoAuction.toCreateAuctionSuccessResponseProto(clock: Clock): CreateAuctionResponseProto {
+    return CreateAuctionResponseProto.newBuilder().also { builder ->
+        builder.successBuilder.setAuction(toAuctionProto(clock))
+    }.build()
+}
+
+fun Throwable.toCreateAuctionFailureResponseProto(): CreateAuctionResponseProto {
+    return CreateAuctionResponseProto.newBuilder().also { builder ->
         builder.failureBuilder.message = message.orEmpty()
         if (this is InvalidAuctionOperationException) {
             builder.failureBuilder.invalidAuctionOperationBuilder
@@ -43,18 +59,15 @@ fun Throwable.toCreateAuctionFailureResponseProto(): CreateAuctionResponseProtoG
     }.build()
 }
 
-fun MongoAuction.toFindAuctionByIdSuccessResponseProto(clock: Clock): FindAuctionByIdResponseProtoGrpc {
-    return FindAuctionByIdResponseProtoGrpc.newBuilder().also { builder ->
-        builder.successBuilder.setAuction(toAuctionProto(clock))
+fun List<MongoAuction>.toFindAllAuctionsSuccessResponseProto(clock: Clock): FindAllAuctionsResponseProto {
+    return FindAllAuctionsResponseProto.newBuilder().also { builder ->
+        builder.successBuilder.addAllAuctions(map { it.toAuctionProto(clock) })
     }.build()
 }
 
-fun Throwable.toFindAuctionByIdFailureResponseProto(): FindAuctionByIdResponseProtoGrpc {
-    return FindAuctionByIdResponseProtoGrpc.newBuilder().also { builder ->
+fun Throwable.toFindAllAuctionsFailureResponseProto(): FindAllAuctionsResponseProto {
+    return FindAllAuctionsResponseProto.newBuilder().also { builder ->
         builder.failureBuilder.message = message.orEmpty()
-        if (this is AuctionNotFoundException) {
-            builder.failureBuilder.notFoundByIdBuilder
-        }
     }.build()
 }
 
