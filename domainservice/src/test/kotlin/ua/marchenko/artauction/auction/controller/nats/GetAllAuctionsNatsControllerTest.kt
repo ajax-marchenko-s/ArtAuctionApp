@@ -44,9 +44,9 @@ class GetAllAuctionsNatsControllerTest : AbstractBaseNatsControllerTest() {
                 )
             ).block()!!.toAuctionProto(clock)
         }
-        val request = FindAllAuctionsRequestProto.newBuilder().also {
-            it.page = START_PAGE
-            it.limit = Int.MAX_VALUE
+        val request = FindAllAuctionsRequestProto.newBuilder().apply {
+            page = START_PAGE
+            limit = Int.MAX_VALUE
         }.build()
 
         // WHEN

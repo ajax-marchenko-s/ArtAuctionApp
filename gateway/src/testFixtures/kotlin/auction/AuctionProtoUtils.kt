@@ -17,70 +17,70 @@ import ua.marchenko.internal.input.reqreply.auction.CreateAuctionResponse as Cre
 object AuctionProtoFixture {
 
     fun randomCreateAuctionRequestProtoGrpc(): CreateAuctionRequestProtoGrpc =
-        CreateAuctionRequestProtoGrpc.newBuilder().also {
-            it.artworkId = getRandomString()
-            it.startBid = getRandomBigDecimal()
-            it.startedAt = getRandomTimestamp()
-            it.finishedAt = getRandomTimestamp()
+        CreateAuctionRequestProtoGrpc.newBuilder().apply {
+            artworkId = getRandomString()
+            startBid = getRandomBigDecimal()
+            startedAt = getRandomTimestamp()
+            finishedAt = getRandomTimestamp()
         }.build()
 
     fun randomSuccessCreateAuctionResponseProto(): CreateAuctionResponseProto =
-        CreateAuctionResponseProto.newBuilder().also {
-            it.successBuilder.auction = randomAuctionProto()
+        CreateAuctionResponseProto.newBuilder().apply {
+            successBuilder.auction = randomAuctionProto()
         }.build()
 
     fun randomSuccessFindByIdResponseProto(): FindAuctionByIdResponseProtoInternal =
-        FindAuctionByIdResponseProtoInternal.newBuilder().also {
-            it.successBuilder.auction = randomAuctionProto()
+        FindAuctionByIdResponseProtoInternal.newBuilder().apply {
+            successBuilder.auction = randomAuctionProto()
         }.build()
 
     fun randomSuccessFindAllAuctionsResponseProto(auctionList: List<AuctionProto> = List(3) { randomAuctionProto() }): FindAllAuctionsResponseProto =
         FindAllAuctionsResponseProto.newBuilder()
-            .also { it.successBuilder.addAllAuctions(auctionList) }.build()
+            .apply { successBuilder.addAllAuctions(auctionList) }.build()
 
-    fun randomAuctionProto(): AuctionProto = AuctionProto.newBuilder().also {
-        it.id = getRandomString()
-        it.artworkId = getRandomString()
-        it.startBid = getRandomBigDecimal()
-        it.startedAt = getRandomTimestamp()
-        it.finishedAt = getRandomTimestamp()
+    fun randomAuctionProto(): AuctionProto = AuctionProto.newBuilder().apply {
+        id = getRandomString()
+        artworkId = getRandomString()
+        startBid = getRandomBigDecimal()
+        startedAt = getRandomTimestamp()
+        finishedAt = getRandomTimestamp()
     }.build()
 
     fun randomFailureGeneralFindAuctionByIdResponseProtoInternal(): FindAuctionByIdResponseProtoInternal =
-        FindAuctionByIdResponseProtoInternal.newBuilder().also { builder ->
-            builder.failureBuilder.message = ERROR_MESSAGE
+        FindAuctionByIdResponseProtoInternal.newBuilder().apply {
+            failureBuilder.message = ERROR_MESSAGE
         }.build()
 
     fun randomFailureAuctionNotFoundFindAuctionByIdResponseProtoInternal(): FindAuctionByIdResponseProtoInternal =
-        FindAuctionByIdResponseProtoInternal.newBuilder().also { builder ->
-            builder.failureBuilder.notFoundByIdBuilder
-            builder.failureBuilder.message = ERROR_MESSAGE
+        FindAuctionByIdResponseProtoInternal.newBuilder().apply {
+            failureBuilder.notFoundByIdBuilder
+            failureBuilder.message = ERROR_MESSAGE
         }.build()
 
     fun randomFailureGeneralCreateAuctionResponseProtoInternal(): CreateAuctionResponseProtoInternal =
-        CreateAuctionResponseProtoInternal.newBuilder().also { builder ->
-            builder.failureBuilder.message = ERROR_MESSAGE
+        CreateAuctionResponseProtoInternal.newBuilder().apply {
+            failureBuilder.message = ERROR_MESSAGE
         }.build()
 
     fun randomFailureInvalidAuctionOperationCreateAuctionResponseProtoInternal(): CreateAuctionResponseProtoInternal =
-        CreateAuctionResponseProtoInternal.newBuilder().also { builder ->
-            builder.failureBuilder.invalidAuctionOperationBuilder
-            builder.failureBuilder.message = ERROR_MESSAGE
+        CreateAuctionResponseProtoInternal.newBuilder().apply {
+            failureBuilder.invalidAuctionOperationBuilder
+            failureBuilder.message = ERROR_MESSAGE
         }.build()
 
 
-    private fun getRandomBigDecimal(): BigDecimalProto = BigDecimalProto.newBuilder().also {
-        it.scale = Random.nextInt(10, 100)
-        it.intVal = getRandomBigInteger()
+    private fun getRandomBigDecimal(): BigDecimalProto = BigDecimalProto.newBuilder().apply {
+        scale = Random.nextInt(10, 100)
+        intVal = getRandomBigInteger()
     }.build()
 
-    private fun getRandomBigInteger(): BigIntegerProto = BigIntegerProto.newBuilder()
-        .setValue(ByteString.copyFrom(Random.nextBytes(ByteArray(16))))
-        .build()
+    private fun getRandomBigInteger(): BigIntegerProto = BigIntegerProto.newBuilder().apply {
+        value = ByteString.copyFrom(Random.nextBytes(ByteArray(16)))
+    }.build()
 
-    private fun getRandomTimestamp(): TimestampProto = TimestampProto.newBuilder().also {
-        it.seconds = Random.nextLong(0, Instant.now().epochSecond)
-        it.nanos = Random.nextInt(0, 1_000_000_000)
+    private fun getRandomTimestamp(): TimestampProto = TimestampProto.newBuilder().apply {
+        seconds = Random.nextLong(0, Instant.now().epochSecond)
+        nanos = Random.nextInt(0, 1_000_000_000)
     }.build()
 
     const val ERROR_MESSAGE = "Error message"

@@ -91,9 +91,9 @@ class AuctionGrpcServiceTest {
         every {
             natsClient.doRequest(
                 subject = NatsSubject.Auction.FIND_ALL,
-                payload = FindAllAuctionsRequest.newBuilder().also {
-                    it.page = START_PAGE
-                    it.limit = Int.MAX_VALUE
+                payload = FindAllAuctionsRequest.newBuilder().apply {
+                    page = START_PAGE
+                    limit = Int.MAX_VALUE
                 }.build(),
                 parser = FindAllAuctionsResponse.parser()
             )

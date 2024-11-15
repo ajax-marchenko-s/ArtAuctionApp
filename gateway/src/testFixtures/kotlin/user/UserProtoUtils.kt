@@ -5,10 +5,10 @@ import ua.marchenko.commonmodels.user.User as UserProto
 
 object UserProtoFixture {
     fun randomUserProto(): UserProto =
-        UserProto.newBuilder().also {
-            it.id = getRandomString()
-            it.name = getRandomString()
-            it.lastName = getRandomString()
-            it.email = getRandomString()
+        UserProto.newBuilder().apply {
+            id = getRandomString()
+            name = getRandomString()
+            lastName = getRandomString()
+            email = getRandomString()
         }.build()
 }

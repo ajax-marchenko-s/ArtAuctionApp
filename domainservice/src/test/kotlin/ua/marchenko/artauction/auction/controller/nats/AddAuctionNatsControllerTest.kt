@@ -29,15 +29,15 @@ class AddAuctionNatsControllerTest : AbstractBaseNatsControllerTest() {
         val savedArtist = userRepository.save(MongoUser.random(id = null)).block()
         val savedArtwork =
             artworkRepository.save(MongoArtwork.random(artistId = savedArtist!!.id!!.toHexString())).block()
-     val request = AuctionProtoFixture.randomCreateAuctionRequestProto(artworkId = savedArtwork!!.id!!.toHexString())
-        val expectedResponse = CreateAuctionResponseProto.newBuilder().also { builder ->
-            builder.successBuilder.setAuction(
-                AuctionProto.newBuilder().also {
-                    it.artworkId = request.artworkId
-                    it.startBid = request.startBid
-                    it.startedAt = request.startedAt
-                    it.finishedAt = request.finishedAt
-                    it.addAllBuyers(emptyList())
+        val request = AuctionProtoFixture.randomCreateAuctionRequestProto(artworkId = savedArtwork!!.id!!.toHexString())
+        val expectedResponse = CreateAuctionResponseProto.newBuilder().apply {
+            successBuilder.setAuction(
+                AuctionProto.newBuilder().apply {
+                    artworkId = request.artworkId
+                    startBid = request.startBid
+                    startedAt = request.startedAt
+                    finishedAt = request.finishedAt
+                    addAllBuyers(emptyList())
                 })
         }.build()
 

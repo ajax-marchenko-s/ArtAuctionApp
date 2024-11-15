@@ -27,9 +27,9 @@ import ua.marchenko.internal.NatsSubject
 class AuctionGrpcService(private val natsClient: NatsClient) : ReactorAuctionServiceGrpc.AuctionServiceImplBase() {
 
     override fun subscribeToAllAuctions(request: Mono<Empty>): Flux<Auction> {
-        val allAuctionRequest = FindAllAuctionsRequestProtoInternal.newBuilder().also {
-            it.page = 0
-            it.limit = Int.MAX_VALUE
+        val allAuctionRequest = FindAllAuctionsRequestProtoInternal.newBuilder().apply {
+            page = 0
+            limit = Int.MAX_VALUE
         }.build()
 
         val existingAuctions = natsClient.doRequest(

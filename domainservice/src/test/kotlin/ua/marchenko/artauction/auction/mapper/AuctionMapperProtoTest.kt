@@ -283,13 +283,13 @@ class AuctionMapperProtoTest {
         fun throwableWithExpectedFailureCreateAuctionResponseProto(): List<Arguments> = listOf(
             Arguments.of(
                 InvalidAuctionOperationException(ERROR_MESSAGE),
-                CreateAuctionResponseProto.newBuilder().also {
-                    it.failureBuilder.invalidAuctionOperationBuilder
-                    it.failureBuilder.message = ERROR_MESSAGE
+                CreateAuctionResponseProto.newBuilder().apply {
+                    failureBuilder.invalidAuctionOperationBuilder
+                    failureBuilder.message = ERROR_MESSAGE
                 }.build()
             ),
-            Arguments.of(Exception(ERROR_MESSAGE), CreateAuctionResponseProto.newBuilder().also {
-                it.failureBuilder.message = ERROR_MESSAGE
+            Arguments.of(Exception(ERROR_MESSAGE), CreateAuctionResponseProto.newBuilder().apply {
+                failureBuilder.message = ERROR_MESSAGE
             }.build()),
         )
 

@@ -42,8 +42,8 @@ class GetAuctionByIdNatsControllerTest : AbstractBaseNatsControllerTest() {
             )
         ).block()!!
         val request = FindAuctionByIdRequestProto.newBuilder().setId(auction.id!!.toHexString()).build()
-        val expectedResponse = FindAuctionByIdResponseProto.newBuilder().also { builder ->
-            builder.successBuilder.setAuction(auction.toAuctionProto(clock))
+        val expectedResponse = FindAuctionByIdResponseProto.newBuilder().apply {
+            successBuilder.setAuction(auction.toAuctionProto(clock))
         }.build()
 
         // WHEN
