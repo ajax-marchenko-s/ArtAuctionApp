@@ -1,7 +1,10 @@
 package ua.marchenko.artauction.auction.controller.nats
 
 import artwork.random
+import auction.random
 import java.time.Clock
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import kotlin.test.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,8 +15,6 @@ import ua.marchenko.artauction.auction.mapper.toAuctionProto
 import ua.marchenko.artauction.auction.model.MongoAuction
 import ua.marchenko.artauction.auction.repository.AuctionRepository
 import ua.marchenko.artauction.common.AbstractBaseNatsControllerTest
-import ua.marchenko.artauction.common.mongodb.id.toObjectId
-import ua.marchenko.core.artwork.enums.ArtworkStyle
 import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.input.reqreply.auction.FindAllAuctionsRequest as FindAllAuctionsRequestProto
 import ua.marchenko.internal.input.reqreply.auction.FindAllAuctionsResponse as FindAllAuctionsResponseProto
@@ -32,19 +33,25 @@ class GetAllAuctionsNatsControllerTest : AbstractBaseNatsControllerTest() {
     @Test
     fun `should return all auctions when they are exists`() {
         // GIVEN
-        val artworks = listOf(
-            artworkRepository.save(MongoArtwork.random(id = null, style = ArtworkStyle.CUBISM)).block()!!
-                .toArtworkProto(),
-            artworkRepository.save(MongoArtwork.random(id = null, style = ArtworkStyle.SURREALISM)).block()!!
-                .toArtworkProto(),
-        )
+        val artworks = List(2) { artworkRepository.save(MongoArtwork.random(id = null)).block()!!.toArtworkProto() }
         val auctions = listOf(
-            auctionRepository.save(MongoAuction(artworkId = artworks[0].id.toObjectId())).block()!!
-                .toAuctionProto(clock),
-            auctionRepository.save(MongoAuction(artworkId = artworks[1].id.toObjectId())).block()!!
-                .toAuctionProto(clock),
+            auctionRepository.save(
+                MongoAuction.random(
+                    id = null,
+                    artworkId = artworks[0].id!!,
+                    startedAt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
+                    finishedAt = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS)
+                )
+            ).block()!!.toAuctionProto(clock),
+            auctionRepository.save(
+                MongoAuction.random(
+                    id = null,
+                    artworkId = artworks[1].id!!,
+                    startedAt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
+                    finishedAt = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS)
+                )
+            ).block()!!.toAuctionProto(clock),
         )
-
         val request = FindAllAuctionsRequestProto.newBuilder().setPage(0).setLimit(100).build()
 
         // WHEN
@@ -56,6 +63,6 @@ class GetAllAuctionsNatsControllerTest : AbstractBaseNatsControllerTest() {
 
         // THEN
         val foundAuctions = result.success.auctionsList
-        assertTrue(foundAuctions.containsAll(auctions), "Artworks $artworks not found in returned list")
+        assertTrue(foundAuctions.containsAll(auctions), "Auctions $auctions not found in returned list")
     }
 }
