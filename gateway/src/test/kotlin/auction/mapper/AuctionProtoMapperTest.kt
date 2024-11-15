@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import ua.marchenko.core.auction.exception.AuctionNotFoundException
 import ua.marchenko.core.auction.exception.InvalidAuctionOperationException
+import ua.marchenko.gateway.auction.mapper.toAuctionProtoList
 import ua.marchenko.gateway.auction.mapper.toCreateAuctionRequestProtoInternal
 import ua.marchenko.gateway.auction.mapper.toCreateAuctionResponseProtoGrpc
 import ua.marchenko.gateway.auction.mapper.toFindAuctionByIdRequestProtoInternal
@@ -25,6 +26,7 @@ import ua.marchenko.internal.input.reqreply.auction.CreateAuctionRequest as Crea
 import ua.marchenko.grpcapi.input.reqreply.auction.FindAuctionByIdRequest as FindAuctionByIdRequestProtoGrpc
 import ua.marchenko.grpcapi.input.reqreply.auction.CreateAuctionResponse as CreateAuctionResponseProtoGrpc
 import ua.marchenko.grpcapi.input.reqreply.auction.FindAuctionByIdResponse as FindAuctionByIdResponseProtoGrpc
+import ua.marchenko.internal.input.reqreply.auction.FindAllAuctionsResponse as FindAllAuctionsResponseProtoInternal
 
 class AuctionProtoMapperTest {
 
@@ -55,6 +57,16 @@ class AuctionProtoMapperTest {
 
         // THEN
         assertEquals(expectedResponse, result)
+    }
+
+    @Test
+    fun `should throw exception when the case in FindAuctionByIdResponseProtoInternal is not set`() {
+        // GIVEN
+        val internalResponse = FindAuctionByIdResponseProtoInternal.newBuilder().build()
+
+        // WHEN THEN
+        val exception = assertThrows<IllegalStateException> { internalResponse.toFindAuctionByIdResponseProtoGrpc() }
+        assertEquals(RESPONSE_NOT_SET_ERROR_MESSAGE, exception.message)
     }
 
     @ParameterizedTest
@@ -114,7 +126,29 @@ class AuctionProtoMapperTest {
         assertEquals(ex.message, exception.message)
     }
 
+    @Test
+    fun `should throw exception when the case in CreateAuctionResponseProtoInternal is not set`() {
+        // GIVEN
+        val internalResponse = CreateAuctionResponseProtoInternal.newBuilder().build()
+
+        // WHEN THEN
+        val exception = assertThrows<IllegalStateException> { internalResponse.toCreateAuctionResponseProtoGrpc() }
+        assertEquals(RESPONSE_NOT_SET_ERROR_MESSAGE, exception.message)
+    }
+
+    @Test
+    fun `should throw exception when the case in FindAllAuctionsResponseProtoInternal is not set`() {
+        // GIVEN
+        val internalResponse = FindAllAuctionsResponseProtoInternal.newBuilder().build()
+
+        // WHEN THEN
+        val exception = assertThrows<IllegalStateException> { internalResponse.toAuctionProtoList() }
+        assertEquals(RESPONSE_NOT_SET_ERROR_MESSAGE, exception.message)
+    }
+
     companion object {
+        private const val RESPONSE_NOT_SET_ERROR_MESSAGE = "Response not set"
+
         @JvmStatic
         fun findAuctionByIdResponseProtoInternalFailureData(): List<Arguments> = listOf(
             Arguments.of(
