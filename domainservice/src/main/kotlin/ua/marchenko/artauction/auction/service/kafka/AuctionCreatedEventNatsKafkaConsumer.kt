@@ -41,7 +41,7 @@ class AuctionCreatedEventNatsKafkaConsumer(
 
     private fun processAuctionEvent(event: AuctionCreatedEvent) {
         natsConnection.publish(
-            NatsSubject.AuctionNatsSubject.CREATED_EVENT,
+            NatsSubject.Auction.CREATED_EVENT,
             event.auction.toAuctionProto(clock).toByteArray()
         )
     }

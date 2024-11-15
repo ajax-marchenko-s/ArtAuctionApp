@@ -11,7 +11,7 @@ option java_multiple_files = true;
 
 message CreateAuctionRequest {
   string artwork_id = 1;
-  ua.marchenko.commonmodels.general.BigDecimal start_bid = 2;
+  commonmodels.general.BigDecimal start_bid = 2;
   google.protobuf.Timestamp started_at = 3;
   google.protobuf.Timestamp finished_at = 4;
 }
@@ -24,14 +24,14 @@ message CreateAuctionResponse {
   }
 
   message Success {
-    ua.marchenko.commonmodels.auction.Auction auction = 1;
+    commonmodels.auction.Auction auction = 1;
   }
 
   message Failure {
     string message = 100;
 
     oneof error {
-      ua.marchenko.commonmodels.Error invalid_auction_operation = 1;
+      commonmodels.Error invalid_auction_operation = 1;
     }
   }
 }

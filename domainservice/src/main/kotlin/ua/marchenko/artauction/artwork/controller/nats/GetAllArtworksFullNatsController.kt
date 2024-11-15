@@ -3,7 +3,7 @@ package ua.marchenko.artauction.artwork.controller.nats
 import com.google.protobuf.Parser
 import io.nats.client.Connection
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Controller
+import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 import ua.marchenko.artauction.artwork.mapper.toFindAllArtworksFullFailureResponseProto
@@ -14,13 +14,13 @@ import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullRequest as FindAllArtworksFullRequestProto
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullResponse as FindAllArtworksFullResponseProto
 
-@Controller
+@Component
 class GetAllArtworksFullNatsController(
     private val artworkService: ArtworkService,
     override val connection: Connection
 ) : NatsController<FindAllArtworksFullRequestProto, FindAllArtworksFullResponseProto> {
 
-    override val subject: String = NatsSubject.ArtworkNatsSubject.FIND_ALL_FULL
+    override val subject: String = NatsSubject.Artwork.FIND_ALL_FULL
 
     override val queueGroup: String = QUEUE_GROUP
 
@@ -34,7 +34,7 @@ class GetAllArtworksFullNatsController(
             .collectList()
             .map { it.toFindAllArtworksFullSuccessResponseProto() }
             .onErrorResume {
-                log.error("Error in FindAllArtworksFull", it)
+                log.error("Error in FindAllArtworksFull for {}", request, it)
                 it.toFindAllArtworksFullFailureResponseProto().toMono()
             }
     }

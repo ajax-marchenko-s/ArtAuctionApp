@@ -19,7 +19,7 @@ message FindAllAuctionsResponse {
   }
 
   message Success {
-    repeated ua.marchenko.commonmodels.auction.Auction auctions = 1;
+    repeated commonmodels.auction.Auction auctions = 1;
   }
 
   message Failure {

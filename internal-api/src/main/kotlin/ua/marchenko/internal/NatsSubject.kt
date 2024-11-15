@@ -1,7 +1,7 @@
 package ua.marchenko.internal
 
 object NatsSubject {
-    object ArtworkNatsSubject {
+    object Artwork {
         private const val ARTWORK_PREFIX = "artwork"
         const val FIND_BY_ID = "$ARTWORK_PREFIX.find_by_id"
         const val FIND_ALL = "$ARTWORK_PREFIX.find_all"
@@ -10,7 +10,7 @@ object NatsSubject {
         const val CREATE = "$ARTWORK_PREFIX.create"
     }
 
-    object AuctionNatsSubject {
+    object Auction {
         private const val AUCTION_PREFIX = "auction"
         const val CREATE = "$AUCTION_PREFIX.create"
         const val FIND_BY_ID = "$AUCTION_PREFIX.find_by_id"

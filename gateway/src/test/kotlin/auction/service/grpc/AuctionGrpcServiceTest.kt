@@ -44,7 +44,7 @@ class AuctionGrpcServiceTest {
         val response = randomSuccessCreateAuctionResponseProto()
         every {
             natsClient.doRequest(
-                subject = NatsSubject.AuctionNatsSubject.CREATE,
+                subject = NatsSubject.Auction.CREATE,
                 payload = request.toCreateAuctionRequestProtoInternal(),
                 parser = CreateAuctionResponse.parser()
             )
@@ -67,7 +67,7 @@ class AuctionGrpcServiceTest {
         val response = randomSuccessFindByIdResponseProto()
         every {
             natsClient.doRequest(
-                subject = NatsSubject.AuctionNatsSubject.FIND_BY_ID,
+                subject = NatsSubject.Auction.FIND_BY_ID,
                 payload = request.toFindAuctionByIdRequestProtoInternal(),
                 parser = FindAuctionByIdResponse.parser()
             )
@@ -90,9 +90,9 @@ class AuctionGrpcServiceTest {
 
         every {
             natsClient.doRequest(
-                subject = NatsSubject.AuctionNatsSubject.FIND_ALL,
+                subject = NatsSubject.Auction.FIND_ALL,
                 payload = FindAllAuctionsRequest.newBuilder().also {
-                    it.page = 0
+                    it.page = START_PAGE
                     it.limit = Int.MAX_VALUE
                 }.build(),
                 parser = FindAllAuctionsResponse.parser()
@@ -115,5 +115,9 @@ class AuctionGrpcServiceTest {
                 )
             }
             .verifyComplete()
+    }
+
+    companion object {
+        private const val START_PAGE = 0
     }
 }

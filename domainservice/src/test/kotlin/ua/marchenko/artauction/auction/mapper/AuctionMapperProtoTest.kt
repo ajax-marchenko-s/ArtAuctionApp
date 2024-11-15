@@ -56,8 +56,8 @@ class AuctionMapperProtoTest {
         // GIVEN
         val fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
         val mongoAuction = MongoAuction.random()
-        val expectedResponse = CreateAuctionResponseProto.newBuilder().also {
-            it.successBuilder.auction = mongoAuction.toAuctionProto(fixedClock)
+        val expectedResponse = CreateAuctionResponseProto.newBuilder().apply {
+            successBuilder.auction = mongoAuction.toAuctionProto(fixedClock)
         }.build()
 
         // WHEN
@@ -80,8 +80,8 @@ class AuctionMapperProtoTest {
     fun `should return FindAllAuctionsResponseProto with failure when called on throwable `() {
         // GIVEN
         val error = Throwable(ERROR_MESSAGE)
-        val expectedResponse = FindAllAuctionsResponseProto.newBuilder().also { builder ->
-            builder.failureBuilder.message = ERROR_MESSAGE
+        val expectedResponse = FindAllAuctionsResponseProto.newBuilder().apply {
+            failureBuilder.message = ERROR_MESSAGE
         }.build()
 
         // WHEN
@@ -96,8 +96,8 @@ class AuctionMapperProtoTest {
         // GIVEN
         val fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
         val auctionList = List(3) { MongoAuction.random() }
-        val expectedResponse = FindAllAuctionsResponseProto.newBuilder().also {
-            it.successBuilder.addAllAuctions(auctionList.map { auction -> auction.toAuctionProto(fixedClock) })
+        val expectedResponse = FindAllAuctionsResponseProto.newBuilder().apply {
+            successBuilder.addAllAuctions(auctionList.map { auction -> auction.toAuctionProto(fixedClock) })
         }.build()
 
         // WHEN
@@ -112,8 +112,8 @@ class AuctionMapperProtoTest {
         // GIVEN
         val fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
         val mongoAuction = MongoAuction.random()
-        val expectedResponse = FindAuctionByIdResponseProto.newBuilder().also {
-            it.successBuilder.auction = mongoAuction.toAuctionProto(fixedClock)
+        val expectedResponse = FindAuctionByIdResponseProto.newBuilder().apply {
+            successBuilder.auction = mongoAuction.toAuctionProto(fixedClock)
         }.build()
 
         // WHEN
@@ -297,13 +297,13 @@ class AuctionMapperProtoTest {
         fun throwableWithExpectedFailureFindAuctionByIdResponseProto(): List<Arguments> = listOf(
             Arguments.of(
                 AuctionNotFoundException("id"),
-                FindAuctionByIdResponseProto.newBuilder().also {
-                    it.failureBuilder.notFoundByIdBuilder
-                    it.failureBuilder.message = "Auction with ID id not found"
+                FindAuctionByIdResponseProto.newBuilder().apply {
+                    failureBuilder.notFoundByIdBuilder
+                    failureBuilder.message = "Auction with ID id not found"
                 }.build()
             ),
-            Arguments.of(Exception(ERROR_MESSAGE), FindAuctionByIdResponseProto.newBuilder().also {
-                it.failureBuilder.message = ERROR_MESSAGE
+            Arguments.of(Exception(ERROR_MESSAGE), FindAuctionByIdResponseProto.newBuilder().apply {
+                failureBuilder.message = ERROR_MESSAGE
             }.build()),
         )
     }

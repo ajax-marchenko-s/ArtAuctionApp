@@ -30,8 +30,8 @@ fun CreateAuctionRequestProto.toCreateAuctionRequest(clock: Clock): CreateAuctio
     )
 
 fun MongoAuction.toFindAuctionByIdSuccessResponseProto(clock: Clock): FindAuctionByIdResponseProto {
-    return FindAuctionByIdResponseProto.newBuilder().also { builder ->
-        builder.successBuilder.setAuction(toAuctionProto(clock))
+    return FindAuctionByIdResponseProto.newBuilder().apply {
+        successBuilder.setAuction(toAuctionProto(clock))
     }.build()
 }
 
@@ -45,8 +45,8 @@ fun Throwable.toFindAuctionByIdFailureResponseProto(): FindAuctionByIdResponsePr
 }
 
 fun MongoAuction.toCreateAuctionSuccessResponseProto(clock: Clock): CreateAuctionResponseProto {
-    return CreateAuctionResponseProto.newBuilder().also { builder ->
-        builder.successBuilder.setAuction(toAuctionProto(clock))
+    return CreateAuctionResponseProto.newBuilder().apply {
+        successBuilder.setAuction(toAuctionProto(clock))
     }.build()
 }
 
@@ -60,14 +60,14 @@ fun Throwable.toCreateAuctionFailureResponseProto(): CreateAuctionResponseProto 
 }
 
 fun List<MongoAuction>.toFindAllAuctionsSuccessResponseProto(clock: Clock): FindAllAuctionsResponseProto {
-    return FindAllAuctionsResponseProto.newBuilder().also { builder ->
-        builder.successBuilder.addAllAuctions(map { it.toAuctionProto(clock) })
+    return FindAllAuctionsResponseProto.newBuilder().apply {
+        successBuilder.addAllAuctions(map { it.toAuctionProto(clock) })
     }.build()
 }
 
 fun Throwable.toFindAllAuctionsFailureResponseProto(): FindAllAuctionsResponseProto {
-    return FindAllAuctionsResponseProto.newBuilder().also { builder ->
-        builder.failureBuilder.message = message.orEmpty()
+    return FindAllAuctionsResponseProto.newBuilder().apply {
+        failureBuilder.message = message.orEmpty()
     }.build()
 }
 

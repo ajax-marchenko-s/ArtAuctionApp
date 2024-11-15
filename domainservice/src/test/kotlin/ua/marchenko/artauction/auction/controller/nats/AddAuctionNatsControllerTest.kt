@@ -43,7 +43,7 @@ class AddAuctionNatsControllerTest : AbstractBaseNatsControllerTest() {
 
         // WHEN
         val result = doRequest(
-            subject = NatsSubject.AuctionNatsSubject.CREATE,
+            subject = NatsSubject.Auction.CREATE,
             request = request,
             parser = CreateAuctionResponseProto.parser()
         )

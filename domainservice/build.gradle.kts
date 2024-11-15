@@ -5,7 +5,6 @@ plugins {
 dependencies {
     implementation(project(":core"))
     implementation(project(":internal-api"))
-    implementation(project(":grpc-api"))
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive:3.3.2")
     implementation("org.springframework.boot:spring-boot-starter-validation:3.3.2")

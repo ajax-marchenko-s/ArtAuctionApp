@@ -46,8 +46,8 @@ class AuctionProtoMapperTest {
     fun `should build FindAuctionByIdResponseGrpc success when FindAuctionByIdResponseInternal is success`() {
         // GIVEN
         val internalResponse = randomSuccessFindByIdResponseProto()
-        val expectedResponse = FindAuctionByIdResponseProtoGrpc.newBuilder().also { builder ->
-            builder.successBuilder.auction = internalResponse.success.auction
+        val expectedResponse = FindAuctionByIdResponseProtoGrpc.newBuilder().apply {
+            successBuilder.auction = internalResponse.success.auction
         }.build()
 
         // WHEN
@@ -73,11 +73,11 @@ class AuctionProtoMapperTest {
     fun `should build CreateAuctionRequestProtoInternal from CreateAuctionRequestProtoGrpc`() {
         // GIVEN
         val request = randomCreateAuctionRequestProtoGrpc()
-        val expectedRequest = CreateArtworkRequestProtoInternal.newBuilder().also {
-            it.artworkId = request.artworkId
-            it.startBid = request.startBid
-            it.startedAt = request.startedAt
-            it.finishedAt = request.finishedAt
+        val expectedRequest = CreateArtworkRequestProtoInternal.newBuilder().apply {
+            artworkId = request.artworkId
+            startBid = request.startBid
+            startedAt = request.startedAt
+            finishedAt = request.finishedAt
         }.build()
 
         // WHEN
@@ -91,8 +91,8 @@ class AuctionProtoMapperTest {
     fun `should build CreateAuctionResponseProtoGrpc success when CreateAuctionResponseProtoInternal is success`() {
         // GIVEN
         val internalResponse = randomSuccessCreateAuctionResponseProto()
-        val expectedResponse = CreateAuctionResponseProtoGrpc.newBuilder().also { builder ->
-            builder.successBuilder.auction = internalResponse.success.auction
+        val expectedResponse = CreateAuctionResponseProtoGrpc.newBuilder().apply {
+            successBuilder.auction = internalResponse.success.auction
         }.build()
 
         // WHEN

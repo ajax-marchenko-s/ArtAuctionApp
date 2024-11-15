@@ -19,14 +19,14 @@ message FindAuctionByIdResponse {
   }
 
   message Success {
-    ua.marchenko.commonmodels.auction.Auction auction = 1;
+    commonmodels.auction.Auction auction = 1;
   }
 
   message Failure {
     string message = 100;
 
     oneof error {
-      ua.marchenko.commonmodels.Error not_found_by_id = 1;
+      commonmodels.Error not_found_by_id = 1;
     }
   }
 }

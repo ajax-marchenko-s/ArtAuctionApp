@@ -4,7 +4,7 @@ import com.google.protobuf.Parser
 import io.nats.client.Connection
 import java.time.Clock
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Controller
+import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 import ua.marchenko.artauction.auction.mapper.toCreateAuctionFailureResponseProto
@@ -16,14 +16,14 @@ import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.input.reqreply.auction.CreateAuctionResponse as CreateAuctionResponseProto
 import ua.marchenko.internal.input.reqreply.auction.CreateAuctionRequest as CreateAuctionRequestProto
 
-@Controller
+@Component
 class AddAuctionNatsController(
     private val auctionService: AuctionService,
     override val connection: Connection,
     private val clock: Clock,
 ) : NatsController<CreateAuctionRequestProto, CreateAuctionResponseProto> {
 
-    override val subject: String = NatsSubject.AuctionNatsSubject.CREATE
+    override val subject: String = NatsSubject.Auction.CREATE
 
     override val queueGroup: String = QUEUE_GROUP
 
@@ -36,7 +36,7 @@ class AddAuctionNatsController(
         return auctionService.save(request.toCreateAuctionRequest(clock))
             .map { it.toCreateAuctionSuccessResponseProto(clock) }
             .onErrorResume {
-                log.error("Error in CreateAuction", it)
+                log.error("Error in CreateAuction for {}", request, it)
                 it.toCreateAuctionFailureResponseProto().toMono()
             }
     }

@@ -48,7 +48,7 @@ class GetArtworkFullByIdNatsControllerTest : AbstractBaseNatsControllerTest() {
 
         // WHEN
         val result = doRequest(
-            subject = NatsSubject.ArtworkNatsSubject.FIND_BY_ID_FULL,
+            subject = NatsSubject.Artwork.FIND_BY_ID_FULL,
             request = request,
             parser = FindArtworkFullByIdResponse.parser()
         )
@@ -71,7 +71,7 @@ class GetArtworkFullByIdNatsControllerTest : AbstractBaseNatsControllerTest() {
 
         // WHEN
         val result = doRequest(
-            subject = NatsSubject.ArtworkNatsSubject.FIND_BY_ID_FULL,
+            subject = NatsSubject.Artwork.FIND_BY_ID_FULL,
             request = request,
             parser = FindArtworkFullByIdResponse.parser()
         )

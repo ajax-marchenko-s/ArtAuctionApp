@@ -4,7 +4,7 @@ import com.google.protobuf.Parser
 import io.nats.client.Connection
 import java.time.Clock
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Controller
+import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 import ua.marchenko.artauction.auction.mapper.toFindAuctionByIdFailureResponseProto
@@ -15,14 +15,14 @@ import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.input.reqreply.auction.FindAuctionByIdRequest as FindAuctionByIdRequestProto
 import ua.marchenko.internal.input.reqreply.auction.FindAuctionByIdResponse as FindAuctionByIdResponseProto
 
-@Controller
+@Component
 class GetAuctionByIdNatsController(
     private val auctionService: AuctionService,
     override val connection: Connection,
     private val clock: Clock,
 ) : NatsController<FindAuctionByIdRequestProto, FindAuctionByIdResponseProto> {
 
-    override val subject: String = NatsSubject.AuctionNatsSubject.FIND_BY_ID
+    override val subject: String = NatsSubject.Auction.FIND_BY_ID
 
     override val queueGroup: String = QUEUE_GROUP
 
@@ -35,7 +35,7 @@ class GetAuctionByIdNatsController(
         return auctionService.getById(request.id)
             .map { it.toFindAuctionByIdSuccessResponseProto(clock) }
             .onErrorResume {
-                log.error("Error in FindArtworkById", it)
+                log.error("Error in FindArtworkById for {}", request, it)
                 it.toFindAuctionByIdFailureResponseProto().toMono()
             }
     }

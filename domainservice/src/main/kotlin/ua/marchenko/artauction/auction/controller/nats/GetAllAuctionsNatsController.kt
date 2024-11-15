@@ -4,7 +4,7 @@ import com.google.protobuf.Parser
 import io.nats.client.Connection
 import java.time.Clock
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Controller
+import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 import ua.marchenko.artauction.auction.mapper.toFindAllAuctionsFailureResponseProto
@@ -15,14 +15,14 @@ import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.input.reqreply.auction.FindAllAuctionsRequest as FindAllAuctionsRequestProto
 import ua.marchenko.internal.input.reqreply.auction.FindAllAuctionsResponse as FindAllAuctionsResponseProto
 
-@Controller
+@Component
 class GetAllAuctionsNatsController(
     private val auctionService: AuctionService,
     override val connection: Connection,
     private val clock: Clock,
 ) : NatsController<FindAllAuctionsRequestProto, FindAllAuctionsResponseProto> {
 
-    override val subject: String = NatsSubject.AuctionNatsSubject.FIND_ALL
+    override val subject: String = NatsSubject.Auction.FIND_ALL
 
     override val queueGroup: String = QUEUE_GROUP
 
@@ -36,7 +36,7 @@ class GetAllAuctionsNatsController(
             .collectList()
             .map { it.toFindAllAuctionsSuccessResponseProto(clock) }
             .onErrorResume {
-                log.error("Error in FindAllAuctions", it)
+                log.error("Error in FindAllAuctions for {}", request, it)
                 it.toFindAllAuctionsFailureResponseProto().toMono()
             }
     }

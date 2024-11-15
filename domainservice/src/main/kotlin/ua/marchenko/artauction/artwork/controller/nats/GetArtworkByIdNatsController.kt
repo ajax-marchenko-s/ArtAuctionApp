@@ -3,7 +3,7 @@ package ua.marchenko.artauction.artwork.controller.nats
 import com.google.protobuf.Parser
 import io.nats.client.Connection
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Controller
+import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 import ua.marchenko.artauction.artwork.mapper.toFindArtworkByIdFailureResponseProto
@@ -14,13 +14,13 @@ import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdRequest as FindArtworkByIdRequestProto
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdResponse as FindArtworkByIdResponseProto
 
-@Controller
+@Component
 class GetArtworkByIdNatsController(
     private val artworkService: ArtworkService,
     override val connection: Connection,
 ) : NatsController<FindArtworkByIdRequestProto, FindArtworkByIdResponseProto> {
 
-    override val subject: String = NatsSubject.ArtworkNatsSubject.FIND_BY_ID
+    override val subject: String = NatsSubject.Artwork.FIND_BY_ID
 
     override val queueGroup: String = QUEUE_GROUP
 
@@ -33,7 +33,7 @@ class GetArtworkByIdNatsController(
         return artworkService.getById(request.id)
             .map { it.toFindArtworkByIdSuccessResponseProto() }
             .onErrorResume {
-                log.error("Error in FindArtworkById", it)
+                log.error("Error in FindArtworkById for {}", request, it)
                 it.toFindArtworkByIdFailureResponseProto().toMono()
             }
     }

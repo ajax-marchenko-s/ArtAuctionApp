@@ -29,12 +29,14 @@ class NatsClient(
 
     fun subscribeToCreatedAuction(): Flux<AuctionProto> {
         val sink = Sinks.many().unicast().onBackpressureBuffer<AuctionProto>()
-        val subscription = dispatcher.subscribe(NatsSubject.AuctionNatsSubject.CREATED_EVENT) { message ->
-            sink.tryEmitNext(AuctionProto.parseFrom(message.data))
+        val subscription = dispatcher.subscribe(NatsSubject.Auction.CREATED_EVENT) { message ->
+            runCatching { AuctionProto.parseFrom(message.data) }
+                .onSuccess { auction -> sink.tryEmitNext(auction) }
+                .onFailure { error -> log.error("Error parsing AuctionProto: ${error.message}", error) }
         }
         return sink.asFlux()
             .doFinally {
-                log.info("Unsubscribe from NATS")
+                log.info("Unsubscribe from NATS Subject {}", NatsSubject.Auction.CREATED_EVENT)
                 dispatcher.unsubscribe(subscription)
             }
     }

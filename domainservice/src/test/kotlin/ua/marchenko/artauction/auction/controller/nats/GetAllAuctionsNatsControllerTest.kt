@@ -34,29 +34,24 @@ class GetAllAuctionsNatsControllerTest : AbstractBaseNatsControllerTest() {
     fun `should return all auctions when they are exists`() {
         // GIVEN
         val artworks = List(2) { artworkRepository.save(MongoArtwork.random(id = null)).block()!!.toArtworkProto() }
-        val auctions = listOf(
+        val auctions = artworks.map { artwork ->
             auctionRepository.save(
                 MongoAuction.random(
                     id = null,
-                    artworkId = artworks[0].id!!,
+                    artworkId = artwork.id!!,
                     startedAt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     finishedAt = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS)
                 )
-            ).block()!!.toAuctionProto(clock),
-            auctionRepository.save(
-                MongoAuction.random(
-                    id = null,
-                    artworkId = artworks[1].id!!,
-                    startedAt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
-                    finishedAt = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS)
-                )
-            ).block()!!.toAuctionProto(clock),
-        )
-        val request = FindAllAuctionsRequestProto.newBuilder().setPage(0).setLimit(100).build()
+            ).block()!!.toAuctionProto(clock)
+        }
+        val request = FindAllAuctionsRequestProto.newBuilder().also {
+            it.page = START_PAGE
+            it.limit = Int.MAX_VALUE
+        }.build()
 
         // WHEN
         val result = doRequest(
-            subject = NatsSubject.AuctionNatsSubject.FIND_ALL,
+            subject = NatsSubject.Auction.FIND_ALL,
             request = request,
             parser = FindAllAuctionsResponseProto.parser()
         )
@@ -64,5 +59,9 @@ class GetAllAuctionsNatsControllerTest : AbstractBaseNatsControllerTest() {
         // THEN
         val foundAuctions = result.success.auctionsList
         assertTrue(foundAuctions.containsAll(auctions), "Auctions $auctions not found in returned list")
+    }
+
+    companion object {
+        private const val START_PAGE = 0
     }
 }

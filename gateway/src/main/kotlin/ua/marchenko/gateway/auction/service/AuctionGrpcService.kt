@@ -33,7 +33,7 @@ class AuctionGrpcService(private val natsClient: NatsClient) : ReactorAuctionSer
         }.build()
 
         val existingAuctions = natsClient.doRequest(
-            subject = NatsSubject.AuctionNatsSubject.FIND_ALL,
+            subject = NatsSubject.Auction.FIND_ALL,
             payload = allAuctionRequest,
             parser = FindAllAuctionsResponseProtoInternal.parser()
         ).flatMapMany { it.toAuctionProtoList().toFlux() }
@@ -47,7 +47,7 @@ class AuctionGrpcService(private val natsClient: NatsClient) : ReactorAuctionSer
             .map { it.toFindAuctionByIdRequestProtoInternal() }
             .flatMap {
                 natsClient.doRequest(
-                    subject = NatsSubject.AuctionNatsSubject.FIND_BY_ID,
+                    subject = NatsSubject.Auction.FIND_BY_ID,
                     payload = it,
                     parser = FindAuctionByIdResponseProtoInternal.parser()
                 )
@@ -59,7 +59,7 @@ class AuctionGrpcService(private val natsClient: NatsClient) : ReactorAuctionSer
             .map { it.toCreateAuctionRequestProtoInternal() }
             .flatMap {
                 natsClient.doRequest(
-                    subject = NatsSubject.AuctionNatsSubject.CREATE,
+                    subject = NatsSubject.Auction.CREATE,
                     payload = it,
                     parser = CreateAuctionResponseProtoInternal.parser()
                 )

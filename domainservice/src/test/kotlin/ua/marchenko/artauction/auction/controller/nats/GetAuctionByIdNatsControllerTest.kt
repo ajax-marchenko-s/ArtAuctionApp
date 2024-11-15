@@ -48,7 +48,7 @@ class GetAuctionByIdNatsControllerTest : AbstractBaseNatsControllerTest() {
 
         // WHEN
         val result = doRequest(
-            subject = NatsSubject.AuctionNatsSubject.FIND_BY_ID,
+            subject = NatsSubject.Auction.FIND_BY_ID,
             request = request,
             parser = FindAuctionByIdResponseProto.parser()
         )
