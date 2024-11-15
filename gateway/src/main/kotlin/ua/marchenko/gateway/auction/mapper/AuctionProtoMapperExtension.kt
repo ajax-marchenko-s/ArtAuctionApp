@@ -13,9 +13,8 @@ import ua.marchenko.internal.input.reqreply.auction.CreateAuctionRequest as Crea
 import ua.marchenko.internal.input.reqreply.auction.CreateAuctionResponse as CreateAuctionResponseProtoInternal
 import ua.marchenko.internal.input.reqreply.auction.FindAllAuctionsResponse as FindAllAuctionsResponseProtoInternal
 
-fun FindAuctionByIdRequestProtoGrpc.toFindAuctionByIdRequestProtoInternal(): FindAuctionByIdRequestProtoInternal {
-    return FindAuctionByIdRequestProtoInternal.newBuilder().setId(id).build()
-}
+fun FindAuctionByIdRequestProtoGrpc.toFindAuctionByIdRequestProtoInternal(): FindAuctionByIdRequestProtoInternal =
+    FindAuctionByIdRequestProtoInternal.newBuilder().setId(id).build()
 
 fun FindAuctionByIdResponseProtoInternal.toFindAuctionByIdResponseProtoGrpc(): FindAuctionByIdResponseProtoGrpc {
     return when (responseCase!!) {

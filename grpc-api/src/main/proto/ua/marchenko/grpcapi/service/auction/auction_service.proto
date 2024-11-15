@@ -17,4 +17,3 @@ service AuctionService {
 
   rpc createAuction (input.reqreply.auction.CreateAuctionRequest) returns (input.reqreply.auction.CreateAuctionResponse);
 }
-

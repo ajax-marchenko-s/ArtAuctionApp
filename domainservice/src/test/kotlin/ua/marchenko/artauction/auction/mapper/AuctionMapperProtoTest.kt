@@ -1,6 +1,5 @@
 package ua.marchenko.artauction.auction.mapper
 
-import artwork.random
 import auction.AuctionProtoFixture
 import auction.AuctionProtoFixture.randomCreateAuctionRequestProto
 import auction.random
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.auction.model.MongoAuction
 import ua.marchenko.artauction.common.mongodb.id.toObjectId
@@ -49,7 +47,23 @@ class AuctionMapperProtoTest {
         // WHEN
         val result = requestProto.toCreateAuctionRequest(fixedClock)
 
-        //THEN
+        // THEN
+        assertEquals(expectedResponse, result)
+    }
+
+    @Test
+    fun `should build CreateAuctionResponseProto success from MongoAuction`() {
+        // GIVEN
+        val fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+        val mongoAuction = MongoAuction.random()
+        val expectedResponse = CreateAuctionResponseProto.newBuilder().also {
+            it.successBuilder.auction = mongoAuction.toAuctionProto(fixedClock)
+        }.build()
+
+        // WHEN
+        val result = mongoAuction.toCreateAuctionSuccessResponseProto(fixedClock)
+
+        // THEN
         assertEquals(expectedResponse, result)
     }
 
@@ -73,7 +87,23 @@ class AuctionMapperProtoTest {
         // WHEN
         val result = error.toFindAllAuctionsFailureResponseProto()
 
-        //THEN
+        // THEN
+        assertEquals(expectedResponse, result)
+    }
+
+    @Test
+    fun `should build FindAllAuctionsResponseProto success from List of MongoAuction`() {
+        // GIVEN
+        val fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+        val auctionList = List(3) { MongoAuction.random() }
+        val expectedResponse = FindAllAuctionsResponseProto.newBuilder().also {
+            it.successBuilder.addAllAuctions(auctionList.map { auction -> auction.toAuctionProto(fixedClock) })
+        }.build()
+
+        // WHEN
+        val result = auctionList.toFindAllAuctionsSuccessResponseProto(fixedClock)
+
+        // THEN
         assertEquals(expectedResponse, result)
     }
 
@@ -89,7 +119,7 @@ class AuctionMapperProtoTest {
         // WHEN
         val result = mongoAuction.toFindAuctionByIdSuccessResponseProto(fixedClock)
 
-        //THEN
+        // THEN
         assertEquals(expectedResponse, result)
     }
 
@@ -246,7 +276,7 @@ class AuctionMapperProtoTest {
         @JvmStatic
         fun invalidMongoAuctionCasesWithExpectedErrorMessages(): List<Arguments> = listOf(
             Arguments.of(MongoAuction.random(id = null), "Auction id cannot be null"),
-            Arguments.of(MongoAuction.random(artwork = MongoArtwork.random(id = null)), "Artwork id cannot be null"),
+            Arguments.of(MongoAuction.random(artworkId = null), "Artwork id cannot be null"),
         )
 
         @JvmStatic

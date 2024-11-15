@@ -2,6 +2,9 @@ package auction.mapper
 
 import auction.AuctionProtoFixture
 import auction.AuctionProtoFixture.randomCreateAuctionRequestProtoGrpc
+import auction.AuctionProtoFixture.randomSuccessCreateAuctionResponseProto
+import auction.AuctionProtoFixture.randomSuccessFindByIdResponseProto
+import getRandomString
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -13,29 +16,45 @@ import ua.marchenko.core.auction.exception.AuctionNotFoundException
 import ua.marchenko.core.auction.exception.InvalidAuctionOperationException
 import ua.marchenko.gateway.auction.mapper.toCreateAuctionRequestProtoInternal
 import ua.marchenko.gateway.auction.mapper.toCreateAuctionResponseProtoGrpc
+import ua.marchenko.gateway.auction.mapper.toFindAuctionByIdRequestProtoInternal
 import ua.marchenko.gateway.auction.mapper.toFindAuctionByIdResponseProtoGrpc
 import ua.marchenko.internal.input.reqreply.auction.FindAuctionByIdResponse as FindAuctionByIdResponseProtoInternal
+import ua.marchenko.internal.input.reqreply.auction.FindAuctionByIdRequest as FindAuctionByIdRequestProtoInternal
 import ua.marchenko.internal.input.reqreply.auction.CreateAuctionResponse as CreateAuctionResponseProtoInternal
 import ua.marchenko.internal.input.reqreply.auction.CreateAuctionRequest as CreateArtworkRequestProtoInternal
+import ua.marchenko.grpcapi.input.reqreply.auction.FindAuctionByIdRequest as FindAuctionByIdRequestProtoGrpc
+import ua.marchenko.grpcapi.input.reqreply.auction.CreateAuctionResponse as CreateAuctionResponseProtoGrpc
+import ua.marchenko.grpcapi.input.reqreply.auction.FindAuctionByIdResponse as FindAuctionByIdResponseProtoGrpc
 
 class AuctionProtoMapperTest {
 
     @Test
-    fun `should build CreateAuctionRequestProtoInternal from CreateAuctionRequestProtoGrpc`() {
+    fun `should build FindAuctionByIdRequestProtoInternal from FindAuctionByIdRequestProtoGrpc`() {
         // GIVEN
-        val request = randomCreateAuctionRequestProtoGrpc()
-        val expectedRequestProto = CreateArtworkRequestProtoInternal.newBuilder().also {
-            it.artworkId = request.artworkId
-            it.startBid = request.startBid
-            it.startedAt = request.startedAt
-            it.finishedAt = request.finishedAt
+        val id = getRandomString()
+        val request = FindAuctionByIdRequestProtoGrpc.newBuilder().setId(id).build()
+        val expectedResponse = FindAuctionByIdRequestProtoInternal.newBuilder().setId(id).build()
+
+        // WHEN
+        val result = request.toFindAuctionByIdRequestProtoInternal()
+
+        // THEN
+        assertEquals(expectedResponse, result)
+    }
+
+    @Test
+    fun `should build FindAuctionByIdResponseGrpc success when FindAuctionByIdResponseInternal is success`() {
+        // GIVEN
+        val internalResponse = randomSuccessFindByIdResponseProto()
+        val expectedResponse = FindAuctionByIdResponseProtoGrpc.newBuilder().also { builder ->
+            builder.successBuilder.auction = internalResponse.success.auction
         }.build()
 
         // WHEN
-        val result = request.toCreateAuctionRequestProtoInternal()
+        val result = internalResponse.toFindAuctionByIdResponseProtoGrpc()
 
         // THEN
-        assertEquals(expectedRequestProto, result)
+        assertEquals(expectedResponse, result)
     }
 
     @ParameterizedTest
@@ -48,6 +67,39 @@ class AuctionProtoMapperTest {
         val exception = assertThrows<Throwable> { response.toFindAuctionByIdResponseProtoGrpc() }
         assertTrue(ex::class.isInstance(exception), "Unexpected exception type thrown")
         assertEquals(ex.message, exception.message)
+    }
+
+    @Test
+    fun `should build CreateAuctionRequestProtoInternal from CreateAuctionRequestProtoGrpc`() {
+        // GIVEN
+        val request = randomCreateAuctionRequestProtoGrpc()
+        val expectedRequest = CreateArtworkRequestProtoInternal.newBuilder().also {
+            it.artworkId = request.artworkId
+            it.startBid = request.startBid
+            it.startedAt = request.startedAt
+            it.finishedAt = request.finishedAt
+        }.build()
+
+        // WHEN
+        val result = request.toCreateAuctionRequestProtoInternal()
+
+        // THEN
+        assertEquals(expectedRequest, result)
+    }
+
+    @Test
+    fun `should build CreateAuctionResponseProtoGrpc success when CreateAuctionResponseProtoInternal is success`() {
+        // GIVEN
+        val internalResponse = randomSuccessCreateAuctionResponseProto()
+        val expectedResponse = CreateAuctionResponseProtoGrpc.newBuilder().also { builder ->
+            builder.successBuilder.auction = internalResponse.success.auction
+        }.build()
+
+        // WHEN
+        val result = internalResponse.toCreateAuctionResponseProtoGrpc()
+
+        // THEN
+        assertEquals(expectedResponse, result)
     }
 
     @ParameterizedTest
