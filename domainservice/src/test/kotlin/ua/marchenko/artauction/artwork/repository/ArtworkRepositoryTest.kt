@@ -1,8 +1,8 @@
 package ua.marchenko.artauction.artwork.repository
 
-import artwork.random
-import artwork.toFullArtwork
-import getRandomString
+import ua.marchenko.artauction.artwork.random
+import ua.marchenko.artauction.artwork.toFullArtwork
+import ua.marchenko.artauction.getRandomString
 import kotlin.test.Test
 import kotlin.test.assertTrue
 import org.bson.types.ObjectId
@@ -15,7 +15,7 @@ import ua.marchenko.artauction.common.AbstractBaseIntegrationTest
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.repository.UserRepository
 import ua.marchenko.core.artwork.enums.ArtworkStatus
-import user.random
+import ua.marchenko.artauction.user.random
 
 class ArtworkRepositoryTest : AbstractBaseIntegrationTest {
 

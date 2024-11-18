@@ -1,7 +1,7 @@
 package ua.marchenko.artauction.user.service
 
 import org.springframework.dao.DuplicateKeyException
-import getRandomEmail
+import ua.marchenko.artauction.getRandomEmail
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -18,7 +18,7 @@ import ua.marchenko.artauction.user.mapper.toMongo
 import ua.marchenko.core.user.exception.UserNotFoundException
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.repository.UserRepository
-import user.random
+import ua.marchenko.artauction.user.random
 
 class UserServiceTest {
 

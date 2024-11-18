@@ -1,7 +1,7 @@
 package ua.marchenko.artauction.artwork.controller.nats
 
-import artwork.random
-import artwork.toFullArtwork
+import ua.marchenko.artauction.artwork.random
+import ua.marchenko.artauction.artwork.toFullArtwork
 import kotlin.test.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,7 +15,7 @@ import ua.marchenko.core.artwork.enums.ArtworkStyle
 import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullRequest
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullResponse
-import user.random
+import ua.marchenko.artauction.user.random
 
 class GetAllArtworksFullNatsControllerTest : AbstractBaseNatsControllerTest() {
 

@@ -1,14 +1,11 @@
 package ua.marchenko.artauction.config.annotation.customProfiling
 
 import ch.qos.logback.classic.Level
-import config.annotation.customProfiling.CustomProfilingTestServiceWithAnnotationImpl
-import config.annotation.customProfiling.CustomProfilingTestServiceWithoutAnnotationImpl
-import getRandomString
+import ua.marchenko.artauction.getRandomString
 import java.lang.reflect.Proxy
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
-import config.annotation.customProfiling.CustomProfilingTestService
 import io.mockk.impl.annotations.InjectMockKs
 import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.test.Test

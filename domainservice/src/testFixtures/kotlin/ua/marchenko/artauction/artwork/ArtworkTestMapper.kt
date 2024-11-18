@@ -1,4 +1,4 @@
-package artwork
+package ua.marchenko.artauction.artwork
 
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull

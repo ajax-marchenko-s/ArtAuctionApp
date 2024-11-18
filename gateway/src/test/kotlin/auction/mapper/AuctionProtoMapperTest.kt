@@ -1,10 +1,9 @@
 package auction.mapper
 
-import auction.AuctionProtoFixture
-import auction.AuctionProtoFixture.randomCreateAuctionRequestProtoGrpc
-import auction.AuctionProtoFixture.randomSuccessCreateAuctionResponseProto
-import auction.AuctionProtoFixture.randomSuccessFindByIdResponseProto
-import getRandomString
+import ua.marchenko.artauction.auction.AuctionProtoFixture
+import ua.marchenko.artauction.auction.AuctionProtoFixture.randomCreateAuctionRequestProtoGrpc
+import ua.marchenko.artauction.auction.AuctionProtoFixture.randomSuccessCreateAuctionResponseProto
+import ua.marchenko.artauction.auction.AuctionProtoFixture.randomSuccessFindByIdResponseProto
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import ua.marchenko.artauction.getRandomString
 import ua.marchenko.core.auction.exception.AuctionNotFoundException
 import ua.marchenko.core.auction.exception.InvalidAuctionOperationException
 import ua.marchenko.gateway.auction.mapper.toAuctionProtoList

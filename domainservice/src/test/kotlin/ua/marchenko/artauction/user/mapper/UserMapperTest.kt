@@ -6,7 +6,7 @@ import org.junit.jupiter.api.assertThrows
 import ua.marchenko.artauction.user.controller.dto.CreateUserRequest
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.core.user.dto.UserResponse
-import user.random
+import ua.marchenko.artauction.user.random
 
 class UserMapperTest {
 

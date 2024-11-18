@@ -1,6 +1,6 @@
 package ua.marchenko.artauction.user.repository
 
-import getRandomEmail
+import ua.marchenko.artauction.getRandomEmail
 import kotlin.test.Test
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import reactor.kotlin.test.test
 import ua.marchenko.artauction.common.AbstractBaseIntegrationTest
 import ua.marchenko.artauction.user.model.MongoUser
-import user.random
+import ua.marchenko.artauction.user.random
 
 class UserRepositoryTest : AbstractBaseIntegrationTest {
 

@@ -1,7 +1,7 @@
 package artwork.mapper
 
-import artwork.ArtworkProtoFixture
-import artwork.random
+import ua.marchenko.artauction.artwork.ArtworkProtoFixture
+import ua.marchenko.artauction.artwork.random
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -25,7 +25,7 @@ import ua.marchenko.gateway.artwork.mapper.toCreateArtworkRequestProto
 import ua.marchenko.gateway.artwork.mapper.toFullArtworkList
 import ua.marchenko.gateway.user.toUserResponse
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse
-import user.UserProtoFixture
+import ua.marchenko.artauction.user.UserProtoFixture
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest as CreateArtworkRequestProto
 import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStyle as ArtworkStyleProto
 import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStatus as ArtworkStatusProto

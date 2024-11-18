@@ -1,6 +1,6 @@
-package artwork
+package ua.marchenko.artauction.artwork
 
-import getRandomString
+import ua.marchenko.artauction.getRandomString
 import kotlin.random.Random
 import org.bson.types.ObjectId
 import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStyle as ArtworkStyleProto

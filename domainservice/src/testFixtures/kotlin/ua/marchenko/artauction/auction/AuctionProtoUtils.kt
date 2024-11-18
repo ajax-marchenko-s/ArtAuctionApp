@@ -1,4 +1,4 @@
-package auction
+package ua.marchenko.artauction.auction
 
 import java.time.Clock
 import java.time.Instant

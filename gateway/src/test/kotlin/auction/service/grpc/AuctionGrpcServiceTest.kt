@@ -1,11 +1,10 @@
 package auction.service.grpc
 
-import auction.AuctionProtoFixture.randomAuctionProto
-import auction.AuctionProtoFixture.randomCreateAuctionRequestProtoGrpc
-import auction.AuctionProtoFixture.randomSuccessCreateAuctionResponseProto
-import auction.AuctionProtoFixture.randomSuccessFindAllAuctionsResponseProto
-import auction.AuctionProtoFixture.randomSuccessFindByIdResponseProto
-import getRandomString
+import ua.marchenko.artauction.auction.AuctionProtoFixture.randomAuctionProto
+import ua.marchenko.artauction.auction.AuctionProtoFixture.randomCreateAuctionRequestProtoGrpc
+import ua.marchenko.artauction.auction.AuctionProtoFixture.randomSuccessCreateAuctionResponseProto
+import ua.marchenko.artauction.auction.AuctionProtoFixture.randomSuccessFindAllAuctionsResponseProto
+import ua.marchenko.artauction.auction.AuctionProtoFixture.randomSuccessFindByIdResponseProto
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -16,6 +15,7 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
+import ua.marchenko.artauction.getRandomString
 import ua.marchenko.gateway.auction.service.AuctionGrpcService
 import ua.marchenko.gateway.auction.mapper.toCreateAuctionRequestProtoInternal
 import ua.marchenko.gateway.auction.mapper.toCreateAuctionResponseProtoGrpc

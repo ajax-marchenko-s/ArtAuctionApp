@@ -1,8 +1,8 @@
-package auction
+package ua.marchenko.artauction.auction
 
 import ua.marchenko.artauction.auction.controller.dto.CreateAuctionRequest
 import ua.marchenko.artauction.auction.model.MongoAuction
-import artwork.random
+import ua.marchenko.artauction.artwork.random
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import kotlin.random.Random
@@ -14,7 +14,7 @@ import ua.marchenko.artauction.auction.model.projection.AuctionFull
 import ua.marchenko.artauction.auction.model.projection.AuctionFull.BidFull
 import ua.marchenko.artauction.common.mongodb.id.toObjectId
 import ua.marchenko.artauction.user.model.MongoUser
-import user.random
+import ua.marchenko.artauction.user.random
 
 fun MongoAuction.Companion.random(
     id: String? = ObjectId().toHexString(),

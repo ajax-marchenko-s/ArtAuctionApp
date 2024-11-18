@@ -1,8 +1,8 @@
 package ua.marchenko.artauction.auction.mapper
 
-import auction.AuctionProtoFixture
-import auction.AuctionProtoFixture.randomCreateAuctionRequestProto
-import auction.random
+import ua.marchenko.artauction.auction.AuctionProtoFixture
+import ua.marchenko.artauction.auction.random
+import ua.marchenko.artauction.auction.AuctionProtoFixture.randomCreateAuctionRequestProto
 import com.google.protobuf.ByteString
 import java.math.BigDecimal
 import java.math.BigInteger

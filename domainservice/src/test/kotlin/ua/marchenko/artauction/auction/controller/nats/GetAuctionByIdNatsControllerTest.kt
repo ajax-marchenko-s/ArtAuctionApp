@@ -1,7 +1,7 @@
 package ua.marchenko.artauction.auction.controller.nats
 
-import artwork.random
-import auction.random
+import ua.marchenko.artauction.artwork.random
+import ua.marchenko.artauction.auction.random
 import java.time.Clock
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit

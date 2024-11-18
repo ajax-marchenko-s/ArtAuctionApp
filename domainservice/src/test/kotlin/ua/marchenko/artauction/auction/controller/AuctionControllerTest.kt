@@ -1,10 +1,10 @@
 package ua.marchenko.artauction.auction.controller
 
-import auction.random
+import ua.marchenko.artauction.auction.random
 import ua.marchenko.core.auction.exception.AuctionNotFoundException
 import ua.marchenko.artauction.auction.service.AuctionService
 import kotlin.test.Test
-import getRandomString
+import ua.marchenko.artauction.getRandomString
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK

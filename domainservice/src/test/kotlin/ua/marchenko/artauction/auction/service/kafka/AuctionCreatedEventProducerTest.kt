@@ -1,7 +1,7 @@
 package ua.marchenko.artauction.auction.service.kafka
 
-import artwork.random
-import auction.random
+import ua.marchenko.artauction.artwork.random
+import ua.marchenko.artauction.auction.random
 import java.time.Clock
 import java.time.Duration
 import kotlin.test.assertTrue
@@ -26,7 +26,7 @@ import ua.marchenko.artauction.common.kafka.common.createBasicKafkaConsumer
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.service.UserService
 import ua.marchenko.internal.KafkaTopic
-import user.random
+import ua.marchenko.artauction.user.random
 
 @Import(AuctionCreatedEventProducerTest.AuctionCreatedEventProducerTestConfiguration::class)
 class AuctionCreatedEventProducerTest : AbstractBaseIntegrationTest {

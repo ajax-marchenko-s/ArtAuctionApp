@@ -4,8 +4,8 @@ import ua.marchenko.artauction.artwork.service.ArtworkService
 import ua.marchenko.core.auction.exception.AuctionNotFoundException
 import ua.marchenko.core.auction.exception.InvalidAuctionOperationException
 import ua.marchenko.artauction.auction.repository.AuctionRepository
-import artwork.random
-import auction.random
+import ua.marchenko.artauction.artwork.random
+import ua.marchenko.artauction.auction.random
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK

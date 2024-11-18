@@ -1,6 +1,6 @@
-package artwork
+package ua.marchenko.artauction.artwork
 
-import getRandomString
+import ua.marchenko.artauction.getRandomString
 import kotlin.random.Random
 import ua.marchenko.core.artwork.enums.ArtworkStyle
 import ua.marchenko.gateway.artwork.controller.dto.CreateArtworkRequest

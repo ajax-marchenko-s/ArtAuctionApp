@@ -1,6 +1,6 @@
 package ua.marchenko.artauction.auction.mapper
 
-import auction.random
+import ua.marchenko.artauction.auction.random
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDateTime

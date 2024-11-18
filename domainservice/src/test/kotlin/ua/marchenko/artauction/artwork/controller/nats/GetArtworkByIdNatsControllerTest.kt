@@ -1,7 +1,7 @@
 package ua.marchenko.artauction.artwork.controller.nats
 
-import artwork.random
-import getRandomString
+import ua.marchenko.artauction.artwork.random
+import ua.marchenko.artauction.getRandomString
 import kotlin.test.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

@@ -1,6 +1,6 @@
 package ua.marchenko.artauction.artwork.controller.nats
 
-import artwork.ArtworkProtoFixture
+import ua.marchenko.artauction.artwork.ArtworkProtoFixture
 import kotlin.test.assertEquals
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
@@ -15,7 +15,7 @@ import ua.marchenko.internal.commonmodels.artwork.Artwork
 import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStatus
 import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStyle
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse
-import user.random
+import ua.marchenko.artauction.user.random
 
 class AddArtworkNatsControllerTest : AbstractBaseNatsControllerTest() {
 

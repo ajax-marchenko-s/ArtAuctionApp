@@ -1,8 +1,8 @@
 package ua.marchenko.artauction.artwork.controller.nats
 
-import artwork.random
-import artwork.toFullArtwork
-import getRandomString
+import ua.marchenko.artauction.artwork.random
+import ua.marchenko.artauction.artwork.toFullArtwork
+import ua.marchenko.artauction.getRandomString
 import kotlin.test.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,7 +19,7 @@ import ua.marchenko.commonmodels.Error
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdRequest
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkFullByIdRequest
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkFullByIdResponse
-import user.random
+import ua.marchenko.artauction.user.random
 
 class GetArtworkFullByIdNatsControllerTest : AbstractBaseNatsControllerTest() {
 
