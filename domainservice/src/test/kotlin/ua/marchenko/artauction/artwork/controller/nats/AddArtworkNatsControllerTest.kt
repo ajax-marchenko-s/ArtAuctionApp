@@ -45,7 +45,7 @@ class AddArtworkNatsControllerTest : AbstractBaseNatsControllerTest() {
 
         // WHEN
         val result = doRequest(
-            subject = NatsSubject.ArtworkNatsSubject.CREATE,
+            subject = NatsSubject.Artwork.CREATE,
             request = request,
             parser = CreateArtworkResponse.parser()
         )
@@ -70,7 +70,7 @@ class AddArtworkNatsControllerTest : AbstractBaseNatsControllerTest() {
 
         // WHEN
         val result = doRequest(
-            subject = NatsSubject.ArtworkNatsSubject.CREATE,
+            subject = NatsSubject.Artwork.CREATE,
             request = request,
             parser = CreateArtworkResponse.parser()
         )

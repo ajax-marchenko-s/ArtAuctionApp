@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     implementation("com.google.protobuf:protobuf-java:4.28.2")
+    api(project(":common-proto"))
 }
 
 protobuf {

@@ -7,7 +7,6 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 import kotlin.random.Random
 import org.bson.types.ObjectId
-import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.auction.domain.AuctionCreatedEvent
 import ua.marchenko.artauction.auction.model.MongoAuction.Bid
@@ -19,14 +18,14 @@ import user.random
 
 fun MongoAuction.Companion.random(
     id: String? = ObjectId().toHexString(),
-    artwork: MongoArtwork? = MongoArtwork.random(),
+    artworkId: String? = ObjectId().toHexString(),
     startBid: BigDecimal? = BigDecimal(100.0),
     startedAt: LocalDateTime? = LocalDateTime.now(),
     finishedAt: LocalDateTime? = LocalDateTime.now().plusDays(1),
     buyers: List<Bid>? = emptyList()
 ) = MongoAuction(
     id = id?.toObjectId(),
-    artworkId = artwork?.id,
+    artworkId = artworkId?.toObjectId(),
     startBid = startBid,
     startedAt = startedAt,
     finishedAt = finishedAt,

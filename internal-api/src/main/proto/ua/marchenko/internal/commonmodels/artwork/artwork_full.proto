@@ -3,7 +3,7 @@ syntax = "proto3";
 package ua.marchenko.internal.commonmodels.artwork;
 
 import "ua/marchenko/internal/commonmodels/artwork/artwork.proto";
-import "ua/marchenko/internal/commonmodels/user/user.proto";
+import "ua/marchenko/commonmodels/user/user.proto";
 
 option java_multiple_files = true;
 
@@ -15,5 +15,5 @@ message ArtworkFull {
   uint32 width = 5;
   uint32 height = 6;
   Artwork.ArtworkStatus status = 7;
-  commonmodels.user.User artist = 8;
+  ua.marchenko.commonmodels.user.User artist = 8;
 }

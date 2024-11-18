@@ -31,7 +31,7 @@ class GetAllArtworksNatsControllerTest : AbstractBaseNatsControllerTest() {
 
         // WHEN
         val result = doRequest(
-            subject = NatsSubject.ArtworkNatsSubject.FIND_ALL,
+            subject = NatsSubject.Artwork.FIND_ALL,
             request = request,
             parser = FindAllArtworksResponse.parser()
         )

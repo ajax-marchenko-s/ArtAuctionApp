@@ -1,14 +1,14 @@
 package user
 
 import getRandomString
-import ua.marchenko.internal.commonmodels.user.User as UserProto
+import ua.marchenko.commonmodels.user.User as UserProto
 
 object UserProtoFixture {
     fun randomUserProto(): UserProto =
-        UserProto.newBuilder()
-            .setId(getRandomString())
-            .setName(getRandomString())
-            .setLastName(getRandomString())
-            .setEmail(getRandomString())
-            .build()
+        UserProto.newBuilder().apply {
+            id = getRandomString()
+            name = getRandomString()
+            lastName = getRandomString()
+            email = getRandomString()
+        }.build()
 }

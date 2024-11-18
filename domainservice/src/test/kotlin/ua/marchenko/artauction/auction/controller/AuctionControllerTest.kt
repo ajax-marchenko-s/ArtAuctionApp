@@ -1,7 +1,7 @@
 package ua.marchenko.artauction.auction.controller
 
 import auction.random
-import ua.marchenko.artauction.auction.exception.AuctionNotFoundException
+import ua.marchenko.core.auction.exception.AuctionNotFoundException
 import ua.marchenko.artauction.auction.service.AuctionService
 import kotlin.test.Test
 import getRandomString

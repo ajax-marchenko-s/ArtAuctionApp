@@ -51,7 +51,7 @@ class ArtworkControllerTest {
 
         every {
             natsClient.doRequest(
-                subject = NatsSubject.ArtworkNatsSubject.CREATE,
+                subject = NatsSubject.Artwork.CREATE,
                 payload = request.toCreateArtworkRequestProto(),
                 parser = CreateArtworkResponseProto.parser()
             )
@@ -76,7 +76,7 @@ class ArtworkControllerTest {
         )
         every {
             natsClient.doRequest(
-                subject = NatsSubject.ArtworkNatsSubject.FIND_BY_ID,
+                subject = NatsSubject.Artwork.FIND_BY_ID,
                 payload = FindArtworkByIdRequestProto.newBuilder().setId(id).build(),
                 parser = FindArtworkByIdResponseProto.parser()
             )
@@ -101,7 +101,7 @@ class ArtworkControllerTest {
         )
         every {
             natsClient.doRequest(
-                subject = NatsSubject.ArtworkNatsSubject.FIND_BY_ID_FULL,
+                subject = NatsSubject.Artwork.FIND_BY_ID_FULL,
                 payload = FindArtworkFullByIdRequestProto.newBuilder().setId(id).build(),
                 parser = FindArtworkFullByIdResponseProto.parser()
             )
@@ -122,7 +122,7 @@ class ArtworkControllerTest {
         val response = randomSuccessFindAllArtworkResponseProto()
         every {
             natsClient.doRequest(
-                subject = NatsSubject.ArtworkNatsSubject.FIND_ALL,
+                subject = NatsSubject.Artwork.FIND_ALL,
                 payload = FindAllArtworksRequestProto.newBuilder().setPage(0).setLimit(10).build(),
                 parser = FindAllArtworksResponseProto.parser()
             )
@@ -143,7 +143,7 @@ class ArtworkControllerTest {
         val response = randomSuccessFindAllArtworkFullResponseProto()
         every {
             natsClient.doRequest(
-                subject = NatsSubject.ArtworkNatsSubject.FIND_ALL_FULL,
+                subject = NatsSubject.Artwork.FIND_ALL_FULL,
                 payload = FindAllArtworksFullRequestProto.newBuilder().setPage(0).setLimit(10).build(),
                 parser = FindAllArtworksFullResponseProto.parser()
             )

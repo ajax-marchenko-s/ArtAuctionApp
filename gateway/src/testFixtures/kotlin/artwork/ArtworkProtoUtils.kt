@@ -10,7 +10,7 @@ import ua.marchenko.internal.commonmodels.artwork.ArtworkFull as ArtworkFullProt
 import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStyle as ArtworkStyleProto
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdResponse as FindArtworkByIdResponseProto
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkFullByIdResponse as FindArtworkFullByIdResponseProto
-import ua.marchenko.internal.commonmodels.user.User as UserProto
+import ua.marchenko.commonmodels.user.User as UserProto
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksResponse as FindAllArtworkResponseProto
 import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksFullResponse as FindAllArtworkFullResponseProto
 

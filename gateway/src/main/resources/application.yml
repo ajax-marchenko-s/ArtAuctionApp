@@ -1,2 +1,8 @@
 nats:
   uri: ${NATS_CONNECTION}
+
+grpc:
+  server:
+    port: 9091
+    security:
+      enabled: false

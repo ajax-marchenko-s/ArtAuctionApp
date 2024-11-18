@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.support.WebExchangeBindException
 import org.springframework.web.server.ServerWebInputException
 import reactor.core.publisher.Mono
-import ua.marchenko.artauction.auction.exception.InvalidAuctionOperationException
+import ua.marchenko.core.auction.exception.InvalidAuctionOperationException
 import ua.marchenko.artauction.common.exception.type.general.AlreadyExistException
 import ua.marchenko.core.common.exception.ErrorMessageModel
 import ua.marchenko.core.common.exception.NotFoundException

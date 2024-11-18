@@ -8,7 +8,7 @@ import ua.marchenko.artauction.common.exception.type.general.AlreadyExistExcepti
 import java.time.LocalDateTime
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.server.ServerWebInputException
-import ua.marchenko.artauction.auction.exception.InvalidAuctionOperationException
+import ua.marchenko.core.auction.exception.InvalidAuctionOperationException
 import ua.marchenko.core.common.exception.ErrorMessageModel
 import ua.marchenko.core.common.exception.NotFoundException
 

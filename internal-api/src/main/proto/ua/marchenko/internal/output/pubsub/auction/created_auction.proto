@@ -3,7 +3,7 @@ syntax = "proto3";
 package ua.marchenko.internal.output.pubsub.auction;
 
 import "google/protobuf/timestamp.proto";
-import "ua/marchenko/internal/commonmodels/auction/auction.proto";
+import "ua/marchenko/commonmodels/auction/auction.proto";
 
 option java_multiple_files = true;
 

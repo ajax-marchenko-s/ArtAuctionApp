@@ -8,8 +8,9 @@ import kotlin.random.Random
 import org.bson.types.ObjectId
 import ua.marchenko.artauction.auction.mapper.toBigDecimalProto
 import ua.marchenko.artauction.auction.mapper.toTimestampProto
-import ua.marchenko.internal.commonmodels.auction.Auction as AuctionProto
-import ua.marchenko.internal.commonmodels.auction.Auction.Bid as BidProto
+import ua.marchenko.commonmodels.auction.Auction as AuctionProto
+import ua.marchenko.commonmodels.auction.Auction.Bid as BidProto
+import ua.marchenko.internal.input.reqreply.auction.CreateAuctionRequest as CreateAuctionRequestProto
 
 object AuctionProtoFixture {
 
@@ -29,4 +30,14 @@ object AuctionProtoFixture {
         it.bid = Random.nextDouble(10.0, 100.0).toBigDecimal().toBigDecimalProto()
         it.buyerId = ObjectId().toHexString()
     }.build()
+
+    fun randomCreateAuctionRequestProto(artworkId: String = ObjectId().toHexString()): CreateAuctionRequestProto {
+        val fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+        return CreateAuctionRequestProto.newBuilder().also {
+            it.artworkId = artworkId
+            it.startBid = Random.nextDouble(10.0, 100.0).toBigDecimal().toBigDecimalProto()
+            it.startedAt = LocalDateTime.now().toTimestampProto(fixedClock)
+            it.finishedAt = LocalDateTime.now().toTimestampProto(fixedClock)
+        }.build()
+    }
 }

@@ -1,8 +1,8 @@
 package ua.marchenko.artauction.auction.service
 
 import ua.marchenko.artauction.artwork.service.ArtworkService
-import ua.marchenko.artauction.auction.exception.AuctionNotFoundException
-import ua.marchenko.artauction.auction.exception.InvalidAuctionOperationException
+import ua.marchenko.core.auction.exception.AuctionNotFoundException
+import ua.marchenko.core.auction.exception.InvalidAuctionOperationException
 import ua.marchenko.artauction.auction.repository.AuctionRepository
 import artwork.random
 import auction.random

@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package ua.marchenko.internal.input.reqreply.auction;
+
+import "ua/marchenko/commonmodels/auction/auction.proto";
+import "ua/marchenko/commonmodels/error.proto";
+
+option java_multiple_files = true;
+
+message FindAuctionByIdRequest {
+  string id = 1;
+}
+
+message FindAuctionByIdResponse {
+
+  oneof response {
+    Success success = 1;
+    Failure failure = 2;
+  }
+
+  message Success {
+    commonmodels.auction.Auction auction = 1;
+  }
+
+  message Failure {
+    string message = 100;
+
+    oneof error {
+      commonmodels.Error not_found_by_id = 1;
+    }
+  }
+}

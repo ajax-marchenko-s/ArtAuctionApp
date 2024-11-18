@@ -11,7 +11,7 @@ import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 import ua.marchenko.artauction.common.AbstractBaseNatsControllerTest
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.internal.NatsSubject
-import ua.marchenko.internal.commonmodels.Error
+import ua.marchenko.commonmodels.Error
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdRequest
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdResponse
 
@@ -31,7 +31,7 @@ class GetArtworkByIdNatsControllerTest : AbstractBaseNatsControllerTest() {
 
         // WHEN
         val result = doRequest(
-            subject = NatsSubject.ArtworkNatsSubject.FIND_BY_ID,
+            subject = NatsSubject.Artwork.FIND_BY_ID,
             request = request,
             parser = FindArtworkByIdResponse.parser()
         )
@@ -52,7 +52,7 @@ class GetArtworkByIdNatsControllerTest : AbstractBaseNatsControllerTest() {
 
         // WHEN
         val result = doRequest(
-            subject = NatsSubject.ArtworkNatsSubject.FIND_BY_ID,
+            subject = NatsSubject.Artwork.FIND_BY_ID,
             request = request,
             parser = FindArtworkByIdResponse.parser()
         )

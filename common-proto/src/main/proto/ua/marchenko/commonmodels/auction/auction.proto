@@ -1,22 +1,22 @@
 syntax = "proto3";
 
-package ua.marchenko.internal.commonmodels.auction;
+package ua.marchenko.commonmodels.auction;
 
 import "google/protobuf/timestamp.proto";
-import "ua/marchenko/internal/commonmodels/general/big_decimal.proto";
+import "ua/marchenko/commonmodels/general/big_decimal.proto";
 
 option java_multiple_files = true;
 
 message Auction {
   string id = 1;
   string artwork_id = 2;
-  commonmodels.general.BigDecimal start_bid = 3;
+  general.BigDecimal start_bid = 3;
   repeated Bid buyers = 4;
   google.protobuf.Timestamp started_at = 5;
   google.protobuf.Timestamp finished_at = 6;
 
   message Bid {
     string buyer_id = 1;
-    commonmodels.general.BigDecimal bid = 2;
+    general.BigDecimal bid = 2;
   }
 }
