@@ -1,7 +1,7 @@
 package ua.marchenko.artauction.auction.service.kafka
 
-import artwork.random
-import auction.random
+import ua.marchenko.artauction.artwork.random
+import ua.marchenko.artauction.auction.random
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
@@ -19,7 +19,7 @@ import ua.marchenko.artauction.auction.service.AuctionService
 import ua.marchenko.artauction.common.AbstractBaseIntegrationTest
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.service.UserService
-import user.random
+import ua.marchenko.artauction.user.random
 
 class AuctionCreatedEventConsumerTest : AbstractBaseIntegrationTest {
 

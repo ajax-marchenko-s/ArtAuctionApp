@@ -1,6 +1,6 @@
-package artwork
+package ua.marchenko.artauction.artwork
 
-import getRandomString
+import ua.marchenko.artauction.getRandomString
 import kotlin.random.Random
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import org.bson.types.ObjectId
@@ -9,7 +9,7 @@ import ua.marchenko.artauction.common.mongodb.id.toObjectId
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.core.artwork.enums.ArtworkStyle
-import user.random
+import ua.marchenko.artauction.user.random
 
 fun MongoArtwork.Companion.random(
     id: String? = ObjectId().toHexString(),

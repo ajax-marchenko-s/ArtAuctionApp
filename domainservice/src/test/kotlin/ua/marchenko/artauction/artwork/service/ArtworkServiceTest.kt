@@ -1,6 +1,6 @@
 package ua.marchenko.artauction.artwork.service
 
-import artwork.random
+import ua.marchenko.artauction.artwork.random
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 import kotlin.test.Test

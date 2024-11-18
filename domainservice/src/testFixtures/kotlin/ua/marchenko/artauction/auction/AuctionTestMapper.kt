@@ -1,4 +1,4 @@
-package auction
+package ua.marchenko.artauction.auction
 
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.auction.model.MongoAuction

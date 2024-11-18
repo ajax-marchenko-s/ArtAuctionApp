@@ -1,7 +1,5 @@
 package ua.marchenko.artauction.auction.controller.nats
 
-import artwork.random
-import auction.random
 import java.time.Clock
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -10,9 +8,11 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import ua.marchenko.artauction.artwork.mapper.toArtworkProto
 import ua.marchenko.artauction.artwork.model.MongoArtwork
+import ua.marchenko.artauction.artwork.random
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 import ua.marchenko.artauction.auction.mapper.toAuctionProto
 import ua.marchenko.artauction.auction.model.MongoAuction
+import ua.marchenko.artauction.auction.random
 import ua.marchenko.artauction.auction.repository.AuctionRepository
 import ua.marchenko.artauction.common.AbstractBaseNatsControllerTest
 import ua.marchenko.internal.NatsSubject

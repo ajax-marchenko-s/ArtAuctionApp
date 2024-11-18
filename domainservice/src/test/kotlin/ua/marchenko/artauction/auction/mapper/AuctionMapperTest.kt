@@ -2,7 +2,7 @@ package ua.marchenko.artauction.auction.mapper
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import ua.marchenko.artauction.auction.controller.dto.AuctionResponse
-import auction.random
+import ua.marchenko.artauction.auction.random
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import kotlin.test.Test

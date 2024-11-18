@@ -1,6 +1,6 @@
 package ua.marchenko.artauction.artwork.mapper
 
-import artwork.random
+import ua.marchenko.artauction.artwork.random
 import kotlin.test.assertEquals
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

@@ -1,19 +1,19 @@
 package ua.marchenko.artauction.auction.controller.nats
 
-import artwork.random
-import auction.AuctionProtoFixture
 import kotlin.test.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import ua.marchenko.artauction.artwork.model.MongoArtwork
+import ua.marchenko.artauction.artwork.random
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
+import ua.marchenko.artauction.auction.AuctionProtoFixture
 import ua.marchenko.artauction.common.AbstractBaseNatsControllerTest
 import ua.marchenko.artauction.user.model.MongoUser
+import ua.marchenko.artauction.user.random
 import ua.marchenko.artauction.user.repository.UserRepository
 import ua.marchenko.internal.NatsSubject
 import ua.marchenko.commonmodels.auction.Auction as AuctionProto
 import ua.marchenko.internal.input.reqreply.auction.CreateAuctionResponse as CreateAuctionResponseProto
-import user.random
 
 class AddAuctionNatsControllerTest : AbstractBaseNatsControllerTest() {
 

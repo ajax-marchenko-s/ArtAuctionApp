@@ -1,6 +1,6 @@
-package user
+package ua.marchenko.artauction.user
 
-import getRandomString
+import ua.marchenko.artauction.getRandomString
 import ua.marchenko.commonmodels.user.User as UserProto
 
 object UserProtoFixture {

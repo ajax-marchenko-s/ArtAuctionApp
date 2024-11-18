@@ -1,12 +1,12 @@
 package artwork.controller
 
-import artwork.ArtworkProtoFixture.randomSuccessCreateArtworkResponseProto
-import artwork.ArtworkProtoFixture.randomSuccessFindAllArtworkFullResponseProto
-import artwork.ArtworkProtoFixture.randomSuccessFindAllArtworkResponseProto
-import artwork.ArtworkProtoFixture.randomSuccessFindArtworkByIdResponseProto
-import artwork.ArtworkProtoFixture.randomSuccessFindArtworkFullByIdResponseProto
-import artwork.random
-import getRandomString
+import ua.marchenko.artauction.artwork.ArtworkProtoFixture.randomSuccessCreateArtworkResponseProto
+import ua.marchenko.artauction.artwork.ArtworkProtoFixture.randomSuccessFindAllArtworkFullResponseProto
+import ua.marchenko.artauction.artwork.ArtworkProtoFixture.randomSuccessFindAllArtworkResponseProto
+import ua.marchenko.artauction.artwork.ArtworkProtoFixture.randomSuccessFindArtworkByIdResponseProto
+import ua.marchenko.artauction.artwork.ArtworkProtoFixture.randomSuccessFindArtworkFullByIdResponseProto
+import ua.marchenko.artauction.artwork.random
+import ua.marchenko.artauction.getRandomString
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK

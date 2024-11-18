@@ -1,4 +1,4 @@
-package config.annotation.customProfiling
+package ua.marchenko.artauction.config.annotation.customProfiling
 
 import java.util.concurrent.TimeUnit
 import ua.marchenko.artauction.common.annotation.profiling.annotation.CustomProfiling

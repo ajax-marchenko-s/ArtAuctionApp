@@ -3,7 +3,7 @@ package ua.marchenko.artauction.user.controller
 import ua.marchenko.core.user.exception.UserNotFoundException
 import ua.marchenko.artauction.user.service.UserService
 import kotlin.test.Test
-import getRandomString
+import ua.marchenko.artauction.getRandomString
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -15,7 +15,7 @@ import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
 import ua.marchenko.artauction.user.mapper.toResponse
 import ua.marchenko.artauction.user.model.MongoUser
-import user.random
+import ua.marchenko.artauction.user.random
 
 class UserControllerTest {
 

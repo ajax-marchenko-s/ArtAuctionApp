@@ -1,6 +1,6 @@
-package user
+package ua.marchenko.artauction.user
 
-import getRandomString
+import ua.marchenko.artauction.getRandomString
 import org.bson.types.ObjectId
 import ua.marchenko.artauction.common.mongodb.id.toObjectId
 import ua.marchenko.artauction.user.controller.dto.CreateUserRequest

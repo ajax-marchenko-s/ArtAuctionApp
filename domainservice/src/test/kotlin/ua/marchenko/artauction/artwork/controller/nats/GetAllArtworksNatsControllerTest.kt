@@ -1,6 +1,6 @@
 package ua.marchenko.artauction.artwork.controller.nats
 
-import artwork.random
+import ua.marchenko.artauction.artwork.random
 import kotlin.test.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

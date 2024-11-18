@@ -1,9 +1,9 @@
 package ua.marchenko.artauction.auction.repository
 
-import artwork.toFullArtwork
-import auction.random
-import auction.toFullAuction
-import auction.toFullBid
+import ua.marchenko.artauction.artwork.toFullArtwork
+import ua.marchenko.artauction.auction.random
+import ua.marchenko.artauction.auction.toFullAuction
+import ua.marchenko.artauction.auction.toFullBid
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import kotlin.test.Test
@@ -18,7 +18,7 @@ import ua.marchenko.artauction.auction.model.MongoAuction
 import ua.marchenko.artauction.common.AbstractBaseIntegrationTest
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.repository.UserRepository
-import user.random
+import ua.marchenko.artauction.user.random
 
 class AuctionRepositoryTest : AbstractBaseIntegrationTest {
 
