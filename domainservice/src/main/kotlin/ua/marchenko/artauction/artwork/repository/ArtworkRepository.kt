@@ -15,8 +15,8 @@ interface ArtworkRepository {
     fun existsById(id: String): Mono<Boolean>
     fun updateById(id: String, artwork: MongoArtwork): Mono<MongoArtwork>
     fun updateStatusByIdAndPreviousStatus(
-        artworkId: String,
+        id: String,
         prevStatus: ArtworkStatus,
-        newStatus: ArtworkStatus
+        newStatus: ArtworkStatus,
     ): Mono<MongoArtwork>
 }

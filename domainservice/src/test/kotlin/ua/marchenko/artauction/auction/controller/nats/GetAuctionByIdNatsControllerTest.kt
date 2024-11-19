@@ -8,6 +8,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.test.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 import ua.marchenko.artauction.auction.mapper.toAuctionProto
@@ -21,6 +22,7 @@ import ua.marchenko.internal.input.reqreply.auction.FindAuctionByIdResponse as F
 class GetAuctionByIdNatsControllerTest : AbstractBaseNatsControllerTest() {
 
     @Autowired
+    @Qualifier("mongoArtworkRepository")
     private lateinit var artworkRepository: ArtworkRepository
 
     @Autowired

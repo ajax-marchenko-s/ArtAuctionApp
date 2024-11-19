@@ -1,6 +1,7 @@
 package ua.marchenko.artauction.artwork.service
 
 import java.util.concurrent.TimeUnit
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -16,6 +17,7 @@ import ua.marchenko.core.user.exception.UserNotFoundException
 
 @Service
 class ArtworkServiceImpl(
+    @Qualifier(value = "redisArtworkRepository")
     private val artworkRepository: ArtworkRepository,
     private val userService: UserService,
 ) : ArtworkService {

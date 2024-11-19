@@ -5,6 +5,7 @@ import ua.marchenko.artauction.getRandomString
 import kotlin.test.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import ua.marchenko.artauction.artwork.mapper.toArtworkProto
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
@@ -18,6 +19,7 @@ import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdResponse
 class GetArtworkByIdNatsControllerTest : AbstractBaseNatsControllerTest() {
 
     @Autowired
+    @Qualifier("mongoArtworkRepository")
     private lateinit var artworkRepository: ArtworkRepository
 
     @Test

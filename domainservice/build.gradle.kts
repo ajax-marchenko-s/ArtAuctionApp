@@ -16,6 +16,8 @@ dependencies {
     implementation("io.nats:jnats:2.20.2")
     implementation("org.springframework.kafka:spring-kafka")
     implementation("io.projectreactor.kafka:reactor-kafka")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive:3.3.5")
+    implementation("org.springframework.data:spring-data-redis:3.3.0")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:testcontainers:1.19.0")

@@ -9,6 +9,7 @@ import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import reactor.kotlin.test.test
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.common.AbstractBaseIntegrationTest
@@ -17,9 +18,10 @@ import ua.marchenko.artauction.user.repository.UserRepository
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.artauction.user.random
 
-class ArtworkRepositoryTest : AbstractBaseIntegrationTest {
+class MongoArtworkRepositoryTest : AbstractBaseIntegrationTest {
 
     @Autowired
+    @Qualifier("mongoArtworkRepository")
     private lateinit var artworkRepository: ArtworkRepository
 
     @Autowired

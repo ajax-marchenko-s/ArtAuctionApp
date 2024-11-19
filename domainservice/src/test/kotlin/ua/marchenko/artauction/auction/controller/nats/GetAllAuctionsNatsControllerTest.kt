@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.test.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import ua.marchenko.artauction.artwork.mapper.toArtworkProto
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.random
@@ -22,6 +23,7 @@ import ua.marchenko.internal.input.reqreply.auction.FindAllAuctionsResponse as F
 class GetAllAuctionsNatsControllerTest : AbstractBaseNatsControllerTest() {
 
     @Autowired
+    @Qualifier("mongoArtworkRepository")
     private lateinit var artworkRepository: ArtworkRepository
 
     @Autowired

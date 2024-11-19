@@ -67,12 +67,12 @@ internal class MongoArtworkRepository(
     }
 
     override fun updateStatusByIdAndPreviousStatus(
-        artworkId: String,
+        id: String,
         prevStatus: ArtworkStatus,
         newStatus: ArtworkStatus
     ): Mono<MongoArtwork> {
         val query = Query.query(
-            Criteria.where(MongoArtwork::id.name).`is`(artworkId).and(MongoArtwork::status.name).`is`(prevStatus)
+            Criteria.where(MongoArtwork::id.name).`is`(id).and(MongoArtwork::status.name).`is`(prevStatus)
         )
         val changes = Update.update(MongoArtwork::status.name, newStatus)
         val options = FindAndModifyOptions.options().returnNew(true)
