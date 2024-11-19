@@ -68,8 +68,7 @@ internal class RedisArtworkRepository(
                         .onSuccess { artwork -> sink.next(artwork) }
                         .onFailure { error -> sink.error(error) }
                 }
-            }
-            .switchIfEmpty {
+            }.switchIfEmpty {
                 mongoArtworkRepository.findFullById(id)
                     .flatMap { saveArtworkFullToRedis(it).thenReturn(it) }
                     .switchIfEmpty {
@@ -110,11 +109,10 @@ internal class RedisArtworkRepository(
     }
 
     private fun saveToRedis(key: String, value: ByteArray): Mono<Unit> =
-        reactiveRedisTemplate.opsForValue().set(key, value, TIME_TO_LIVE)
+        reactiveRedisTemplate.opsForValue().set(key, value, durationToLive)
             .doOnError { error ->
                 log.error("Error while saving to Redis: ${error.message}")
-            }
-            .thenReturn(Unit)
+            }.thenReturn(Unit)
 
     private fun isErrorFromRedis(throwable: Throwable): Boolean {
         return listOf(
@@ -125,7 +123,7 @@ internal class RedisArtworkRepository(
     }
 
     companion object {
-        private val TIME_TO_LIVE = Duration.ofMinutes(10)
+        private val durationToLive = Duration.ofMinutes(10)
         private const val KEY_PREFIX_GENERAL = "artwork"
         private const val KEY_PREFIX_FULL = "artwork-full"
         fun createGeneralKeyById(id: String): String = "$KEY_PREFIX_GENERAL:$id"
