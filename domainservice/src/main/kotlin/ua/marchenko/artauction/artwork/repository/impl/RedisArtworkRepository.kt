@@ -5,6 +5,7 @@ import io.lettuce.core.RedisException
 import java.net.SocketException
 import java.time.Duration
 import org.slf4j.LoggerFactory
+import org.springframework.dao.QueryTimeoutException
 import org.springframework.data.redis.RedisConnectionFailureException
 import org.springframework.data.redis.core.ReactiveRedisTemplate
 import org.springframework.stereotype.Repository
@@ -35,58 +36,52 @@ internal class RedisArtworkRepository(
             }
 
     override fun findById(id: String): Mono<MongoArtwork> {
-        return reactiveRedisTemplate.opsForValue()
-            .get(createGeneralKeyById(id))
+        return reactiveRedisTemplate.opsForValue().get(createGeneralKeyById(id))
             .handle { item, sink ->
-                if (item.isEmpty()) {
-                    sink.error(ArtworkNotFoundException(artworkId = id))
-                } else {
+                if (item.isNotEmpty()) {
                     runCatching { objectMapper.readValue(item, MongoArtwork::class.java) }
                         .onSuccess { artwork -> sink.next(artwork) }
                         .onFailure { error -> sink.error(error) }
+                } else {
+                    sink.error(ArtworkNotFoundException(artworkId = id))
                 }
             }.switchIfEmpty {
                 mongoArtworkRepository.findById(id)
                     .flatMap { saveArtworkToRedis(it).thenReturn(it) }
                     .switchIfEmpty {
-                        saveToRedis(createGeneralKeyById(id), byteArrayOf())
-                            .then(saveToRedis(createFullKeyById(id), byteArrayOf()))
-                            .onErrorResume(::isErrorFromRedis) { Mono.empty() }
-                            .then(Mono.empty())
+                        saveEmptyArtworkToRedis(id)
+                            .onErrorResume(::isErrorFromRedis) { ArtworkNotFoundException(artworkId = id).toMono() }
+                            .then(ArtworkNotFoundException(artworkId = id).toMono())
                     }
             }.onErrorResume(::isErrorFromRedis) { mongoArtworkRepository.findById(id) }
     }
 
     override fun findFullById(id: String): Mono<ArtworkFull> {
-        return reactiveRedisTemplate.opsForValue()
-            .get(createFullKeyById(id))
+        return reactiveRedisTemplate.opsForValue().get(createFullKeyById(id))
             .handle { item, sink ->
-                if (item.isEmpty()) {
-                    sink.error(ArtworkNotFoundException(artworkId = id))
-                } else {
+                if (item.isNotEmpty()) {
                     runCatching { objectMapper.readValue(item, ArtworkFull::class.java) }
                         .onSuccess { artwork -> sink.next(artwork) }
                         .onFailure { error -> sink.error(error) }
+                } else {
+                    sink.error(ArtworkNotFoundException(artworkId = id))
                 }
             }.switchIfEmpty {
                 mongoArtworkRepository.findFullById(id)
                     .flatMap { saveArtworkFullToRedis(it).thenReturn(it) }
                     .switchIfEmpty {
-                        saveToRedis(createGeneralKeyById(id), byteArrayOf())
-                            .then(saveToRedis(createFullKeyById(id), byteArrayOf()))
-                            .onErrorResume(::isErrorFromRedis) { Mono.empty() }
-                            .then(Mono.empty())
-
+                        saveEmptyArtworkToRedis(id)
+                            .onErrorResume(::isErrorFromRedis) { ArtworkNotFoundException(artworkId = id).toMono() }
+                            .then(ArtworkNotFoundException(artworkId = id).toMono())
                     }
             }.onErrorResume(::isErrorFromRedis) { mongoArtworkRepository.findFullById(id) }
     }
 
-    override fun updateById(id: String, artwork: MongoArtwork): Mono<MongoArtwork> {
-        return reactiveRedisTemplate
+    override fun updateById(id: String, artwork: MongoArtwork): Mono<MongoArtwork> =
+        reactiveRedisTemplate
             .delete(createGeneralKeyById(id), createFullKeyById(id))
             .then(mongoArtworkRepository.updateById(id, artwork))
             .onErrorResume(::isErrorFromRedis) { mongoArtworkRepository.updateById(id, artwork) }
-    }
 
     override fun updateStatusByIdAndPreviousStatus(id: String, prevStatus: ArtworkStatus, newStatus: ArtworkStatus):
             Mono<MongoArtwork> {
@@ -97,6 +92,10 @@ internal class RedisArtworkRepository(
                 mongoArtworkRepository.updateStatusByIdAndPreviousStatus(id, prevStatus, newStatus)
             }
     }
+
+    private fun saveEmptyArtworkToRedis(id: String): Mono<Unit> =
+        saveToRedis(createGeneralKeyById(id), byteArrayOf())
+            .then(saveToRedis(createFullKeyById(id), byteArrayOf()))
 
     private fun saveArtworkToRedis(artwork: MongoArtwork): Mono<Unit> {
         val id = requireNotNull(artwork.id) { "artwork id cannot be null" }.toHexString()
@@ -110,17 +109,16 @@ internal class RedisArtworkRepository(
 
     private fun saveToRedis(key: String, value: ByteArray): Mono<Unit> =
         reactiveRedisTemplate.opsForValue().set(key, value, durationToLive)
-            .doOnError { error ->
-                log.error("Error while saving to Redis: ${error.message}")
-            }.thenReturn(Unit)
+            .doOnError { log.error("Error while saving to Redis: ${it.message}", it) }
+            .thenReturn(Unit)
 
-    private fun isErrorFromRedis(throwable: Throwable): Boolean {
-        return listOf(
+    private fun isErrorFromRedis(throwable: Throwable): Boolean =
+        throwable::class in listOf(
             RedisConnectionFailureException::class,
             RedisException::class,
             SocketException::class,
-        ).any { it.isInstance(throwable) }
-    }
+            QueryTimeoutException::class,
+        )
 
     companion object {
         private val durationToLive = Duration.ofMinutes(10)
