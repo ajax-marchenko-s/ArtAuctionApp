@@ -1,16 +1,16 @@
 package ua.marchenko.artauction.artwork.controller.nats
 
 import com.google.protobuf.Parser
-import io.nats.client.Connection
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
+import systems.ajax.nats.handler.api.ProtoNatsMessageHandler
 import ua.marchenko.artauction.artwork.mapper.toCreateArtworkFailureResponseProto
 import ua.marchenko.artauction.artwork.mapper.toCreateArtworkSuccessResponseProto
 import ua.marchenko.artauction.artwork.mapper.toMongo
 import ua.marchenko.artauction.artwork.service.ArtworkService
-import ua.marchenko.artauction.common.nats.NatsController
 import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest as CreateArtworkRequestProto
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse as CreateArtworkResponseProto
@@ -18,29 +18,32 @@ import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse as Cre
 @Component
 class AddArtworkNatsController(
     private val artworkService: ArtworkService,
-    override val connection: Connection,
-) : NatsController<CreateArtworkRequestProto, CreateArtworkResponseProto> {
+) : ProtoNatsMessageHandler<CreateArtworkRequestProto, CreateArtworkResponseProto> {
+
+    override val log: Logger = LoggerFactory.getLogger(AddArtworkNatsController::class.java)
 
     override val subject: String = NatsSubject.Artwork.CREATE
 
-    override val queueGroup: String = QUEUE_GROUP
+    override val queue: String = QUEUE_GROUP
 
     override val parser: Parser<CreateArtworkRequestProto> = CreateArtworkRequestProto.parser()
 
-    override fun errorResponse(throwable: Throwable): CreateArtworkResponseProto =
-        throwable.toCreateArtworkFailureResponseProto()
+    override fun doOnUnexpectedError(
+        inMsg: CreateArtworkRequestProto?,
+        e: Exception
+    ): Mono<CreateArtworkResponseProto> =
+        e.toCreateArtworkFailureResponseProto().toMono()
 
-    override fun handle(request: CreateArtworkRequestProto): Mono<CreateArtworkResponseProto> {
-        return artworkService.save(request.toMongo())
+    override fun doHandle(inMsg: CreateArtworkRequestProto): Mono<CreateArtworkResponseProto> {
+        return artworkService.save(inMsg.toMongo())
             .map { it.toCreateArtworkSuccessResponseProto() }
             .onErrorResume {
-                log.error("Error in CreateArtwork for {}", request, it)
+                log.error("Error in CreateArtwork for {}", inMsg, it)
                 it.toCreateArtworkFailureResponseProto().toMono()
             }
     }
 
     companion object {
         private const val QUEUE_GROUP = "artwork"
-        private val log = LoggerFactory.getLogger(AddArtworkNatsController::class.java)
     }
 }

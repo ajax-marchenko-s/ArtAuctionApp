@@ -2,23 +2,27 @@ package ua.marchenko.artauction.artwork.controller.nats
 
 import ua.marchenko.artauction.artwork.random
 import ua.marchenko.artauction.getRandomString
-import kotlin.test.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import reactor.kotlin.test.test
+import systems.ajax.nats.publisher.api.NatsMessagePublisher
 import ua.marchenko.artauction.artwork.mapper.toArtworkProto
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
-import ua.marchenko.artauction.common.AbstractBaseNatsControllerTest
+import ua.marchenko.artauction.common.AbstractBaseIntegrationTest
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.internal.NatsSubject
 import ua.marchenko.commonmodels.Error
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdRequest
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdResponse
 
-class GetArtworkByIdNatsControllerTest : AbstractBaseNatsControllerTest() {
+class GetArtworkByIdNatsControllerTest : AbstractBaseIntegrationTest {
 
     @Autowired
     private lateinit var artworkRepository: ArtworkRepository
+
+    @Autowired
+    private lateinit var natsPublisher: NatsMessagePublisher
 
     @Test
     fun `should return FindArtworkByIdResponse Success when artwork with this id exists`() {
@@ -30,14 +34,16 @@ class GetArtworkByIdNatsControllerTest : AbstractBaseNatsControllerTest() {
         }.build()
 
         // WHEN
-        val result = doRequest(
+        val result = natsPublisher.request(
             subject = NatsSubject.Artwork.FIND_BY_ID,
-            request = request,
+            payload = request,
             parser = FindArtworkByIdResponse.parser()
         )
 
         // THEN
-        assertEquals(expectedResponse, result)
+        result.test()
+            .expectNext(expectedResponse)
+            .verifyComplete()
     }
 
     @Test
@@ -51,14 +57,16 @@ class GetArtworkByIdNatsControllerTest : AbstractBaseNatsControllerTest() {
         }.build()
 
         // WHEN
-        val result = doRequest(
+        val result = natsPublisher.request(
             subject = NatsSubject.Artwork.FIND_BY_ID,
-            request = request,
+            payload = request,
             parser = FindArtworkByIdResponse.parser()
         )
 
         // THEN
-        assertEquals(expectedResponse, result)
+        result.test()
+            .expectNext(expectedResponse)
+            .verifyComplete()
     }
 
     companion object {

@@ -13,6 +13,7 @@ import io.mockk.impl.annotations.MockK
 import org.junit.jupiter.api.Test
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
+import systems.ajax.nats.publisher.api.NatsMessagePublisher
 import ua.marchenko.core.artwork.enums.ArtworkStyle
 import ua.marchenko.gateway.artwork.controller.ArtworkController
 import ua.marchenko.gateway.artwork.controller.dto.CreateArtworkRequest
@@ -21,7 +22,6 @@ import ua.marchenko.gateway.artwork.mapper.toArtworkResponse
 import ua.marchenko.gateway.artwork.mapper.toArtworksList
 import ua.marchenko.gateway.artwork.mapper.toCreateArtworkRequestProto
 import ua.marchenko.gateway.artwork.mapper.toFullArtworkList
-import ua.marchenko.gateway.common.nats.NatsClient
 import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStatus as ArtworkStatusProto
 import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStyle as ArtworkStyleProto
@@ -38,7 +38,7 @@ import ua.marchenko.internal.input.reqreply.artwork.FindArtworkFullByIdResponse 
 class ArtworkControllerTest {
 
     @MockK
-    private lateinit var natsClient: NatsClient
+    private lateinit var natsPublisher: NatsMessagePublisher
 
     @InjectMockKs
     private lateinit var artworkController: ArtworkController
@@ -50,7 +50,7 @@ class ArtworkControllerTest {
         val response = randomSuccessCreateArtworkResponseProto()
 
         every {
-            natsClient.doRequest(
+            natsPublisher.request(
                 subject = NatsSubject.Artwork.CREATE,
                 payload = request.toCreateArtworkRequestProto(),
                 parser = CreateArtworkResponseProto.parser()
@@ -75,7 +75,7 @@ class ArtworkControllerTest {
             status = ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION
         )
         every {
-            natsClient.doRequest(
+            natsPublisher.request(
                 subject = NatsSubject.Artwork.FIND_BY_ID,
                 payload = FindArtworkByIdRequestProto.newBuilder().setId(id).build(),
                 parser = FindArtworkByIdResponseProto.parser()
@@ -100,7 +100,7 @@ class ArtworkControllerTest {
             status = ArtworkStatusProto.ARTWORK_STATUS_SOLD
         )
         every {
-            natsClient.doRequest(
+            natsPublisher.request(
                 subject = NatsSubject.Artwork.FIND_BY_ID_FULL,
                 payload = FindArtworkFullByIdRequestProto.newBuilder().setId(id).build(),
                 parser = FindArtworkFullByIdResponseProto.parser()
@@ -121,7 +121,7 @@ class ArtworkControllerTest {
         // GIVEN
         val response = randomSuccessFindAllArtworkResponseProto()
         every {
-            natsClient.doRequest(
+            natsPublisher.request(
                 subject = NatsSubject.Artwork.FIND_ALL,
                 payload = FindAllArtworksRequestProto.newBuilder().setPage(0).setLimit(10).build(),
                 parser = FindAllArtworksResponseProto.parser()
@@ -142,7 +142,7 @@ class ArtworkControllerTest {
         // GIVEN
         val response = randomSuccessFindAllArtworkFullResponseProto()
         every {
-            natsClient.doRequest(
+            natsPublisher.request(
                 subject = NatsSubject.Artwork.FIND_ALL_FULL,
                 payload = FindAllArtworksFullRequestProto.newBuilder().setPage(0).setLimit(10).build(),
                 parser = FindAllArtworksFullResponseProto.parser()
