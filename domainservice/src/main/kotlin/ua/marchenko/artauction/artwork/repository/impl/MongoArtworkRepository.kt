@@ -72,7 +72,7 @@ internal class MongoArtworkRepository(
         newStatus: ArtworkStatus
     ): Mono<MongoArtwork> {
         val query = Query.query(
-            Criteria.where(MongoArtwork::id.name).`is`(id).and(MongoArtwork::status.name).`is`(prevStatus)
+            Criteria.where(MongoArtwork::id.name).isEqualTo(id).and(MongoArtwork::status.name).isEqualTo(prevStatus)
         )
         val changes = Update.update(MongoArtwork::status.name, newStatus)
         val options = FindAndModifyOptions.options().returnNew(true)
@@ -86,7 +86,7 @@ internal class MongoArtworkRepository(
             MongoArtwork::artistId.name
         )
 
-        val query = Query.query(Criteria.where(MongoArtwork::id.name).`is`(id))
+        val query = Query.query(Criteria.where(MongoArtwork::id.name).isEqualTo(id))
         val changes = Update()
         MongoArtwork::class.memberProperties
             .filter { !nonUpdatableFields.contains(it.name) }
