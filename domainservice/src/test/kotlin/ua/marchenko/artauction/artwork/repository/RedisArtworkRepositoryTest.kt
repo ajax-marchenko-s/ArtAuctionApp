@@ -115,7 +115,7 @@ class RedisArtworkRepositoryTest : AbstractBaseIntegrationTest {
     }
 
     @Test
-    fun `should set empty array in redis when call findById on non-existing artwork first time`() {
+    fun `should set empty array in redis and throw exception when call findById on non-existing artwork first time`() {
         // GIVEN
         val id = ObjectId().toHexString() //random id
 
@@ -124,7 +124,7 @@ class RedisArtworkRepositoryTest : AbstractBaseIntegrationTest {
 
         // THEN
         result.test()
-            .verifyComplete()
+            .verifyError(ArtworkNotFoundException::class.java)
 
         val dataInRedis = reactiveRedisTemplate.opsForValue()
             .get(createGeneralKeyById(id))
