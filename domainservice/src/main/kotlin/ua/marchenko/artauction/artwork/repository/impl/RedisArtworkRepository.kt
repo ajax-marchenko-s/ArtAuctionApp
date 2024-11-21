@@ -20,6 +20,7 @@ import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 import ua.marchenko.core.artwork.enums.ArtworkStatus
 import ua.marchenko.core.artwork.exception.ArtworkNotFoundException
 
+@Suppress("TooManyFunctions")
 @Repository
 internal class RedisArtworkRepository(
     private val mongoArtworkRepository: MongoArtworkRepository,
