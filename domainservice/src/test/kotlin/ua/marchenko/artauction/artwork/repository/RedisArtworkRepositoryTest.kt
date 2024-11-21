@@ -74,7 +74,6 @@ class RedisArtworkRepositoryTest : AbstractBaseIntegrationTest {
                     .get(createGeneralKeyById(artwork.id!!.toHexString())).block()
             )
         }
-
     }
 
     @Test
