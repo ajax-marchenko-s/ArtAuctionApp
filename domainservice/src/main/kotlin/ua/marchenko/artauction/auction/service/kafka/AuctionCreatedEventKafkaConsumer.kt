@@ -1,33 +1,33 @@
 package ua.marchenko.artauction.auction.service.kafka
 
+import com.google.protobuf.Parser
 import java.time.Clock
-import org.slf4j.LoggerFactory
-import org.springframework.boot.context.event.ApplicationReadyEvent
-import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
-import reactor.core.scheduler.Schedulers
-import reactor.kafka.receiver.KafkaReceiver
+import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
+import systems.ajax.kafka.handler.KafkaEvent
+import systems.ajax.kafka.handler.KafkaHandler
+import systems.ajax.kafka.handler.subscription.topic.TopicSingle
 import ua.marchenko.artauction.auction.domain.AuctionCreatedEvent
 import ua.marchenko.artauction.auction.mapper.toAuctionCreatedEvent
+import ua.marchenko.internal.KafkaTopic
 import ua.marchenko.internal.output.pubsub.auction.AuctionCreatedEvent as AuctionCreatedEventProto
 
 @Component
 class AuctionCreatedEventKafkaConsumer(
-    private val createdAuctionKafkaConsumer: KafkaReceiver<String, ByteArray>,
     private val clock: Clock,
-) {
+) : KafkaHandler<AuctionCreatedEventProto, TopicSingle> {
 
-    @EventListener(ApplicationReadyEvent::class)
-    fun listenToCreatedAuctionTopic() {
-        createdAuctionKafkaConsumer.receive()
-            .flatMap { record ->
-                val event = AuctionCreatedEventProto.parseFrom(record.value()).toAuctionCreatedEvent(clock)
-                processAuctionEvent(event).toMono()
-                    .doFinally { record.receiverOffset().acknowledge() }
-            }
-            .subscribeOn(Schedulers.boundedElastic())
-            .subscribe()
+    override val groupId: String = CREATED_GROUP_ID
+
+    override val parser: Parser<AuctionCreatedEventProto> = AuctionCreatedEventProto.parser()
+
+    override val subscriptionTopics: TopicSingle = TopicSingle(KafkaTopic.AuctionKafkaTopic.CREATED)
+
+    override fun handle(kafkaEvent: KafkaEvent<AuctionCreatedEventProto>): Mono<Unit> {
+        return Mono.just(KafkaEvent)
+            .flatMap { processAuctionEvent(kafkaEvent.data.toAuctionCreatedEvent(clock)).toMono() }
+            .doOnSuccess { kafkaEvent.ack() }
     }
 
     private fun processAuctionEvent(event: AuctionCreatedEvent) {
@@ -35,6 +35,6 @@ class AuctionCreatedEventKafkaConsumer(
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(AuctionCreatedEventKafkaConsumer::class.java)
+        private const val CREATED_GROUP_ID = "auctionCreatedConsumerGroup"
     }
 }
