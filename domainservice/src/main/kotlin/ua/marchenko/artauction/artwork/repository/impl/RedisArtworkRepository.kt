@@ -10,8 +10,10 @@ import org.springframework.data.redis.RedisConnectionFailureException
 import org.springframework.data.redis.core.ReactiveRedisTemplate
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import reactor.kotlin.core.publisher.switchIfEmpty
 import reactor.kotlin.core.publisher.toMono
+import reactor.util.retry.Retry
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
@@ -27,13 +29,7 @@ internal class RedisArtworkRepository(
 
     override fun save(artwork: MongoArtwork): Mono<MongoArtwork> =
         mongoArtworkRepository.save(artwork)
-            .flatMap { savedArtwork ->
-                val id = requireNotNull(savedArtwork.id) { "artwork id cannot be null" }.toHexString()
-                reactiveRedisTemplate.delete(createFullKeyById(id))
-                    .then(saveArtworkToRedis(savedArtwork))
-                    .thenReturn(savedArtwork)
-                    .onErrorResume(::isErrorFromRedis) { savedArtwork.toMono() }
-            }
+            .doOnSuccess { saveToRedisWithRetries(it) }
 
     override fun findById(id: String): Mono<MongoArtwork> {
         return reactiveRedisTemplate.opsForValue().get(createGeneralKeyById(id))
@@ -78,20 +74,53 @@ internal class RedisArtworkRepository(
     }
 
     override fun updateById(id: String, artwork: MongoArtwork): Mono<MongoArtwork> =
-        reactiveRedisTemplate
-            .delete(createGeneralKeyById(id), createFullKeyById(id))
-            .then(mongoArtworkRepository.updateById(id, artwork))
-            .onErrorResume(::isErrorFromRedis) { mongoArtworkRepository.updateById(id, artwork) }
+        mongoArtworkRepository.updateById(id, artwork)
+            .doOnSuccess { deleteKeysFromRedisWithRetries(createGeneralKeyById(id), createFullKeyById(id)) }
 
     override fun updateStatusByIdAndPreviousStatus(id: String, prevStatus: ArtworkStatus, newStatus: ArtworkStatus):
-            Mono<MongoArtwork> {
-        return reactiveRedisTemplate
-            .delete(createGeneralKeyById(id), createFullKeyById(id))
-            .then(mongoArtworkRepository.updateStatusByIdAndPreviousStatus(id, prevStatus, newStatus))
-            .onErrorResume(::isErrorFromRedis) {
-                mongoArtworkRepository.updateStatusByIdAndPreviousStatus(id, prevStatus, newStatus)
-            }
+            Mono<MongoArtwork> =
+        mongoArtworkRepository.updateStatusByIdAndPreviousStatus(id, prevStatus, newStatus)
+            .doOnSuccess { deleteKeysFromRedisWithRetries(createGeneralKeyById(id), createFullKeyById(id)) }
+
+    private fun saveToRedisWithRetries(artwork: MongoArtwork) {
+        val id = requireNotNull(artwork.id) { "artwork id cannot be null" }.toHexString()
+        callWithRetries(
+            action = {
+                reactiveRedisTemplate.delete(createFullKeyById(id))
+                    .then(saveArtworkToRedis(artwork))
+            },
+            successLog = "Artwork with ID $id saved to Redis",
+            errorLog = "Failed to save artwork with ID $id to Redis",
+        )
     }
+
+    private fun deleteKeysFromRedisWithRetries(vararg keys: String) {
+        callWithRetries(
+            action = { reactiveRedisTemplate.delete(*keys).thenReturn(Unit) },
+            successLog = "Keys ${keys.joinToString()} removed from redis",
+            errorLog = "Failed to remove keys ${keys.joinToString()} in Redis",
+        )
+    }
+
+    private fun callWithRetries(
+        action: () -> Mono<Unit>,
+        successLog: String,
+        errorLog: String,
+        retry: Retry = retryOnRedisError(),
+    ) {
+        action()
+            .retryWhen(retry)
+            .subscribeOn(Schedulers.boundedElastic())
+            .subscribe(
+                { log.info(successLog) },
+                { log.error(errorLog, it) }
+            )
+    }
+
+    private fun retryOnRedisError(maxAttempts: Long = 5, fixedDelay: Duration = Duration.ofSeconds(2)): Retry =
+        Retry.fixedDelay(maxAttempts, fixedDelay)
+            .filter { error -> isErrorFromRedis(error) }
+            .doBeforeRetry { log.warn("Retrying due to error: ${it.failure().message}") }
 
     private fun saveEmptyArtworkToRedis(id: String): Mono<Unit> =
         saveToRedis(createGeneralKeyById(id), byteArrayOf())
