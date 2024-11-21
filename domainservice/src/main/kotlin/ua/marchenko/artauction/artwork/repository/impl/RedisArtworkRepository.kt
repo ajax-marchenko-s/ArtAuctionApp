@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import reactor.kotlin.core.publisher.switchIfEmpty
-import reactor.kotlin.core.publisher.toMono
 import reactor.util.retry.Retry
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.model.projection.ArtworkFull
@@ -47,8 +46,8 @@ internal class RedisArtworkRepository(
                     .flatMap { saveArtworkToRedis(it).thenReturn(it) }
                     .switchIfEmpty {
                         saveEmptyArtworkToRedis(id)
-                            .onErrorResume(::isErrorFromRedis) { ArtworkNotFoundException(artworkId = id).toMono() }
-                            .then(ArtworkNotFoundException(artworkId = id).toMono())
+                            .onErrorResume(::isErrorFromRedis) { Mono.empty() }
+                            .then(Mono.empty())
                     }
             }.onErrorResume(::isErrorFromRedis) { mongoArtworkRepository.findById(id) }
     }
@@ -68,8 +67,8 @@ internal class RedisArtworkRepository(
                     .flatMap { saveArtworkFullToRedis(it).thenReturn(it) }
                     .switchIfEmpty {
                         saveEmptyArtworkToRedis(id)
-                            .onErrorResume(::isErrorFromRedis) { ArtworkNotFoundException(artworkId = id).toMono() }
-                            .then(ArtworkNotFoundException(artworkId = id).toMono())
+                            .onErrorResume(::isErrorFromRedis) { Mono.empty() }
+                            .then(Mono.empty())
                     }
             }.onErrorResume(::isErrorFromRedis) { mongoArtworkRepository.findFullById(id) }
     }
