@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import java.time.Duration
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import org.awaitility.Awaitility.await
 import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.ReactiveRedisTemplate
@@ -45,33 +48,33 @@ class RedisArtworkRepositoryTest : AbstractBaseIntegrationTest {
 
         reactiveRedisTemplate.opsForValue().set(
             createGeneralKeyById(artwork.id!!.toHexString()),
-            objectMapper.writeValueAsBytes(byteArrayOf()),
+            byteArrayOf(),
             timeToLive
         ).block()
 
         reactiveRedisTemplate.opsForValue().set(
             createFullKeyById(artwork.id!!.toHexString()),
-            objectMapper.writeValueAsBytes(byteArrayOf()),
+            byteArrayOf(),
             timeToLive
         ).block()
 
-
         // WHEN
-        val savedArtwork = redisArtworkRepository.save(artwork)
+        val savedArtwork = redisArtworkRepository.save(artwork).block()!!
 
         // THEN
-        savedArtwork.test()
-            .expectNext(artwork)
-            .verifyComplete()
+        assertEquals(artwork.copy(id = savedArtwork.id), savedArtwork)
+        await().atMost(timeToWait).untilAsserted {
+            assertNull(
+                reactiveRedisTemplate.opsForValue().get(createFullKeyById(artwork.id!!.toHexString())).block(),
+                "General key for artwork with ID ${artwork.id!!.toHexString()} should be deleted"
+            )
 
-        reactiveRedisTemplate.opsForValue()
-            .get(createFullKeyById(artwork.id!!.toHexString())).test()
-            .verifyComplete()
+            assertContentEquals(
+                objectMapper.writeValueAsBytes(artwork), reactiveRedisTemplate.opsForValue()
+                    .get(createGeneralKeyById(artwork.id!!.toHexString())).block()
+            )
+        }
 
-        reactiveRedisTemplate.opsForValue()
-            .get(createGeneralKeyById(artwork.id!!.toHexString())).test()
-            .assertNext { assertContentEquals(objectMapper.writeValueAsBytes(artwork), it) }
-            .verifyComplete()
     }
 
     @Test
@@ -115,7 +118,7 @@ class RedisArtworkRepositoryTest : AbstractBaseIntegrationTest {
     }
 
     @Test
-    fun `should set empty array in redis and throw exception when call findById on non-existing artwork first time`() {
+    fun `should set empty array in redis and return empty when call findById on non-existing artwork first time`() {
         // GIVEN
         val id = ObjectId().toHexString() //random id
 
@@ -124,7 +127,7 @@ class RedisArtworkRepositoryTest : AbstractBaseIntegrationTest {
 
         // THEN
         result.test()
-            .verifyError(ArtworkNotFoundException::class.java)
+            .verifyComplete()
 
         val dataInRedis = reactiveRedisTemplate.opsForValue()
             .get(createGeneralKeyById(id))
@@ -202,7 +205,7 @@ class RedisArtworkRepositoryTest : AbstractBaseIntegrationTest {
         reactiveRedisTemplate.opsForValue().set(
             createFullKeyById(id),
             byteArrayOf(),
-            Duration.ofMinutes(10)
+            timeToLive
         ).block()
 
         // WHEN
@@ -216,72 +219,76 @@ class RedisArtworkRepositoryTest : AbstractBaseIntegrationTest {
     @Test
     fun `should remove general and full key from redis when updating artwork`() {
         // GIVEN
-        val id = ObjectId().toHexString()
-        val artwork = MongoArtwork.random(id = id)
-        val artworkFull = ArtworkFull.random(id = id)
+        val savedArtwork = mongoArtworkRepository.save(MongoArtwork.random(id = null)).block()!!
 
         reactiveRedisTemplate.opsForValue().set(
-            createGeneralKeyById(id),
-            objectMapper.writeValueAsBytes(artwork),
+            createGeneralKeyById(savedArtwork.id!!.toHexString()),
+            objectMapper.writeValueAsBytes(savedArtwork),
             timeToLive
         ).block()
 
         reactiveRedisTemplate.opsForValue().set(
-            createFullKeyById(id),
-            objectMapper.writeValueAsBytes(artworkFull),
+            createFullKeyById(savedArtwork.id!!.toHexString()),
+            objectMapper.writeValueAsBytes(savedArtwork),
             timeToLive
         ).block()
 
         // WHEN
-        redisArtworkRepository.updateById(artwork.id!!.toHexString(), MongoArtwork.random()).block()
+        redisArtworkRepository.updateById(savedArtwork.id!!.toHexString(), MongoArtwork.random()).block()
 
         // THEN
-        reactiveRedisTemplate.opsForValue()
-            .get(createFullKeyById(artwork.id!!.toHexString())).test()
-            .verifyComplete()
-
-        reactiveRedisTemplate.opsForValue()
-            .get(createGeneralKeyById(artwork.id!!.toHexString())).test()
-            .verifyComplete()
+        await().atMost(timeToWait).untilAsserted {
+            assertNull(
+                reactiveRedisTemplate.opsForValue().get(createGeneralKeyById(savedArtwork.id!!.toHexString())).block(),
+                "General key for artwork with ID ${savedArtwork.id} should be deleted"
+            )
+            assertNull(
+                reactiveRedisTemplate.opsForValue().get(createFullKeyById(savedArtwork.id!!.toHexString())).block(),
+                "Full key for artwork with ID ${savedArtwork.id} should be deleted"
+            )
+        }
     }
 
     @Test
     fun `should remove general and full key from redis when updating status of artwork`() {
         // GIVEN
-        val id = ObjectId().toHexString()
-        val artwork = MongoArtwork.random(id = id)
-        val artworkFull = ArtworkFull.random(id = id)
+        val savedArtwork =
+            mongoArtworkRepository.save(MongoArtwork.random(id = null, status = ArtworkStatus.VIEW)).block()!!
 
         reactiveRedisTemplate.opsForValue().set(
-            createGeneralKeyById(id),
-            objectMapper.writeValueAsBytes(artwork),
+            createGeneralKeyById(savedArtwork.id!!.toHexString()),
+            objectMapper.writeValueAsBytes(savedArtwork),
             timeToLive
         ).block()
 
         reactiveRedisTemplate.opsForValue().set(
-            createFullKeyById(id),
-            objectMapper.writeValueAsBytes(artworkFull),
+            createFullKeyById(savedArtwork.id!!.toHexString()),
+            objectMapper.writeValueAsBytes(savedArtwork),
             timeToLive
         ).block()
 
         // WHEN
         redisArtworkRepository.updateStatusByIdAndPreviousStatus(
-            artwork.id!!.toHexString(),
+            savedArtwork.id!!.toHexString(),
             ArtworkStatus.VIEW,
             ArtworkStatus.ON_AUCTION
         ).block()
 
         // THEN
-        reactiveRedisTemplate.opsForValue()
-            .get(createFullKeyById(artwork.id!!.toHexString())).test()
-            .verifyComplete()
-
-        reactiveRedisTemplate.opsForValue()
-            .get(createGeneralKeyById(artwork.id!!.toHexString())).test()
-            .verifyComplete()
+        await().atMost(timeToWait).untilAsserted {
+            assertNull(
+                reactiveRedisTemplate.opsForValue().get(createGeneralKeyById(savedArtwork.id!!.toHexString())).block(),
+                "General key for artwork with ID ${savedArtwork.id} should be deleted"
+            )
+            assertNull(
+                reactiveRedisTemplate.opsForValue().get(createFullKeyById(savedArtwork.id!!.toHexString())).block(),
+                "Full key for artwork with ID ${savedArtwork.id} should be deleted"
+            )
+        }
     }
 
     companion object {
         private val timeToLive = Duration.ofMinutes(10)
+        private val timeToWait = Duration.ofSeconds(5)
     }
 }
