@@ -1,5 +1,7 @@
 nats:
-  uri: "nats://localhost:4222"
+  spring:
+    io.nats.client:
+      servers: "nats://localhost:4222"
 
 spring:
   kafka:

@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
+import systems.ajax.nats.publisher.api.NatsMessagePublisher
 import ua.marchenko.gateway.artwork.mapper.toArtworkFullResponse
 import ua.marchenko.gateway.artwork.mapper.toArtworkResponse
 import ua.marchenko.gateway.artwork.mapper.toArtworksList
 import ua.marchenko.gateway.artwork.mapper.toCreateArtworkRequestProto
 import ua.marchenko.gateway.artwork.mapper.toFullArtworkList
-import ua.marchenko.gateway.common.nats.NatsClient
 import ua.marchenko.internal.NatsSubject
 import ua.marchenko.core.artwork.dto.ArtworkFullResponse
 import ua.marchenko.gateway.artwork.controller.dto.ArtworkResponse
@@ -33,12 +33,12 @@ import ua.marchenko.internal.input.reqreply.artwork.FindAllArtworksResponse as F
 
 @RestController
 @RequestMapping("/api/v1/artworks")
-class ArtworkController(private val natsClient: NatsClient) {
+class ArtworkController(private val natsPublisher: NatsMessagePublisher) {
 
     @GetMapping("{id}")
     fun getArtworkById(@PathVariable id: String): Mono<ArtworkResponse> {
         val request = FindArtworkByIdRequestProto.newBuilder().setId(id).build()
-        return natsClient.doRequest(
+        return natsPublisher.request(
             subject = NatsSubject.Artwork.FIND_BY_ID,
             payload = request,
             parser = FindArtworkByIdResponseProto.parser()
@@ -48,7 +48,7 @@ class ArtworkController(private val natsClient: NatsClient) {
     @GetMapping("{id}/full")
     fun getFullArtworkById(@PathVariable id: String): Mono<ArtworkFullResponse> {
         val request = FindArtworkFullByIdRequestProto.newBuilder().setId(id).build()
-        return natsClient.doRequest(
+        return natsPublisher.request(
             subject = NatsSubject.Artwork.FIND_BY_ID_FULL,
             payload = request,
             parser = FindArtworkFullByIdResponseProto.parser()
@@ -61,7 +61,7 @@ class ArtworkController(private val natsClient: NatsClient) {
         @RequestParam(required = false, defaultValue = "10") limit: Int
     ): Mono<List<ArtworkResponse>> {
         val request = FindAllArtworksRequestProto.newBuilder().setPage(page).setLimit(limit).build()
-        return natsClient.doRequest(
+        return natsPublisher.request(
             subject = NatsSubject.Artwork.FIND_ALL,
             payload = request,
             parser = FindAllArtworksResponseProto.parser()
@@ -74,7 +74,7 @@ class ArtworkController(private val natsClient: NatsClient) {
         @RequestParam(required = false, defaultValue = "10") limit: Int
     ): Mono<List<ArtworkFullResponse>> {
         val request = FindAllArtworksFullRequestProto.newBuilder().setPage(page).setLimit(limit).build()
-        return natsClient.doRequest(
+        return natsPublisher.request(
             subject = NatsSubject.Artwork.FIND_ALL_FULL,
             payload = request,
             parser = FindAllArtworksFullResponseProto.parser()
@@ -84,7 +84,7 @@ class ArtworkController(private val natsClient: NatsClient) {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun addArtwork(@Valid @RequestBody artwork: CreateArtworkRequest): Mono<ArtworkResponse> {
-        return natsClient.doRequest(
+        return natsPublisher.request(
             subject = NatsSubject.Artwork.CREATE,
             payload = artwork.toCreateArtworkRequestProto(),
             parser = CreateArtworkResponseProto.parser()

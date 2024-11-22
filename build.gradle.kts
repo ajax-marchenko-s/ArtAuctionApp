@@ -9,6 +9,14 @@ allprojects {
 
     repositories {
         mavenCentral()
+
+        maven {
+            credentials(AwsCredentials::class.java) {
+                accessKey = extra["AWS_ACCESS_KEY_ID"].toString()
+                secretKey = extra["AWS_SECRET_ACCESS_KEY"].toString()
+            }
+            url = uri(extra["repository"].toString())
+        }
     }
 }
 

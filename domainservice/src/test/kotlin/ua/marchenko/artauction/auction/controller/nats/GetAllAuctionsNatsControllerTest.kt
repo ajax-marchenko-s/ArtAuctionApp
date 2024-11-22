@@ -6,6 +6,8 @@ import java.time.temporal.ChronoUnit
 import kotlin.test.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import reactor.kotlin.test.test
+import systems.ajax.nats.publisher.api.NatsMessagePublisher
 import org.springframework.beans.factory.annotation.Qualifier
 import ua.marchenko.artauction.artwork.mapper.toArtworkProto
 import ua.marchenko.artauction.artwork.model.MongoArtwork
@@ -15,12 +17,12 @@ import ua.marchenko.artauction.auction.mapper.toAuctionProto
 import ua.marchenko.artauction.auction.model.MongoAuction
 import ua.marchenko.artauction.auction.random
 import ua.marchenko.artauction.auction.repository.AuctionRepository
-import ua.marchenko.artauction.common.AbstractBaseNatsControllerTest
+import ua.marchenko.artauction.common.AbstractBaseIntegrationTest
 import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.input.reqreply.auction.FindAllAuctionsRequest as FindAllAuctionsRequestProto
 import ua.marchenko.internal.input.reqreply.auction.FindAllAuctionsResponse as FindAllAuctionsResponseProto
 
-class GetAllAuctionsNatsControllerTest : AbstractBaseNatsControllerTest() {
+class GetAllAuctionsNatsControllerTest : AbstractBaseIntegrationTest {
 
     @Autowired
     @Qualifier("mongoArtworkRepository")
@@ -28,6 +30,9 @@ class GetAllAuctionsNatsControllerTest : AbstractBaseNatsControllerTest() {
 
     @Autowired
     private lateinit var auctionRepository: AuctionRepository
+
+    @Autowired
+    private lateinit var natsPublisher: NatsMessagePublisher
 
     @Autowired
     private lateinit var clock: Clock
@@ -52,15 +57,21 @@ class GetAllAuctionsNatsControllerTest : AbstractBaseNatsControllerTest() {
         }.build()
 
         // WHEN
-        val result = doRequest(
+        val result = natsPublisher.request(
             subject = NatsSubject.Auction.FIND_ALL,
-            request = request,
+            payload = request,
             parser = FindAllAuctionsResponseProto.parser()
         )
 
         // THEN
-        val foundAuctions = result.success.auctionsList
-        assertTrue(foundAuctions.containsAll(auctions), "Auctions $auctions not found in returned list")
+        result.test()
+            .assertNext {
+                assertTrue(
+                    it.success.auctionsList.containsAll(auctions),
+                    "Auctions $auctions not found in returned list"
+                )
+            }
+            .verifyComplete()
     }
 
     companion object {

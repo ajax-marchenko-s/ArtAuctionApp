@@ -5,8 +5,10 @@ import kotlin.test.assertEquals
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import reactor.kotlin.test.test
+import systems.ajax.nats.publisher.api.NatsMessagePublisher
 import ua.marchenko.artauction.artwork.mapper.toCreateArtworkFailureResponseProto
-import ua.marchenko.artauction.common.AbstractBaseNatsControllerTest
+import ua.marchenko.artauction.common.AbstractBaseIntegrationTest
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.repository.UserRepository
 import ua.marchenko.core.user.exception.UserNotFoundException
@@ -17,10 +19,13 @@ import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStyle
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse
 import ua.marchenko.artauction.user.random
 
-class AddArtworkNatsControllerTest : AbstractBaseNatsControllerTest() {
+class AddArtworkNatsControllerTest : AbstractBaseIntegrationTest {
 
     @Autowired
     private lateinit var userRepository: UserRepository
+
+    @Autowired
+    private lateinit var natsPublisher: NatsMessagePublisher
 
     @Test
     fun `should save new artwork and return ArtworkResponse with data from CreateArtworkRequest`() {
@@ -44,17 +49,20 @@ class AddArtworkNatsControllerTest : AbstractBaseNatsControllerTest() {
         }.build()
 
         // WHEN
-        val result = doRequest(
+        val result = natsPublisher.request(
             subject = NatsSubject.Artwork.CREATE,
-            request = request,
+            payload = request,
             parser = CreateArtworkResponse.parser()
         )
 
         // THEN
-        assertEquals(
-            expectedResponse.success.artwork,
-            result.toBuilder().successBuilder.artworkBuilder.clearId().build()
-        )
+        result.test()
+            .assertNext {
+                assertEquals(
+                    expectedResponse.success.artwork,
+                    it.toBuilder().successBuilder.artworkBuilder.clearId().build()
+                )
+            }.verifyComplete()
     }
 
     @Test
@@ -69,13 +77,15 @@ class AddArtworkNatsControllerTest : AbstractBaseNatsControllerTest() {
             UserNotFoundException(value = artistId).toCreateArtworkFailureResponseProto()
 
         // WHEN
-        val result = doRequest(
+        val result = natsPublisher.request(
             subject = NatsSubject.Artwork.CREATE,
-            request = request,
+            payload = request,
             parser = CreateArtworkResponse.parser()
         )
 
         // THEN
-        assertEquals(expectedResponse, result)
+        result.test()
+            .expectNext(expectedResponse)
+            .verifyComplete()
     }
 }
