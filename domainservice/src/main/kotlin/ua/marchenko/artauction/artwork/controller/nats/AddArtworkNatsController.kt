@@ -24,7 +24,7 @@ class AddArtworkNatsController(
 
     override val subject: String = NatsSubject.Artwork.CREATE
 
-    override val queue: String = QUEUE_GROUP
+    override val queue: String = QUEUE_GROUP_NAME
 
     override val parser: Parser<CreateArtworkRequestProto> = CreateArtworkRequestProto.parser()
 
@@ -44,6 +44,6 @@ class AddArtworkNatsController(
     }
 
     companion object {
-        private const val QUEUE_GROUP = "artwork"
+        private const val QUEUE_GROUP_NAME = "artwork"
     }
 }

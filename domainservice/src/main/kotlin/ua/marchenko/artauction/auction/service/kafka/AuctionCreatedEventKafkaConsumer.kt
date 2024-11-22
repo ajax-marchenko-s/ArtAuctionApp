@@ -18,7 +18,7 @@ class AuctionCreatedEventKafkaConsumer(
     private val clock: Clock,
 ) : KafkaHandler<AuctionCreatedEventProto, TopicSingle> {
 
-    override val groupId: String = CREATED_GROUP_ID
+    override val groupId: String = CREATED_AUCTION_GROUP_ID
 
     override val parser: Parser<AuctionCreatedEventProto> = AuctionCreatedEventProto.parser()
 
@@ -35,6 +35,6 @@ class AuctionCreatedEventKafkaConsumer(
     }
 
     companion object {
-        private const val CREATED_GROUP_ID = "auctionCreatedConsumerGroup"
+        private const val CREATED_AUCTION_GROUP_ID = "auctionCreatedConsumerGroup"
     }
 }

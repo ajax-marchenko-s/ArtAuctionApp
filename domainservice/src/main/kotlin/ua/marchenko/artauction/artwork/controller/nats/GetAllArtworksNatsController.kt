@@ -22,7 +22,7 @@ class GetAllArtworksNatsController(
 
     override val subject: String = NatsSubject.Artwork.FIND_ALL
 
-    override val queue: String = QUEUE_GROUP
+    override val queue: String = QUEUE_GROUP_NAME
 
     override val parser: Parser<FindAllArtworksRequestProto> = FindAllArtworksRequestProto.parser()
 
@@ -43,6 +43,6 @@ class GetAllArtworksNatsController(
     }
 
     companion object {
-        private const val QUEUE_GROUP = "artwork"
+        private const val QUEUE_GROUP_NAME = "artwork"
     }
 }
