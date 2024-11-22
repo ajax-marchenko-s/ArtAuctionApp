@@ -2,6 +2,7 @@ package ua.marchenko.artauction.auction.controller.nats
 
 import com.google.protobuf.Parser
 import java.time.Clock
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
@@ -20,7 +21,7 @@ class GetAllAuctionsNatsController(
     private val clock: Clock,
 ) : ProtoNatsMessageHandler<FindAllAuctionsRequestProto, FindAllAuctionsResponseProto> {
 
-    override val log = LoggerFactory.getLogger(GetAllAuctionsNatsController::class.java)
+    override val log: Logger = LoggerFactory.getLogger(GetAllAuctionsNatsController::class.java)
 
     override val subject: String = NatsSubject.Auction.FIND_ALL
 

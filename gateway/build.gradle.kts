@@ -9,7 +9,6 @@ dependencies {
     implementation(project(":grpc-api"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation:3.3.2")
-    implementation("io.nats:jnats:2.16.14")
     implementation("com.google.protobuf:protobuf-kotlin:4.28.2")
     implementation("net.devh:grpc-server-spring-boot-starter:3.1.0.RELEASE")
     implementation("net.devh:grpc-spring-boot-starter:3.1.0.RELEASE")
