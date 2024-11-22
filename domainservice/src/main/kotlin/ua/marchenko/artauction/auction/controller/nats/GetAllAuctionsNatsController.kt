@@ -25,7 +25,7 @@ class GetAllAuctionsNatsController(
 
     override val subject: String = NatsSubject.Auction.FIND_ALL
 
-    override val queue: String = QUEUE_GROUP
+    override val queue: String = AUCTION_QUEUE_GROUP
 
     override val parser: Parser<FindAllAuctionsRequestProto> = FindAllAuctionsRequestProto.parser()
 
@@ -46,6 +46,6 @@ class GetAllAuctionsNatsController(
     }
 
     companion object {
-        private const val QUEUE_GROUP = "auction"
+        private const val AUCTION_QUEUE_GROUP = "auction"
     }
 }

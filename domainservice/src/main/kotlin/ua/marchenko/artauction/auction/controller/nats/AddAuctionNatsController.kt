@@ -26,7 +26,7 @@ class AddAuctionNatsController(
 
     override val subject: String = NatsSubject.Auction.CREATE
 
-    override val queue: String = QUEUE_GROUP
+    override val queue: String = AUCTION_QUEUE_GROUP
 
     override val parser: Parser<CreateAuctionRequestProto> = CreateAuctionRequestProto.parser()
 
@@ -46,6 +46,6 @@ class AddAuctionNatsController(
     }
 
     companion object {
-        private const val QUEUE_GROUP = "auction"
+        private const val AUCTION_QUEUE_GROUP = "auction"
     }
 }
