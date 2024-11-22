@@ -27,7 +27,7 @@ class AuctionCreatedEventKafkaConsumer(
     override fun handle(kafkaEvent: KafkaEvent<AuctionCreatedEventProto>): Mono<Unit> {
         return Mono.just(KafkaEvent)
             .flatMap { processAuctionEvent(kafkaEvent.data.toAuctionCreatedEvent(clock)).toMono() }
-            .doOnSuccess { kafkaEvent.ack() }
+            .doFinally { kafkaEvent.ack() }
     }
 
     private fun processAuctionEvent(event: AuctionCreatedEvent) {

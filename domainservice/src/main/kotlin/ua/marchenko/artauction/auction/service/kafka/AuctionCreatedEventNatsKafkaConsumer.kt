@@ -26,7 +26,7 @@ class AuctionCreatedEventNatsKafkaConsumer(
         return natsPublisher.publish(
             subject = NatsSubject.Auction.CREATED_EVENT,
             payload = kafkaEvent.data.auction,
-        ).doOnSuccess { kafkaEvent.ack() }
+        ).doFinally { kafkaEvent.ack() }
     }
 
     companion object {
