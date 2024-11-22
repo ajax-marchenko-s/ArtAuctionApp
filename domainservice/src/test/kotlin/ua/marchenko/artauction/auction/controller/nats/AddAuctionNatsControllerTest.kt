@@ -3,11 +3,13 @@ package ua.marchenko.artauction.auction.controller.nats
 import kotlin.test.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import reactor.kotlin.test.test
+import systems.ajax.nats.publisher.api.NatsMessagePublisher
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.random
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 import ua.marchenko.artauction.auction.AuctionProtoFixture
-import ua.marchenko.artauction.common.AbstractBaseNatsControllerTest
+import ua.marchenko.artauction.common.AbstractBaseIntegrationTest
 import ua.marchenko.artauction.user.model.MongoUser
 import ua.marchenko.artauction.user.random
 import ua.marchenko.artauction.user.repository.UserRepository
@@ -15,13 +17,16 @@ import ua.marchenko.internal.NatsSubject
 import ua.marchenko.commonmodels.auction.Auction as AuctionProto
 import ua.marchenko.internal.input.reqreply.auction.CreateAuctionResponse as CreateAuctionResponseProto
 
-class AddAuctionNatsControllerTest : AbstractBaseNatsControllerTest() {
+class AddAuctionNatsControllerTest : AbstractBaseIntegrationTest {
 
     @Autowired
     private lateinit var userRepository: UserRepository
 
     @Autowired
     private lateinit var artworkRepository: ArtworkRepository
+
+    @Autowired
+    private lateinit var natsPublisher: NatsMessagePublisher
 
     @Test
     fun `should save new auction and return AuctionResponse with data from CreateAuctionRequest`() {
@@ -42,16 +47,19 @@ class AddAuctionNatsControllerTest : AbstractBaseNatsControllerTest() {
         }.build()
 
         // WHEN
-        val result = doRequest(
+        val result = natsPublisher.request(
             subject = NatsSubject.Auction.CREATE,
-            request = request,
+            payload = request,
             parser = CreateAuctionResponseProto.parser()
         )
 
         // THEN
-        assertEquals(
-            expectedResponse.success.auction,
-            result.toBuilder().successBuilder.auctionBuilder.clearId().build()
-        )
+        result.test()
+            .assertNext {
+                assertEquals(
+                    expectedResponse.success.auction,
+                    it.toBuilder().successBuilder.auctionBuilder.clearId().build()
+                )
+            }.verifyComplete()
     }
 }

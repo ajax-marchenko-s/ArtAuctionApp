@@ -14,4 +14,6 @@ server:
   port: 8081
 
 nats:
-  uri: ${NATS_CONNECTION}
+  spring:
+    io.nats.client:
+      servers: ${NATS_CONNECTION}

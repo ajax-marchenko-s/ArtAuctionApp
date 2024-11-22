@@ -11,13 +11,13 @@ repositories {
 }
 
 dependencies {
-    implementation("com.google.protobuf:protobuf-java:4.28.2")
+    implementation("com.google.protobuf:protobuf-java:3.25.5")
     api(project(":common-proto"))
 }
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:4.28.2"
+        artifact = "com.google.protobuf:protoc:3.25.5"
     }
 
     plugins {

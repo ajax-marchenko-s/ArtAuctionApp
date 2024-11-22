@@ -5,26 +5,30 @@ import ua.marchenko.artauction.auction.random
 import java.time.Clock
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import kotlin.test.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import reactor.kotlin.test.test
+import systems.ajax.nats.publisher.api.NatsMessagePublisher
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 import ua.marchenko.artauction.auction.mapper.toAuctionProto
 import ua.marchenko.artauction.auction.model.MongoAuction
 import ua.marchenko.artauction.auction.repository.AuctionRepository
-import ua.marchenko.artauction.common.AbstractBaseNatsControllerTest
+import ua.marchenko.artauction.common.AbstractBaseIntegrationTest
 import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.input.reqreply.auction.FindAuctionByIdRequest as FindAuctionByIdRequestProto
 import ua.marchenko.internal.input.reqreply.auction.FindAuctionByIdResponse as FindAuctionByIdResponseProto
 
-class GetAuctionByIdNatsControllerTest : AbstractBaseNatsControllerTest() {
+class GetAuctionByIdNatsControllerTest : AbstractBaseIntegrationTest {
 
     @Autowired
     private lateinit var artworkRepository: ArtworkRepository
 
     @Autowired
     private lateinit var auctionRepository: AuctionRepository
+
+    @Autowired
+    private lateinit var natsPublisher: NatsMessagePublisher
 
     @Autowired
     private lateinit var clock: Clock
@@ -47,13 +51,15 @@ class GetAuctionByIdNatsControllerTest : AbstractBaseNatsControllerTest() {
         }.build()
 
         // WHEN
-        val result = doRequest(
+        val result = natsPublisher.request(
             subject = NatsSubject.Auction.FIND_BY_ID,
-            request = request,
+            payload = request,
             parser = FindAuctionByIdResponseProto.parser()
         )
 
         // THEN
-        assertEquals(expectedResponse, result)
+        result.test()
+            .expectNext(expectedResponse)
+            .verifyComplete()
     }
 }

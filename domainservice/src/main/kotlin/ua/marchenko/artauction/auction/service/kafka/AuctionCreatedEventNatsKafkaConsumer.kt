@@ -1,52 +1,35 @@
 package ua.marchenko.artauction.auction.service.kafka
 
-import io.nats.client.Connection
-import java.time.Clock
-import org.slf4j.LoggerFactory
-import org.springframework.boot.context.event.ApplicationReadyEvent
-import org.springframework.context.event.EventListener
+import com.google.protobuf.Parser
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers
-import reactor.kafka.receiver.KafkaReceiver
-import reactor.kotlin.core.publisher.toMono
-import ua.marchenko.artauction.auction.domain.AuctionCreatedEvent
-import ua.marchenko.artauction.auction.mapper.toAuctionCreatedEvent
-import ua.marchenko.artauction.auction.mapper.toAuctionProto
+import systems.ajax.kafka.handler.KafkaEvent
+import systems.ajax.kafka.handler.KafkaHandler
+import systems.ajax.kafka.handler.subscription.topic.TopicSingle
+import systems.ajax.nats.publisher.api.NatsMessagePublisher
+import ua.marchenko.internal.KafkaTopic
 import ua.marchenko.internal.output.pubsub.auction.AuctionCreatedEvent as AuctionCreatedEventProto
 import ua.marchenko.internal.NatsSubject
 
 @Component
 class AuctionCreatedEventNatsKafkaConsumer(
-    private val createdAuctionForNatsKafkaConsumer: KafkaReceiver<String, ByteArray>,
-    private val natsConnection: Connection,
-    private val clock: Clock,
-) {
+    private val natsPublisher: NatsMessagePublisher,
+) : KafkaHandler<AuctionCreatedEventProto, TopicSingle> {
 
-    @EventListener(ApplicationReadyEvent::class)
-    fun listenToCreatedAuctionTopic() {
-        createdAuctionForNatsKafkaConsumer.receive()
-            .flatMap { record ->
-                Mono.defer {
-                    val event = AuctionCreatedEventProto.parseFrom(record.value()).toAuctionCreatedEvent(clock)
-                    processAuctionEvent(event).toMono()
-                }.onErrorResume { error ->
-                    log.error("Error occurred:", error)
-                    Mono.empty()
-                }.doFinally { record.receiverOffset().acknowledge() }
-            }
-            .subscribeOn(Schedulers.boundedElastic())
-            .subscribe()
-    }
+    override val groupId: String = CREATED_NATS_GROUP_ID
 
-    private fun processAuctionEvent(event: AuctionCreatedEvent) {
-        natsConnection.publish(
-            NatsSubject.Auction.CREATED_EVENT,
-            event.auction.toAuctionProto(clock).toByteArray()
-        )
+    override val parser: Parser<AuctionCreatedEventProto> = AuctionCreatedEventProto.parser()
+
+    override val subscriptionTopics: TopicSingle = TopicSingle(KafkaTopic.AuctionKafkaTopic.CREATED)
+
+    override fun handle(kafkaEvent: KafkaEvent<AuctionCreatedEventProto>): Mono<Unit> {
+        return natsPublisher.publish(
+            subject = NatsSubject.Auction.CREATED_EVENT,
+            payload = kafkaEvent.data.auction,
+        ).doFinally { kafkaEvent.ack() }
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(AuctionCreatedEventNatsKafkaConsumer::class.java)
+        private const val CREATED_NATS_GROUP_ID = "auctionCreatedNatsConsumerGroup"
     }
 }
