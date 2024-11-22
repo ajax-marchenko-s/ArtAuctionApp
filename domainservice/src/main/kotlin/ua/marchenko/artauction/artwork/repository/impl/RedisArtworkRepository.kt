@@ -42,13 +42,12 @@ internal class RedisArtworkRepository(
                     sink.error(ArtworkNotFoundException(artworkId = id))
                 }
             }.switchIfEmpty {
-                mongoArtworkRepository.findById(id)
-                    .flatMap { saveArtworkToRedis(it).thenReturn(it) }
-                    .switchIfEmpty {
-                        saveEmptyArtworkToRedis(id)
-                            .onErrorResume(::isErrorFromRedis) { Mono.empty() }
-                            .then(Mono.empty())
-                    }
+                findByIdInMongoAndSaveToRedis(
+                    id = id,
+                    findByIdInMongo = mongoArtworkRepository::findById,
+                    saveToRedis = ::saveArtworkToRedis,
+                    saveEmptyToRedis = ::saveEmptyArtworkToRedis,
+                )
             }.onErrorResume(::isErrorFromRedis) { mongoArtworkRepository.findById(id) }
     }
 
@@ -63,13 +62,12 @@ internal class RedisArtworkRepository(
                     sink.error(ArtworkNotFoundException(artworkId = id))
                 }
             }.switchIfEmpty {
-                mongoArtworkRepository.findFullById(id)
-                    .flatMap { saveArtworkFullToRedis(it).thenReturn(it) }
-                    .switchIfEmpty {
-                        saveEmptyArtworkToRedis(id)
-                            .onErrorResume(::isErrorFromRedis) { Mono.empty() }
-                            .then(Mono.empty())
-                    }
+                findByIdInMongoAndSaveToRedis(
+                    id = id,
+                    findByIdInMongo = mongoArtworkRepository::findFullById,
+                    saveToRedis = ::saveArtworkFullToRedis,
+                    saveEmptyToRedis = ::saveEmptyArtworkToRedis,
+                )
             }.onErrorResume(::isErrorFromRedis) { mongoArtworkRepository.findFullById(id) }
     }
 
@@ -81,6 +79,21 @@ internal class RedisArtworkRepository(
             Mono<MongoArtwork> =
         mongoArtworkRepository.updateStatusByIdAndPreviousStatus(id, prevStatus, newStatus)
             .doOnSuccess { deleteKeysFromRedisWithRetries(createGeneralKeyById(id), createFullKeyById(id)) }
+
+    private fun <T : Any> findByIdInMongoAndSaveToRedis(
+        id: String,
+        findByIdInMongo: (String) -> Mono<T>,
+        saveToRedis: (T) -> Mono<Unit>,
+        saveEmptyToRedis: (String) -> Mono<Unit>
+    ): Mono<T> {
+        return findByIdInMongo(id)
+            .flatMap { saveToRedis(it).thenReturn(it) }
+            .switchIfEmpty(
+                saveEmptyToRedis(id)
+                    .onErrorResume(::isErrorFromRedis) { Mono.empty() }
+                    .then(Mono.empty())
+            )
+    }
 
     private fun saveToRedisWithRetries(artwork: MongoArtwork) {
         val id = requireNotNull(artwork.id) { "artwork id cannot be null" }.toHexString()
