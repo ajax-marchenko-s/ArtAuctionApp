@@ -1,5 +1,7 @@
 nats:
-  uri: ${NATS_CONNECTION}
+  spring:
+    io.nats.client:
+      servers: ${NATS_CONNECTION}
 
 grpc:
   server:

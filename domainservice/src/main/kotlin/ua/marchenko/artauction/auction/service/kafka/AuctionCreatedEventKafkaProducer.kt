@@ -19,11 +19,10 @@ class AuctionCreatedEventKafkaProducer(
     fun sendCreateAuctionEvent(auction: MongoAuction): Mono<Unit> {
         val auctionEvent = auction.toAuctionCreatedEventProto(clock)
         return kafkaPublisher.publish(
-            KafkaTopic.AuctionKafkaTopic.CREATED,
-            auctionEvent.auction.artworkId,
-            auctionEvent.toByteArray()
-        )
-            .doOnError { log.error("Error sending message to Kafka", it) }
+            topic = KafkaTopic.AuctionKafkaTopic.CREATED,
+            key = auctionEvent.auction.artworkId,
+            value = auctionEvent.toByteArray()
+        ).doOnError { log.error("Error sending message to Kafka", it) }
             .then(Unit.toMono())
     }
 
