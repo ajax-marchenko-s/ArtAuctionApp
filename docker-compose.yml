@@ -82,6 +82,13 @@ services:
       DYNAMIC_CONFIG_ENABLED: true
     profiles: [local]
 
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6379:6379"
+    profiles: [ local, gh-actions]
+
 volumes:
   mongo-data:
     driver: local

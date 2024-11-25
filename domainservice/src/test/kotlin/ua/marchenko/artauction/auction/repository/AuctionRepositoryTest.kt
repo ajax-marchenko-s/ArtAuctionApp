@@ -11,6 +11,7 @@ import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import reactor.kotlin.test.test
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
@@ -26,6 +27,7 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
     private lateinit var auctionRepository: AuctionRepository
 
     @Autowired
+    @Qualifier("mongoArtworkRepository")
     private lateinit var artworkRepository: ArtworkRepository
 
     @Autowired
@@ -170,4 +172,3 @@ class AuctionRepositoryTest : AbstractBaseIntegrationTest {
             .verifyComplete()
     }
 }
-

@@ -1,5 +1,7 @@
 package ua.marchenko.artauction.user.model
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.TypeAlias
 import org.springframework.data.mongodb.core.mapping.Document
@@ -9,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.MongoId
 @TypeAlias("User")
 data class MongoUser(
     @MongoId
+    @JsonSerialize(using = ToStringSerializer::class)
     val id: ObjectId? = null,
     val name: String? = null,
     val lastName: String? = null,

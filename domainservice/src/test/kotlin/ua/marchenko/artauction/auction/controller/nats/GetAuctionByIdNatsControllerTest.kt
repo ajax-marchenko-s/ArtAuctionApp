@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import reactor.kotlin.test.test
 import systems.ajax.nats.publisher.api.NatsMessagePublisher
+import org.springframework.beans.factory.annotation.Qualifier
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
 import ua.marchenko.artauction.auction.mapper.toAuctionProto
@@ -22,6 +23,7 @@ import ua.marchenko.internal.input.reqreply.auction.FindAuctionByIdResponse as F
 class GetAuctionByIdNatsControllerTest : AbstractBaseIntegrationTest {
 
     @Autowired
+    @Qualifier("mongoArtworkRepository")
     private lateinit var artworkRepository: ArtworkRepository
 
     @Autowired

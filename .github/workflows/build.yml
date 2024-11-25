@@ -46,7 +46,7 @@ jobs:
         run: docker compose --profile gh-actions up -d
 
       - name: Run gradle build
-        run: ${gradle_cmd} build --parallel
+        run: ${gradle_cmd} build
 
       - name: Run Delta Coverage check
         if: ${{ github.event_name == 'pull_request' && ( success() || failure() ) }}

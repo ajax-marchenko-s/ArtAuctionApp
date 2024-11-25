@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import reactor.kotlin.test.test
 import systems.ajax.nats.publisher.api.NatsMessagePublisher
+import org.springframework.beans.factory.annotation.Qualifier
 import ua.marchenko.artauction.artwork.model.MongoArtwork
 import ua.marchenko.artauction.artwork.random
 import ua.marchenko.artauction.artwork.repository.ArtworkRepository
@@ -23,6 +24,7 @@ class AddAuctionNatsControllerTest : AbstractBaseIntegrationTest {
     private lateinit var userRepository: UserRepository
 
     @Autowired
+    @Qualifier("mongoArtworkRepository")
     private lateinit var artworkRepository: ArtworkRepository
 
     @Autowired
