@@ -163,7 +163,7 @@ internal class RedisArtworkRepository(
 
     companion object {
         private val durationToLive = Duration.ofMinutes(10)
-        private val minBackoffDuration = Duration.ofMillis(100)
+        private val minBackoffDuration = Duration.ofMillis(200)
         private const val KEY_PREFIX_GENERAL = "artwork"
         private const val KEY_PREFIX_FULL = "artwork-full"
         fun createGeneralKeyById(id: String): String = "$KEY_PREFIX_GENERAL:$id"
