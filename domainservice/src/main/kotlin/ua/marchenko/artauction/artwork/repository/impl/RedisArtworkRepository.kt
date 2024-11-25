@@ -129,7 +129,7 @@ internal class RedisArtworkRepository(
             )
     }
 
-    private fun retryOnRedisError(maxAttempts: Long = 5, minBackoff: Duration = Duration.ofMillis(100)): Retry =
+    private fun retryOnRedisError(maxAttempts: Long = 5, minBackoff: Duration = minBackoffDuration): Retry =
         Retry.backoff(maxAttempts, minBackoff)
             .filter { error -> isErrorFromRedis(error) }
             .doBeforeRetry { log.warn("Retrying due to error: {}", it) }
@@ -163,6 +163,7 @@ internal class RedisArtworkRepository(
 
     companion object {
         private val durationToLive = Duration.ofMinutes(10)
+        private val minBackoffDuration = Duration.ofMillis(100)
         private const val KEY_PREFIX_GENERAL = "artwork"
         private const val KEY_PREFIX_FULL = "artwork-full"
         fun createGeneralKeyById(id: String): String = "$KEY_PREFIX_GENERAL:$id"
