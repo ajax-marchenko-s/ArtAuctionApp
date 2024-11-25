@@ -65,13 +65,13 @@ class RedisArtworkRepositoryTest : AbstractBaseIntegrationTest {
         assertEquals(artwork.copy(id = savedArtwork.id), savedArtwork)
         await().atMost(timeToWait).untilAsserted {
             assertNull(
-                reactiveRedisTemplate.opsForValue().get(createFullKeyById(artwork.id!!.toHexString())).block(),
+                reactiveRedisTemplate.opsForValue().get(createGeneralKeyById(artwork.id!!.toHexString())).block(),
                 "General key for artwork with ID ${artwork.id!!.toHexString()} should be deleted"
             )
 
-            assertContentEquals(
-                objectMapper.writeValueAsBytes(artwork), reactiveRedisTemplate.opsForValue()
-                    .get(createGeneralKeyById(artwork.id!!.toHexString())).block()
+            assertNull(
+                reactiveRedisTemplate.opsForValue().get(createFullKeyById(artwork.id!!.toHexString())).block(),
+                "Full key for artwork with ID ${artwork.id!!.toHexString()} should be deleted"
             )
         }
     }
