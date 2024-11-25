@@ -44,7 +44,7 @@ internal class RedisArtworkRepository(
                         .onSuccess { artwork -> sink.next(artwork) }
                         .onFailure { error ->
                             sink.error(error)
-                            deleteKeysFromRedisWithRetries(createGeneralKeyById(id), createFullKeyById(id))
+                            deleteKeysFromRedisWithRetries(createGeneralKeyById(id))
                         }
                 } else {
                     sink.error(ArtworkNotFoundException(artworkId = id))
@@ -67,7 +67,7 @@ internal class RedisArtworkRepository(
                         .onSuccess { artwork -> sink.next(artwork) }
                         .onFailure { error ->
                             sink.error(error)
-                            deleteKeysFromRedisWithRetries(createGeneralKeyById(id), createFullKeyById(id))
+                            deleteKeysFromRedisWithRetries(createFullKeyById(id))
                         }
                 } else {
                     sink.error(ArtworkNotFoundException(artworkId = id))
