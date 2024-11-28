@@ -1,0 +1,12 @@
+package ua.marchenko.artauction.gateway
+
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
+
+@SpringBootApplication
+class GatewayApplication
+
+fun main(args: Array<String>) {
+    @Suppress("SpreadOperator")
+    runApplication<GatewayApplication>(*args)
+}
