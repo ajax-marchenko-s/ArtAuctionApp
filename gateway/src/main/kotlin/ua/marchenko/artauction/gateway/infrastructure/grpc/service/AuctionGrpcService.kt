@@ -5,7 +5,7 @@ import net.devh.boot.grpc.server.service.GrpcService
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
-import ua.marchenko.artauction.gateway.application.port.output.AuctionMessageHandlerOutputPort
+import ua.marchenko.artauction.gateway.application.port.input.AuctionMessageHandlerInputPort
 import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toAuctionProtoList
 import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toCreateAuctionRequestProtoInternal
 import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toCreateAuctionResponseProtoGrpc
@@ -21,7 +21,7 @@ import ua.marchenko.internal.input.reqreply.auction.FindAllAuctionsRequest
 
 @GrpcService
 class AuctionGrpcService(
-    private val auctionMessageHandlerOutputPort: AuctionMessageHandlerOutputPort
+    private val auctionMessageHandlerInputPort: AuctionMessageHandlerInputPort
 ) : ReactorAuctionServiceGrpc.AuctionServiceImplBase() {
 
     override fun subscribeToAllAuctions(request: Mono<Empty>): Flux<Auction> {
@@ -31,10 +31,10 @@ class AuctionGrpcService(
         }.build()
 
         val existingAuctions =
-            auctionMessageHandlerOutputPort.getAllAuctions(allAuctionRequest)
+            auctionMessageHandlerInputPort.getAllAuctions(allAuctionRequest)
                 .flatMapMany { it.toAuctionProtoList().toFlux() }
 
-        return auctionMessageHandlerOutputPort.subscribeToCreatedAuction().startWith(existingAuctions)
+        return auctionMessageHandlerInputPort.subscribeToCreatedAuction().startWith(existingAuctions)
     }
 
     override fun findAuctionById(request: Mono<FindAuctionByIdRequest>):
@@ -42,7 +42,7 @@ class AuctionGrpcService(
         return request
             .map { it.toFindAuctionByIdRequestProtoInternal() }
             .flatMap {
-                auctionMessageHandlerOutputPort.getAuctionById(it)
+                auctionMessageHandlerInputPort.getAuctionById(it)
             }.map { it.toFindAuctionByIdResponseProtoGrpc() }
     }
 
@@ -50,7 +50,7 @@ class AuctionGrpcService(
         return request
             .map { it.toCreateAuctionRequestProtoInternal() }
             .flatMap {
-                auctionMessageHandlerOutputPort.createAuction(it)
+                auctionMessageHandlerInputPort.createAuction(it)
             }.map { it.toCreateAuctionResponseProtoGrpc() }
     }
 }

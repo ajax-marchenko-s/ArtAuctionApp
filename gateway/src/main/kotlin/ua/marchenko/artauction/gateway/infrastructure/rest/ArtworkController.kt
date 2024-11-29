@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
-import ua.marchenko.artauction.gateway.application.port.output.ArtworkMessageHandlerOutputPort
+import ua.marchenko.artauction.gateway.application.port.input.ArtworkMessageHandlerInputPort
 import ua.marchenko.artauction.gateway.infrastructure.rest.dto.ArtworkFullResponse
 import ua.marchenko.artauction.gateway.infrastructure.rest.dto.ArtworkResponse
 import ua.marchenko.artauction.gateway.infrastructure.rest.dto.CreateArtworkRequest
@@ -28,18 +28,18 @@ import ua.marchenko.internal.input.reqreply.artwork.FindArtworkFullByIdRequest
 @RestController
 @RequestMapping("/api/v1/artworks")
 class ArtworkController(
-    private val artworkMessageHandlerOutputPort: ArtworkMessageHandlerOutputPort,
+    private val artworkMessageHandlerInputPort: ArtworkMessageHandlerInputPort,
 ) {
     @GetMapping("{id}")
     fun getArtworkById(@PathVariable id: String): Mono<ArtworkResponse> {
         val request = FindArtworkByIdRequest.newBuilder().setId(id).build()
-        return artworkMessageHandlerOutputPort.getArtworkById(request).map { it.toArtworkResponse() }
+        return artworkMessageHandlerInputPort.getArtworkById(request).map { it.toArtworkResponse() }
     }
 
     @GetMapping("{id}/full")
     fun getFullArtworkById(@PathVariable id: String): Mono<ArtworkFullResponse> {
         val request = FindArtworkFullByIdRequest.newBuilder().setId(id).build()
-        return artworkMessageHandlerOutputPort.getFullArtworkById(request).map { it.toArtworkFullResponse() }
+        return artworkMessageHandlerInputPort.getFullArtworkById(request).map { it.toArtworkFullResponse() }
     }
 
     @GetMapping
@@ -48,7 +48,7 @@ class ArtworkController(
         @RequestParam(required = false, defaultValue = "10") limit: Int
     ): Mono<List<ArtworkResponse>> {
         val request = FindAllArtworksRequest.newBuilder().setPage(page).setLimit(limit).build()
-        return artworkMessageHandlerOutputPort.getAllArtworks(request).map { it.toArtworksList() }
+        return artworkMessageHandlerInputPort.getAllArtworks(request).map { it.toArtworksList() }
     }
 
     @GetMapping("/full")
@@ -57,13 +57,13 @@ class ArtworkController(
         @RequestParam(required = false, defaultValue = "10") limit: Int
     ): Mono<List<ArtworkFullResponse>> {
         val request = FindAllArtworksFullRequest.newBuilder().setPage(page).setLimit(limit).build()
-        return artworkMessageHandlerOutputPort.getAllFullArtworks(request).map { it.toFullArtworkList() }
+        return artworkMessageHandlerInputPort.getAllFullArtworks(request).map { it.toFullArtworkList() }
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun addArtwork(@Valid @RequestBody artwork: CreateArtworkRequest): Mono<ArtworkResponse> {
-        return artworkMessageHandlerOutputPort.createArtwork(artwork.toCreateArtworkRequestProto())
+        return artworkMessageHandlerInputPort.createArtwork(artwork.toCreateArtworkRequestProto())
             .map { it.toArtworkResponse() }
     }
 }

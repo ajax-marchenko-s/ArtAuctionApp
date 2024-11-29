@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
-import ua.marchenko.artauction.gateway.application.port.output.AuctionMessageHandlerOutputPort
+import ua.marchenko.artauction.gateway.application.port.input.AuctionMessageHandlerInputPort
 import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toCreateAuctionRequestProtoInternal
 import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toCreateAuctionResponseProtoGrpc
 import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toFindAuctionByIdRequestProtoInternal
@@ -28,7 +28,7 @@ import ua.marchenko.grpcapi.input.reqreply.auction.FindAuctionByIdRequest as Fin
 class AuctionGrpcServiceTest {
 
     @MockK
-    private lateinit var auctionMessageHandlerOutputPort: AuctionMessageHandlerOutputPort
+    private lateinit var auctionMessageHandlerInputPort: AuctionMessageHandlerInputPort
 
     @InjectMockKs
     private lateinit var auctionGrpcService: AuctionGrpcService
@@ -39,7 +39,7 @@ class AuctionGrpcServiceTest {
         val request = randomCreateAuctionRequestProtoGrpc()
         val response = randomSuccessCreateAuctionResponseProto()
         every {
-            auctionMessageHandlerOutputPort.createAuction(request.toCreateAuctionRequestProtoInternal())
+            auctionMessageHandlerInputPort.createAuction(request.toCreateAuctionRequestProtoInternal())
         } returns response.toMono()
 
         // WHEN
@@ -58,7 +58,7 @@ class AuctionGrpcServiceTest {
         val request = FindAuctionByIdRequestProtoGrpc.newBuilder().also { it.id = id }.build()
         val response = randomSuccessFindByIdResponseProto()
         every {
-            auctionMessageHandlerOutputPort.getAuctionById(request.toFindAuctionByIdRequestProtoInternal())
+            auctionMessageHandlerInputPort.getAuctionById(request.toFindAuctionByIdRequestProtoInternal())
         } returns response.toMono()
 
         // WHEN
@@ -77,7 +77,7 @@ class AuctionGrpcServiceTest {
         val auctionsFromNats = List(3) { randomAuctionProto() }
 
         every {
-            auctionMessageHandlerOutputPort.getAllAuctions(
+            auctionMessageHandlerInputPort.getAllAuctions(
                 FindAllAuctionsRequest.newBuilder().apply {
                     page = START_PAGE
                     limit = Int.MAX_VALUE
@@ -86,7 +86,7 @@ class AuctionGrpcServiceTest {
         } returns randomSuccessFindAllAuctionsResponseProto(existedAuctions).toMono()
 
         every {
-            auctionMessageHandlerOutputPort.subscribeToCreatedAuction()
+            auctionMessageHandlerInputPort.subscribeToCreatedAuction()
         } returns auctionsFromNats.toFlux()
 
         // WHEN

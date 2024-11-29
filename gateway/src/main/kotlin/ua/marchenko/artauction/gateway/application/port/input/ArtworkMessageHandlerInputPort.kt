@@ -1,4 +1,4 @@
-package ua.marchenko.artauction.gateway.application.port.output
+package ua.marchenko.artauction.gateway.application.port.input
 
 import reactor.core.publisher.Mono
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest as CreateArtworkRequestProto
@@ -12,7 +12,7 @@ import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdResponse as F
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkFullByIdRequest as FindArtworkFullByIdRequestProto
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkFullByIdResponse as FindArtworkFullByIdResponseProto
 
-interface ArtworkMessageHandlerOutputPort {
+interface ArtworkMessageHandlerInputPort {
     fun getArtworkById(request: FindArtworkByIdRequestProto): Mono<FindArtworkByIdResponseProto>
     fun getFullArtworkById(request: FindArtworkFullByIdRequestProto): Mono<FindArtworkFullByIdResponseProto>
     fun getAllArtworks(request: FindAllArtworksRequestProto): Mono<FindAllArtworksResponseProto>
