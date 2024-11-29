@@ -23,6 +23,17 @@ fun Artwork.Companion.random(
     artistId = artistId,
 )
 
+fun CreateArtwork.Companion.random(
+    artistId: String = ObjectId().toHexString(),
+): CreateArtwork = CreateArtwork(
+    title = getRandomString(),
+    description = getRandomString(),
+    style = Artwork.ArtworkStyle.POP_ART,
+    width = Random.nextInt(10, 100),
+    height = Random.nextInt(10, 100),
+    artistId = artistId,
+)
+
 fun ArtworkFull.Companion.random(
     id: String = ObjectId().toHexString(),
     status: ArtworkStatus = ArtworkStatus.VIEW,

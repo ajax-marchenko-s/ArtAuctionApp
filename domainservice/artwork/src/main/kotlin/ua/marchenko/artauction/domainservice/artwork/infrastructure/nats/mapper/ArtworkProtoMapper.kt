@@ -1,4 +1,5 @@
 @file:Suppress("TooManyFunctions")
+
 package ua.marchenko.artauction.domainservice.artwork.infrastructure.nats.mapper
 
 import ua.marchenko.artauction.domainservice.user.infrastructure.proto.toUserProto
@@ -7,6 +8,7 @@ import ua.marchenko.artauction.core.user.exception.UserNotFoundException
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork.ArtworkStatus
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork.ArtworkStyle
+import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
 import ua.marchenko.artauction.domainservice.artwork.domain.projection.ArtworkFull
 import ua.marchenko.internal.commonmodels.artwork.Artwork as ArtworkProto
 import ua.marchenko.internal.commonmodels.artwork.ArtworkFull as ArtworkFullProto
@@ -19,16 +21,14 @@ import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse as Cre
 import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStyle as ArtworkStyleProto
 import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStatus as ArtworkStatusProto
 
-fun CreateArtworkRequestProto.toDomain(): Artwork {
-    return Artwork(
-        id = null,
+fun CreateArtworkRequestProto.toDomainCreate(): CreateArtwork {
+    return CreateArtwork(
         title = title,
         description = description,
         style = style.toArtworkStyle(),
         width = width,
         height = height,
-        status = ArtworkStatus.UNKNOWN,
-        artistId = artistId
+        artistId = artistId,
     )
 }
 
@@ -103,13 +103,13 @@ fun Throwable.toFindAllArtworksFullFailureResponseProto(): FindAllArtworksFullRe
 
 fun ArtworkFull.toArtworkFullProto(): ArtworkFullProto {
     return ArtworkFullProto.newBuilder().also {
-        it.id = requireNotNull(id) { "artwork id cannot be null" }
+        it.id = id
         it.title = title
         it.description = description
         it.width = width
         it.height = height
-        it.style = requireNotNull(style) { "artwork style cannot be null" }.toArtworkStyleProto()
-        it.status = requireNotNull(status) { "artwork status cannot be null" }.toArtworkStatusProto()
+        it.style = style.toArtworkStyleProto()
+        it.status = status.toArtworkStatusProto()
         it.artist = artist.toUserProto()
     }.build()
 }
@@ -121,8 +121,8 @@ fun Artwork.toArtworkProto(): ArtworkProto {
         it.description = description
         it.width = width
         it.height = height
-        it.style = requireNotNull(style) { "artwork style cannot be null" }.toArtworkStyleProto()
-        it.status = requireNotNull(status) { "artwork status cannot be null" }.toArtworkStatusProto()
+        it.style = style.toArtworkStyleProto()
+        it.status = status.toArtworkStatusProto()
         it.artistId = artistId
     }.build()
 }

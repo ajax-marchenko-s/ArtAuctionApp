@@ -1,12 +1,14 @@
+@file:Suppress("TooManyFunctions")
+
 package ua.marchenko.artauction.domainservice.auction.infrastructure.kafka.mapper
 
 import java.time.Clock
 import java.time.LocalDateTime
 import ua.marchenko.artauction.domainservice.auction.domain.Auction
-import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.toAuctionProto
-import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.toDomain
-import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.toLocalDateTime
-import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.toTimestampProto
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toAuctionProto
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toDomain
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toLocalDateTime
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toTimestampProto
 import ua.marchenko.artauction.domainservice.auction.infrastructure.kafka.event.AuctionCreatedEvent
 import ua.marchenko.internal.output.pubsub.auction.AuctionCreatedEvent as AuctionCreatedEventProto
 

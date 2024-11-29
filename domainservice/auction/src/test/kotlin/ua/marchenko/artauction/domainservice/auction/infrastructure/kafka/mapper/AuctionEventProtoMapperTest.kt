@@ -8,8 +8,8 @@ import kotlin.test.assertEquals
 import org.junit.jupiter.api.Test
 import ua.marchenko.artauction.domainservice.auction.domain.Auction
 import ua.marchenko.artauction.domainservice.auction.domain.random
-import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.toAuctionProto
-import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.toTimestampProto
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toAuctionProto
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toTimestampProto
 import ua.marchenko.internal.output.pubsub.auction.AuctionCreatedEvent
 
 class AuctionEventProtoMapperTest {

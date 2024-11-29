@@ -8,11 +8,13 @@ import reactor.kotlin.core.publisher.switchIfEmpty
 import ua.marchenko.artauction.domainservice.user.application.port.input.UserServiceInputPort
 import ua.marchenko.artauction.core.artwork.exception.ArtworkNotFoundException
 import ua.marchenko.artauction.core.user.exception.UserNotFoundException
+import ua.marchenko.artauction.domainservice.artwork.application.mapper.toDomain
 import ua.marchenko.artauction.domainservice.artwork.application.port.input.ArtworkServiceInputPort
 import ua.marchenko.artauction.domainservice.artwork.application.port.output.ArtworkRepositoryOutputPort
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork.ArtworkStatus
 import ua.marchenko.artauction.domainservice.artwork.domain.projection.ArtworkFull
+import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
 
 @Service
 class ArtworkService(
@@ -31,14 +33,14 @@ class ArtworkService(
     override fun getFullById(id: String) =
         artworkRepository.findFullById(id).switchIfEmpty { Mono.error(ArtworkNotFoundException(id)) }
 
-    override fun save(artwork: Artwork): Mono<Artwork> {
+    override fun save(artwork: CreateArtwork): Mono<Artwork> {
         return userService.existById(artwork.artistId)
             .handle { exists, sink ->
                 if (exists) sink.next(artwork)
                 else sink.error(UserNotFoundException(value = artwork.artistId))
             }
             .flatMap { artworkToSave ->
-                artworkRepository.save(artworkToSave.copy(status = ArtworkStatus.VIEW))
+                artworkRepository.save(artworkToSave.toDomain(status = ArtworkStatus.VIEW))
             }
     }
 

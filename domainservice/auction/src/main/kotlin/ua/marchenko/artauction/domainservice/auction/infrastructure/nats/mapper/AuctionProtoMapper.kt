@@ -1,12 +1,14 @@
+@file:Suppress("TooManyFunctions")
+
 package ua.marchenko.artauction.domainservice.auction.infrastructure.nats.mapper
 
 import java.time.Clock
 import ua.marchenko.artauction.domainservice.auction.domain.Auction
-import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.toAuctionProto
-import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.toBigDecimal
-import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.toLocalDateTime
 import ua.marchenko.artauction.core.auction.exception.AuctionNotFoundException
 import ua.marchenko.artauction.core.auction.exception.InvalidAuctionOperationException
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toAuctionProto
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toBigDecimal
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toLocalDateTime
 import ua.marchenko.internal.input.reqreply.auction.CreateAuctionRequest as CreateAuctionRequestProto
 import ua.marchenko.internal.input.reqreply.auction.CreateAuctionResponse as CreateAuctionResponseProto
 import ua.marchenko.internal.input.reqreply.auction.FindAllAuctionsResponse as FindAllAuctionsResponseProto

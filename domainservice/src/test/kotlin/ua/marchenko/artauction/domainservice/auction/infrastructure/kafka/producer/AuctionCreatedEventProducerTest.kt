@@ -16,7 +16,7 @@ import ua.marchenko.artauction.domainservice.auction.infrastructure.kafka.mapper
 import ua.marchenko.artauction.domainservice.user.application.port.input.UserServiceInputPort
 import ua.marchenko.artauction.domainservice.user.domain.User
 import ua.marchenko.artauction.domainservice.user.domain.random
-import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
+import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
 import ua.marchenko.artauction.domainservice.artwork.domain.random
 import ua.marchenko.artauction.domainservice.utils.AbstractBaseIntegrationTest
 import ua.marchenko.artauction.domainservice.utils.KafkaTestConfiguration
@@ -44,7 +44,7 @@ class AuctionCreatedEventProducerTest : AbstractBaseIntegrationTest {
         // GIVEN
         val user = userService.save(User.random(id = null)).block()!!
         val artwork =
-            artworkService.save(Artwork.random(id = null, artistId = user.id!!)).block()!!
+            artworkService.save(CreateArtwork.random(artistId = user.id!!)).block()!!
         val auction = Auction.random(id = null, artworkId = artwork.id!!)
 
         val testConsumer = kafkaMockExtension.listen<AuctionCreatedEvent>(

@@ -10,7 +10,7 @@ import systems.ajax.nats.handler.api.ProtoNatsMessageHandler
 import ua.marchenko.artauction.domainservice.artwork.application.port.input.ArtworkServiceInputPort
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.nats.mapper.toCreateArtworkFailureResponseProto
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.nats.mapper.toCreateArtworkSuccessResponseProto
-import ua.marchenko.artauction.domainservice.artwork.infrastructure.nats.mapper.toDomain
+import ua.marchenko.artauction.domainservice.artwork.infrastructure.nats.mapper.toDomainCreate
 import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest as CreateArtworkRequestProto
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse as CreateArtworkResponseProto
@@ -35,7 +35,7 @@ class AddArtworkNatsController(
         e.toCreateArtworkFailureResponseProto().toMono()
 
     override fun doHandle(inMsg: CreateArtworkRequestProto): Mono<CreateArtworkResponseProto> {
-        return artworkService.save(inMsg.toDomain())
+        return artworkService.save(inMsg.toDomainCreate())
             .map { it.toCreateArtworkSuccessResponseProto() }
             .onErrorResume {
                 log.error("Error in CreateArtwork for {}", inMsg, it)

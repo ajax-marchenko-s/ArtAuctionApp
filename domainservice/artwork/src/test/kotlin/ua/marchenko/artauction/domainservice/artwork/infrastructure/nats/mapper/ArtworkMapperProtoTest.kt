@@ -1,4 +1,4 @@
-package ua.marchenko.artauction.domainservice.user.infrastructure.nats.mapper
+package ua.marchenko.artauction.domainservice.artwork.infrastructure.nats.mapper
 
 import kotlin.test.Test
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -10,12 +10,6 @@ import ua.marchenko.artauction.domainservice.artwork.domain.random
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork.ArtworkStyle
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork.ArtworkStatus
-import ua.marchenko.artauction.domainservice.artwork.infrastructure.nats.mapper.toArtworkProto
-import ua.marchenko.artauction.domainservice.artwork.infrastructure.nats.mapper.toArtworkStatusProto
-import ua.marchenko.artauction.domainservice.artwork.infrastructure.nats.mapper.toArtworkStyle
-import ua.marchenko.artauction.domainservice.artwork.infrastructure.nats.mapper.toArtworkStyleProto
-import ua.marchenko.artauction.domainservice.artwork.infrastructure.nats.mapper.toFindAllArtworksFailureResponseProto
-import ua.marchenko.artauction.domainservice.artwork.infrastructure.nats.mapper.toFindAllArtworksFullFailureResponseProto
 import ua.marchenko.internal.commonmodels.artwork.Artwork as ArtworkProto
 import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStyle as ArtworkStyleProto
 import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStatus as ArtworkStatusProto
@@ -55,7 +49,7 @@ class ArtworkMapperProtoTest {
     }
 
     @Test
-    fun `should return ArtworkProto when Artwork has all non-null properties`() {
+    fun `should return ArtworkProto from Artwork`() {
         // GIVEN
         val artwork = Artwork.random()
         val expectedArtworkProto = ArtworkProto.newBuilder().also {

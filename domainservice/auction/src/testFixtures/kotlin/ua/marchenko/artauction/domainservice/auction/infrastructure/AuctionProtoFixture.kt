@@ -6,8 +6,8 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import kotlin.random.Random
 import org.bson.types.ObjectId
-import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.toBigDecimalProto
-import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.toTimestampProto
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toBigDecimalProto
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toTimestampProto
 import ua.marchenko.commonmodels.auction.Auction
 import ua.marchenko.commonmodels.auction.Auction.Bid
 import ua.marchenko.internal.input.reqreply.auction.CreateAuctionRequest

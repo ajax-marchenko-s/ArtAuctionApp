@@ -1,4 +1,4 @@
-package ua.marchenko.artauction.domainservice.user.application.service
+package ua.marchenko.artauction.domainservice.artwork.application.service
 
 import kotlin.test.Test
 import io.mockk.every
@@ -14,12 +14,14 @@ import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
 import ua.marchenko.artauction.core.artwork.exception.ArtworkNotFoundException
+import ua.marchenko.artauction.domainservice.artwork.application.mapper.toDomain
 import ua.marchenko.artauction.domainservice.artwork.application.port.output.ArtworkRepositoryOutputPort
-import ua.marchenko.artauction.domainservice.artwork.application.service.ArtworkService
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork.ArtworkStatus
+import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
 import ua.marchenko.artauction.domainservice.artwork.domain.projection.ArtworkFull
 import ua.marchenko.artauction.domainservice.artwork.domain.random
+import ua.marchenko.artauction.domainservice.user.application.service.UserService
 
 class ArtworkServiceTest {
 
@@ -139,8 +141,8 @@ class ArtworkServiceTest {
     fun `should set status and call userService before calling repository method`() {
         // GIVEN
         val artistId = ObjectId().toHexString()
-        val artworkToSave = Artwork.random(status = ArtworkStatus.UNKNOWN, artistId = artistId)
-        val expectedArtwork = artworkToSave.copy(status = ArtworkStatus.VIEW)
+        val artworkToSave = CreateArtwork.random(artistId = artistId)
+        val expectedArtwork = artworkToSave.toDomain(status = ArtworkStatus.VIEW)
 
         every { mockUserService.existById(artistId) } returns true.toMono()
         every { mockArtworkRepository.save(expectedArtwork) } returns expectedArtwork.toMono()

@@ -11,10 +11,10 @@ import systems.ajax.nats.publisher.api.NatsMessagePublisher
 import ua.marchenko.artauction.domainservice.artwork.application.port.output.ArtworkRepositoryOutputPort
 import ua.marchenko.artauction.domainservice.auction.domain.Auction
 import ua.marchenko.artauction.domainservice.auction.domain.random
-import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.toAuctionProto
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
 import ua.marchenko.artauction.domainservice.artwork.domain.random
 import ua.marchenko.artauction.domainservice.auction.application.port.output.AuctionRepositoryOutputPort
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toAuctionProto
 import ua.marchenko.artauction.domainservice.utils.AbstractBaseIntegrationTest
 import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.input.reqreply.auction.FindAuctionByIdRequest as FindAuctionByIdRequestProto

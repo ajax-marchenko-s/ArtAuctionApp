@@ -1,6 +1,6 @@
 package ua.marchenko.artauction.gateway.infrastructure.grpc.mapper
 
-import ua.marchenko.commonmodels.auction.Auction
+import ua.marchenko.commonmodels.auction.Auction as AuctionProto
 import ua.marchenko.artauction.core.auction.exception.AuctionNotFoundException
 import ua.marchenko.artauction.core.auction.exception.InvalidAuctionOperationException
 import ua.marchenko.grpcapi.input.reqreply.auction.CreateAuctionResponse as CreateAuctionResponseProtoGrpc
@@ -45,7 +45,7 @@ fun CreateAuctionResponseProtoInternal.toCreateAuctionResponseProtoGrpc(): Creat
     }
 }
 
-fun FindAllAuctionsResponseProtoInternal.toAuctionProtoList(): List<Auction> {
+fun FindAllAuctionsResponseProtoInternal.toAuctionProtoList(): List<AuctionProto> {
     return when (responseCase!!) {
         FindAllAuctionsResponseProtoInternal.ResponseCase.SUCCESS -> success.auctionsList
         FindAllAuctionsResponseProtoInternal.ResponseCase.FAILURE -> error(failure.message)
@@ -73,12 +73,12 @@ private fun FindAuctionByIdResponseProtoInternal.Failure.toException(): Nothing 
     }
 }
 
-private fun Auction.toFindAuctionByIdSuccessResponseProtoGrpc(): FindAuctionByIdResponseProtoGrpc =
+private fun AuctionProto.toFindAuctionByIdSuccessResponseProtoGrpc(): FindAuctionByIdResponseProtoGrpc =
     FindAuctionByIdResponseProtoGrpc.newBuilder().also { builder ->
         builder.successBuilder.auction = this
     }.build()
 
-private fun Auction.toCreateAuctionSuccessResponseProtoGrpc(): CreateAuctionResponseProtoGrpc =
+private fun AuctionProto.toCreateAuctionSuccessResponseProtoGrpc(): CreateAuctionResponseProtoGrpc =
     CreateAuctionResponseProtoGrpc.newBuilder().also { builder ->
         builder.successBuilder.auction = this
     }.build()

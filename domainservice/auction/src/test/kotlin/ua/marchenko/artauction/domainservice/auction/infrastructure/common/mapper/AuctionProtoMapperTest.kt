@@ -15,6 +15,14 @@ import ua.marchenko.artauction.domainservice.auction.domain.Auction
 import ua.marchenko.artauction.domainservice.auction.domain.Auction.Bid
 import ua.marchenko.artauction.domainservice.auction.domain.random
 import ua.marchenko.artauction.domainservice.auction.infrastructure.AuctionProtoFixture
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toAuctionProto
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toBidProto
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toBigDecimal
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toBigDecimalProto
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toBigIntegerProto
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toDomain
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toLocalDateTime
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toTimestampProto
 import ua.marchenko.commonmodels.auction.Auction as AuctionProto
 import ua.marchenko.commonmodels.auction.Auction.Bid as BidProto
 

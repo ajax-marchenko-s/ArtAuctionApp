@@ -1,4 +1,4 @@
-package ua.marchenko.artauction.domainservice.user.architecture
+package ua.marchenko.artauction.domainservice.artwork.architecture
 
 import com.tngtech.archunit.core.importer.ClassFileImporter
 import com.tngtech.archunit.library.Architectures.onionArchitecture

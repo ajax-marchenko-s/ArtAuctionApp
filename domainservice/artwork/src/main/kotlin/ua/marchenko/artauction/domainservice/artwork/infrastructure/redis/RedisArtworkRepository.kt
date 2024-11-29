@@ -18,12 +18,11 @@ import ua.marchenko.artauction.core.artwork.exception.ArtworkNotFoundException
 import ua.marchenko.artauction.domainservice.artwork.application.port.output.ArtworkRepositoryOutputPort
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
 import ua.marchenko.artauction.domainservice.artwork.domain.projection.ArtworkFull
-import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.repository.MongoArtworkRepository
 
 @Suppress("TooManyFunctions")
 @Repository
 class RedisArtworkRepository(
-    private val mongoArtworkRepository: MongoArtworkRepository,
+    private val mongoArtworkRepository: ArtworkRepositoryOutputPort,
     private val reactiveRedisTemplate: ReactiveRedisTemplate<String, ByteArray>,
     private val objectMapper: ObjectMapper,
 ) : ArtworkRepositoryOutputPort by mongoArtworkRepository {
