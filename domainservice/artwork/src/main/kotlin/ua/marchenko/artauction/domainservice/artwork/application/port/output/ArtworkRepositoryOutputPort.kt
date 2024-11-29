@@ -3,6 +3,7 @@ package ua.marchenko.artauction.domainservice.artwork.application.port.output
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
+import ua.marchenko.artauction.domainservice.artwork.domain.Artwork.ArtworkStatus
 import ua.marchenko.artauction.domainservice.artwork.domain.projection.ArtworkFull
 
 interface ArtworkRepositoryOutputPort {
@@ -15,7 +16,7 @@ interface ArtworkRepositoryOutputPort {
     fun updateById(id: String, artwork: Artwork): Mono<Artwork>
     fun updateStatusByIdAndPreviousStatus(
         id: String,
-        prevStatus: Artwork.ArtworkStatus,
-        newStatus: Artwork.ArtworkStatus,
+        prevStatus: ArtworkStatus,
+        newStatus: ArtworkStatus,
     ): Mono<Artwork>
 }
