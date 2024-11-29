@@ -6,6 +6,7 @@ import com.tngtech.archunit.library.Architectures.onionArchitecture
 import kotlin.test.Test
 import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper
 import ua.marchenko.artauction.domainservice.auction.domain.Auction
+import ua.marchenko.artauction.domainservice.auction.domain.Auction.Bid
 
 
 class AuctionModuleArchitectureTest {
@@ -21,7 +22,7 @@ class AuctionModuleArchitectureTest {
             .adapter("kafka", "..infrastructure.kafka..")
             .adapter("rest", "..infrastructure.rest..")
             .ignoreDependency(CommonMapper::class.java, Auction::class.java)
-            .ignoreDependency(CommonMapper::class.java, Auction.Bid::class.java)
+            .ignoreDependency(CommonMapper::class.java, Bid::class.java)
             .check(importedClasses)
     }
 

@@ -33,7 +33,7 @@ fun CreateArtworkRequestProto.toDomainCreate(): CreateArtwork {
 }
 
 fun Artwork.toCreateArtworkSuccessResponseProto(): CreateArtworkResponseProto {
-    return ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse.newBuilder().also { builder ->
+    return CreateArtworkResponseProto.newBuilder().also { builder ->
         builder.successBuilder.setArtwork(toArtworkProto())
     }.build()
 }
@@ -48,7 +48,7 @@ fun Throwable.toCreateArtworkFailureResponseProto(): CreateArtworkResponseProto 
 }
 
 fun Artwork.toFindArtworkByIdSuccessResponseProto(): FindArtworkByIdResponseProto {
-    return ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdResponse.newBuilder().also { builder ->
+    return FindArtworkByIdResponseProto.newBuilder().also { builder ->
         builder.successBuilder.setArtwork(toArtworkProto())
     }.build()
 }
@@ -115,7 +115,7 @@ fun ArtworkFull.toArtworkFullProto(): ArtworkFullProto {
 }
 
 fun Artwork.toArtworkProto(): ArtworkProto {
-    return ua.marchenko.internal.commonmodels.artwork.Artwork.newBuilder().also {
+    return ArtworkProto.newBuilder().also {
         it.id = requireNotNull(id) { "artwork id cannot be null" }
         it.title = title
         it.description = description
