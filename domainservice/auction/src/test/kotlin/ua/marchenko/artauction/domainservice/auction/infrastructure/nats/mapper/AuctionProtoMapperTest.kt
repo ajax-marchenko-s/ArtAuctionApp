@@ -11,11 +11,11 @@ import org.junit.jupiter.params.provider.MethodSource
 import ua.marchenko.artauction.domainservice.auction.domain.Auction
 import ua.marchenko.artauction.domainservice.auction.domain.random
 import ua.marchenko.artauction.domainservice.auction.infrastructure.AuctionProtoFixture.randomCreateAuctionRequestProto
-import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.toAuctionProto
-import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.toBigDecimal
-import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.toLocalDateTime
 import ua.marchenko.artauction.core.auction.exception.AuctionNotFoundException
 import ua.marchenko.artauction.core.auction.exception.InvalidAuctionOperationException
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toAuctionProto
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toBigDecimal
+import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toLocalDateTime
 import ua.marchenko.internal.input.reqreply.auction.CreateAuctionResponse
 import ua.marchenko.internal.input.reqreply.auction.FindAllAuctionsResponse
 import ua.marchenko.internal.input.reqreply.auction.FindAuctionByIdResponse
