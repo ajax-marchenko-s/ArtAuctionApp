@@ -4,12 +4,7 @@ plugins {
 rootProject.name = "artauction"
 include("common-proto", "core", "domainservice", "gateway", "grpc-api", "internal-api")
 include("domainservice:artwork")
-findProject(":domainservice:artwork")?.name = "artwork"
-include("domainservice:user")
-findProject(":domainservice:user")?.name = "user"
-include("domainservice:common")
-findProject(":domainservice:common")?.name = "common"
 include("domainservice:auction")
-findProject(":domainservice:auction")?.name = "auction"
+include("domainservice:common")
 include("domainservice:migration")
-findProject(":domainservice:migration")?.name = "migration"
+include("domainservice:user")
