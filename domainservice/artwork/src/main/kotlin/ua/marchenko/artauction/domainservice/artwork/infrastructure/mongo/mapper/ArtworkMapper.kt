@@ -101,6 +101,9 @@ fun Artwork.ArtworkStyle.toMongoStyle(): MongoArtwork.ArtworkStyle {
     }
 }
 
+fun getMongoField(domainField: String): String? =
+    artworkDomainToMongoFieldsMap[domainField]
+
 private fun User.Companion.defaultDomain() = User(
     id = EMPTY_STRING,
     name = EMPTY_STRING,
@@ -109,3 +112,14 @@ private fun User.Companion.defaultDomain() = User(
 )
 
 private const val EMPTY_STRING = ""
+
+private val artworkDomainToMongoFieldsMap = mapOf(
+    Artwork::id.name to MongoArtwork::id.name,
+    Artwork::status.name to MongoArtwork::status.name,
+    Artwork::style.name to MongoArtwork::style.name,
+    Artwork::artistId.name to MongoArtwork::artistId.name,
+    Artwork::title.name to MongoArtwork::title.name,
+    Artwork::description.name to MongoArtwork::description.name,
+    Artwork::width.name to MongoArtwork::width.name,
+    Artwork::height.name to MongoArtwork::height.name,
+)

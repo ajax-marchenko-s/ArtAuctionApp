@@ -24,6 +24,7 @@ import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
 import ua.marchenko.artauction.domainservice.artwork.domain.projection.ArtworkFull
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.entity.projection.MongoArtworkFull as MongoArtworkFull
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.entity.MongoArtwork
+import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.mapper.getMongoField
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.mapper.toDomain
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.mapper.toMongo
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.mapper.toMongoStatus
@@ -94,7 +95,10 @@ class MongoArtworkRepository(
         val query = Query.query(Criteria.where(MongoArtwork::id.name).isEqualTo(id))
         val changes = Update()
         MongoArtwork::class.memberProperties
-            .filter { !nonUpdatableFields.contains(it.name) }
+            .filter {
+                val mongoField = getMongoField(it.name)
+                mongoField != null && !nonUpdatableFields.contains(getMongoField(it.name))
+            }
             .forEach { property ->
                 property.get(mongoArtwork)?.let { value ->
                     changes.set(property.name, value)
