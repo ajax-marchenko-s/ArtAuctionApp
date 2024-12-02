@@ -12,7 +12,7 @@ import ua.marchenko.artauction.domainservice.artwork.domain.random
 import ua.marchenko.artauction.domainservice.user.domain.random
 
 fun Auction.Companion.random(
-    id: String? = ObjectId().toHexString(),
+    id: String = ObjectId().toHexString(),
     artworkId: String = ObjectId().toHexString(),
     startBid: BigDecimal = BigDecimal(Random.nextInt(10, 100)),
     startedAt: LocalDateTime = LocalDateTime.now(),
@@ -51,4 +51,17 @@ fun AuctionFull.Companion.random(
 fun BidFull.Companion.random() = BidFull(
     buyer = User.random(),
     bid = BigDecimal(Random.nextInt(10, 100)),
+)
+
+fun CreateAuction.Companion.random(
+    artworkId: String = ObjectId().toHexString(),
+    startedAt: LocalDateTime = LocalDateTime.now(),
+    finishedAt: LocalDateTime = LocalDateTime.now().plusDays(1),
+    buyers: List<Auction.Bid> = emptyList(),
+) = CreateAuction(
+    artworkId = artworkId,
+    startBid = BigDecimal(Random.nextInt(10, 100)),
+    startedAt = startedAt,
+    finishedAt = finishedAt,
+    buyers = buyers,
 )

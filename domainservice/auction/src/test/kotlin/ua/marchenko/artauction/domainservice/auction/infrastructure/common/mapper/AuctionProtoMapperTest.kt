@@ -8,9 +8,7 @@ import java.time.Instant
 import java.time.ZoneId
 import kotlin.random.Random
 import kotlin.test.assertEquals
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import ua.marchenko.artauction.domainservice.auction.domain.Auction
 import ua.marchenko.artauction.domainservice.auction.domain.Auction.Bid
 import ua.marchenko.artauction.domainservice.auction.domain.random
@@ -34,7 +32,7 @@ class AuctionProtoMapperTest {
         val fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
         val auction = Auction.random()
         val expectedAuctionProto = AuctionProto.newBuilder().also {
-            it.id = auction.id!!
+            it.id = auction.id
             it.artworkId = auction.artworkId
             it.startBid = auction.startBid.toBigDecimalProto()
             it.startedAt = auction.startedAt.toTimestampProto(fixedClock)
@@ -47,19 +45,6 @@ class AuctionProtoMapperTest {
 
         // THEN
         assertEquals(expectedAuctionProto, result)
-    }
-
-    @Test
-    fun `should throw IllegalArgumentException when Auction with null id to Proto mapping`() {
-        // GIVEN
-        val fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
-        val auction = Auction.random(id = null)
-
-        // WHEN THEN
-        val exception = assertThrows<IllegalArgumentException> {
-            auction.toAuctionProto(fixedClock)
-        }
-        Assertions.assertEquals("Auction id cannot be null", exception.message)
     }
 
     @Test

@@ -17,6 +17,7 @@ import ua.marchenko.artauction.domainservice.artwork.domain.Artwork.ArtworkStatu
 import ua.marchenko.artauction.core.artwork.exception.ArtworkNotFoundException
 import ua.marchenko.artauction.domainservice.artwork.application.port.output.ArtworkRepositoryOutputPort
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
+import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
 import ua.marchenko.artauction.domainservice.artwork.domain.projection.ArtworkFull
 
 @Suppress("TooManyFunctions")
@@ -27,7 +28,7 @@ class RedisArtworkRepository(
     private val objectMapper: ObjectMapper,
 ) : ArtworkRepositoryOutputPort by mongoArtworkRepository {
 
-    override fun save(artwork: Artwork): Mono<Artwork> =
+    override fun save(artwork: CreateArtwork): Mono<Artwork> =
         mongoArtworkRepository.save(artwork)
             .doOnSuccess {
                 deleteKeysFromRedisWithRetries(
@@ -82,8 +83,8 @@ class RedisArtworkRepository(
             }.onErrorResume(::isErrorFromRedis) { mongoArtworkRepository.findFullById(id) }
     }
 
-    override fun updateById(id: String, artwork: Artwork): Mono<Artwork> =
-        mongoArtworkRepository.updateById(id, artwork)
+    override fun updateById(id: String, artwork: Artwork, nonUpdatableFields: List<String>): Mono<Artwork> =
+        mongoArtworkRepository.updateById(id, artwork, nonUpdatableFields)
             .doOnSuccess { deleteKeysFromRedisWithRetries(createGeneralKeyById(id), createFullKeyById(id)) }
 
     override fun updateStatusByIdAndPreviousStatus(id: String, prevStatus: ArtworkStatus, newStatus: ArtworkStatus):

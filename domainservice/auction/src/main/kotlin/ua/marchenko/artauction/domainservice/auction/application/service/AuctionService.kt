@@ -14,6 +14,7 @@ import ua.marchenko.artauction.core.auction.exception.AuctionNotFoundException
 import ua.marchenko.artauction.core.auction.exception.InvalidAuctionOperationException
 import ua.marchenko.artauction.domainservice.artwork.application.port.input.ArtworkServiceInputPort
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork.ArtworkStatus
+import ua.marchenko.artauction.domainservice.auction.domain.CreateAuction
 
 @Service
 class AuctionService(
@@ -31,7 +32,7 @@ class AuctionService(
     override fun getFullById(id: String): Mono<AuctionFull> =
         auctionRepository.findFullById(id).switchIfEmpty { Mono.error(AuctionNotFoundException(id)) }
 
-    override fun save(auction: Auction): Mono<Auction> {
+    override fun save(auction: CreateAuction): Mono<Auction> {
         return artworkService.updateStatusByIdAndPreviousStatus(
             auction.artworkId,
             ArtworkStatus.VIEW,

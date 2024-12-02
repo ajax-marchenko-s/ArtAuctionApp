@@ -7,7 +7,7 @@ import ua.marchenko.artauction.domainservice.auction.domain.projection.AuctionFu
 import ua.marchenko.artauction.domainservice.user.domain.User
 
 fun Auction.toFullAuction(artwork: ArtworkFull, buyers: List<BidFull> = emptyList()) = AuctionFull(
-    id = id ?: "",
+    id = id,
     artwork = artwork,
     startBid = startBid,
     buyers = buyers,

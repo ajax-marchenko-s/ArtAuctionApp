@@ -24,6 +24,7 @@ import ua.marchenko.artauction.domainservice.artwork.application.port.input.Artw
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
 import ua.marchenko.artauction.domainservice.artwork.domain.random
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork.ArtworkStatus
+import ua.marchenko.artauction.domainservice.auction.domain.CreateAuction
 
 class AuctionServiceTest {
 
@@ -147,45 +148,53 @@ class AuctionServiceTest {
         //GIVEN
         val newAuctionId = getRandomString()
         val artwork = Artwork.random(status = ArtworkStatus.ON_AUCTION)
-        val auction = Auction.random(artworkId = artwork.id!!)
+        val createAuction = CreateAuction.random(artworkId = artwork.id)
+        val expectedAuction = Auction(
+            id = newAuctionId,
+            artworkId = createAuction.artworkId,
+            startBid = createAuction.startBid,
+            buyers = createAuction.buyers,
+            startedAt = createAuction.startedAt,
+            finishedAt = createAuction.finishedAt,
+        )
 
         every {
             mockArtworkService.updateStatusByIdAndPreviousStatus(
-                auction.artworkId,
+                createAuction.artworkId,
                 ArtworkStatus.VIEW,
                 ArtworkStatus.ON_AUCTION
             )
         } returns artwork.toMono()
-        every { mockAuctionRepository.save(auction) } returns auction.copy(id = newAuctionId).toMono()
+        every { mockAuctionRepository.save(createAuction) } returns expectedAuction.toMono()
         every {
-            mockAuctionEventKafkaProducer.sendCreateAuctionEvent(auction.copy(id = newAuctionId))
+            mockAuctionEventKafkaProducer.sendCreateAuctionEvent(expectedAuction)
         } returns Unit.toMono()
 
         //WHEN
-        val result = auctionService.save(auction)
+        val result = auctionService.save(createAuction)
 
         //THEN
         result.test()
-            .expectNext(auction.copy(id = newAuctionId))
+            .expectNext(expectedAuction)
             .verifyComplete()
-        verify(exactly = 1) { mockAuctionEventKafkaProducer.sendCreateAuctionEvent(auction.copy(id = newAuctionId)) }
+        verify(exactly = 1) { mockAuctionEventKafkaProducer.sendCreateAuctionEvent(expectedAuction) }
     }
 
     @Test
     fun `should throw InvalidAuctionOperationException when artwork doesnt have VIEW status`() {
         // GIVEN
-        val auctionRequest = Auction.random(artworkId = ObjectId().toHexString())
+        val createAuction = CreateAuction.random(artworkId = ObjectId().toHexString())
 
         every {
             mockArtworkService.updateStatusByIdAndPreviousStatus(
-                auctionRequest.artworkId,
+                createAuction.artworkId,
                 ArtworkStatus.VIEW,
                 ArtworkStatus.ON_AUCTION
             )
         } returns Mono.empty()
 
         // WHEN
-        val result = auctionService.save(auctionRequest)
+        val result = auctionService.save(createAuction)
 
         // THEN
         result.test()

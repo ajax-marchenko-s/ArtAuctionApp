@@ -5,7 +5,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import systems.ajax.nats.handler.api.NatsHandlerManager
 import systems.ajax.nats.publisher.api.NatsMessagePublisher
-import ua.marchenko.artauction.gateway.application.port.input.AuctionMessageHandlerInputPort
+import ua.marchenko.artauction.gateway.application.port.input.AuctionInputPort
 import ua.marchenko.commonmodels.auction.Auction
 import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.input.reqreply.auction.CreateAuctionRequest
@@ -19,7 +19,7 @@ import ua.marchenko.internal.input.reqreply.auction.FindAuctionByIdResponse
 class NatsAuctionMessageHandler(
     private val natsPublisher: NatsMessagePublisher,
     private val natsManager: NatsHandlerManager,
-) : AuctionMessageHandlerInputPort {
+) : AuctionInputPort {
 
     override fun getAllAuctions(request: FindAllAuctionsRequest): Mono<FindAllAuctionsResponse> {
         return natsPublisher.request(

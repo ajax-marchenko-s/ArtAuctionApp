@@ -3,7 +3,7 @@ package ua.marchenko.artauction.gateway.infrastructure.nats
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import systems.ajax.nats.publisher.api.NatsMessagePublisher
-import ua.marchenko.artauction.gateway.application.port.input.ArtworkMessageHandlerInputPort
+import ua.marchenko.artauction.gateway.application.port.input.ArtworkInputPort
 import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkRequest
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse
@@ -19,7 +19,7 @@ import ua.marchenko.internal.input.reqreply.artwork.FindArtworkFullByIdResponse
 @Component
 class NatsArtworkMessageHandler(
     private val natsPublisher: NatsMessagePublisher,
-) : ArtworkMessageHandlerInputPort {
+) : ArtworkInputPort {
 
     override fun getArtworkById(request: FindArtworkByIdRequest): Mono<FindArtworkByIdResponse> {
         return natsPublisher.request(

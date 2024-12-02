@@ -8,7 +8,6 @@ import reactor.kotlin.core.publisher.switchIfEmpty
 import ua.marchenko.artauction.domainservice.user.application.port.input.UserServiceInputPort
 import ua.marchenko.artauction.core.artwork.exception.ArtworkNotFoundException
 import ua.marchenko.artauction.core.user.exception.UserNotFoundException
-import ua.marchenko.artauction.domainservice.artwork.application.mapper.toDomain
 import ua.marchenko.artauction.domainservice.artwork.application.port.input.ArtworkServiceInputPort
 import ua.marchenko.artauction.domainservice.artwork.application.port.output.ArtworkRepositoryOutputPort
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
@@ -40,13 +39,19 @@ class ArtworkService(
                 else sink.error(UserNotFoundException(value = artwork.artistId))
             }
             .flatMap { artworkToSave ->
-                artworkRepository.save(artworkToSave.toDomain(status = ArtworkStatus.VIEW))
+                artworkRepository.save(artworkToSave)
             }
     }
 
-    override fun update(artworkId: String, artwork: Artwork): Mono<Artwork> =
-        artworkRepository.updateById(artworkId, artwork)
+    override fun update(artworkId: String, artwork: Artwork): Mono<Artwork> {
+        val nonUpdatableFields = listOf(
+            Artwork::id.name,
+            Artwork::status.name,
+            Artwork::artistId.name
+        )
+        return artworkRepository.updateById(artworkId, artwork, nonUpdatableFields)
             .switchIfEmpty { Mono.error(ArtworkNotFoundException(artworkId)) }
+    }
 
     override fun updateStatusByIdAndPreviousStatus(
         artworkId: String,

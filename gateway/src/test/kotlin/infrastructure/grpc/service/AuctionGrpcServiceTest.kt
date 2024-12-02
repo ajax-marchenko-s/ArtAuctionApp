@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
-import ua.marchenko.artauction.gateway.application.port.input.AuctionMessageHandlerInputPort
+import ua.marchenko.artauction.gateway.application.port.input.AuctionInputPort
 import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toCreateAuctionRequestProtoInternal
 import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toCreateAuctionResponseProtoGrpc
 import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toFindAuctionByIdRequestProtoInternal
@@ -28,7 +28,7 @@ import ua.marchenko.grpcapi.input.reqreply.auction.FindAuctionByIdRequest as Fin
 class AuctionGrpcServiceTest {
 
     @MockK
-    private lateinit var auctionMessageHandlerInputPort: AuctionMessageHandlerInputPort
+    private lateinit var auctionMessageHandlerInputPort: AuctionInputPort
 
     @InjectMockKs
     private lateinit var auctionGrpcService: AuctionGrpcService

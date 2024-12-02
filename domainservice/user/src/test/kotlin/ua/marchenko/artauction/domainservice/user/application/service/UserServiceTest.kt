@@ -17,6 +17,7 @@ import ua.marchenko.artauction.domainservice.user.domain.User
 import ua.marchenko.artauction.domainservice.user.domain.random
 import ua.marchenko.artauction.domainservice.user.getRandomEmail
 import ua.marchenko.artauction.core.user.exception.UserNotFoundException
+import ua.marchenko.artauction.domainservice.user.domain.CreateUser
 
 class UserServiceTest {
 
@@ -118,8 +119,8 @@ class UserServiceTest {
     @Test
     fun `should return new user when user with provided email doesnt exist`() {
         // GIVEN
-        val request = User.random()
-        val savedUser = request.copy(id = ObjectId().toHexString())
+        val request = CreateUser.random()
+        val savedUser = User.random()
 
         every { mockUserRepository.save(request) } returns savedUser.toMono()
 
@@ -135,7 +136,7 @@ class UserServiceTest {
     @Test
     fun `should throw UserAlreadyExistsException when user with registration email is already exist`() {
         //GIVEN
-        val request = User.random()
+        val request = CreateUser.random()
         every { mockUserRepository.save(request) } returns
                 DuplicateKeyException("duplicate key").toMono()
 
@@ -150,7 +151,7 @@ class UserServiceTest {
     @Test
     fun `should throw given error when saving user throws error`() {
         //GIVEN
-        val request = User.random()
+        val request = CreateUser.random()
         every { mockUserRepository.save(request) } returns
                 RuntimeException("error").toMono()
 

@@ -9,15 +9,15 @@ import systems.ajax.nats.publisher.api.NatsMessagePublisher
 import ua.marchenko.artauction.domainservice.artwork.application.port.output.ArtworkRepositoryOutputPort
 import ua.marchenko.artauction.domainservice.artwork.domain.random
 import ua.marchenko.artauction.domainservice.artwork.domain.toFullArtwork
-import ua.marchenko.artauction.domainservice.user.domain.User
 import ua.marchenko.internal.NatsSubject
 import ua.marchenko.commonmodels.Error
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdRequest
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkFullByIdRequest
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkFullByIdResponse
-import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
+import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.nats.mapper.toArtworkFullProto
 import ua.marchenko.artauction.domainservice.user.application.port.output.UserRepositoryOutputPort
+import ua.marchenko.artauction.domainservice.user.domain.CreateUser
 import ua.marchenko.artauction.domainservice.utils.AbstractBaseIntegrationTest
 import ua.marchenko.artauction.domainservice.user.domain.random
 
@@ -36,13 +36,9 @@ class GetArtworkFullByIdNatsControllerTest : AbstractBaseIntegrationTest {
     @Test
     fun `should return FindArtworkFullByIdResponse Success when artwork with this id exists`() {
         // GIVEN
-        val savedArtist = userRepository.save(User.random(id = null)).block()
-        val artwork = artworkRepository.save(
-            Artwork.random(
-                id = null,
-                artistId = savedArtist!!.id.toString(),
-            )
-        ).block()!!.toFullArtwork(savedArtist)
+        val savedArtist = userRepository.save(CreateUser.random()).block()
+        val artwork = artworkRepository.save(CreateArtwork.random(artistId = savedArtist!!.id)).block()!!
+            .toFullArtwork(savedArtist)
         val request = FindArtworkByIdRequest.newBuilder().setId(artwork.id).build()
         val expectedResponse = FindArtworkFullByIdResponse.newBuilder().also { builder ->
             builder.successBuilder.setArtwork(artwork.toArtworkFullProto())

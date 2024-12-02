@@ -1,6 +1,7 @@
 package ua.marchenko.artauction.domainservice.user.architecture
 
 import com.tngtech.archunit.core.importer.ClassFileImporter
+import com.tngtech.archunit.core.importer.ImportOption
 import com.tngtech.archunit.library.Architectures.onionArchitecture
 import kotlin.test.Test
 
@@ -20,6 +21,8 @@ class UserModuleArchitectureTest {
 
     companion object {
         private val importedClasses = ClassFileImporter()
-            .importPackages("ua.marchenko.artauction.domainservice.auction")
+            .withImportOption(ImportOption.DoNotIncludeTests())
+            .withImportOption(ImportOption.DoNotIncludeGradleTestFixtures())
+            .importPackages("ua.marchenko.artauction.domainservice.user")
     }
 }

@@ -7,9 +7,10 @@ import ua.marchenko.artauction.domainservice.auction.infrastructure.rest.dto.Auc
 import ua.marchenko.artauction.domainservice.auction.infrastructure.rest.dto.CreateAuctionRequest
 import ua.marchenko.artauction.domainservice.user.infrastructure.rest.mapper.toResponse
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.rest.mapper.toFullResponse
+import ua.marchenko.artauction.domainservice.auction.domain.CreateAuction
 
 fun Auction.toResponse() = AuctionResponse(
-    id = requireNotNull(id) { "auction id cannot be null" },
+    id = id,
     artworkId = artworkId,
     startBid = startBid,
     buyers = buyers.map { it.toResponse() },
@@ -17,8 +18,13 @@ fun Auction.toResponse() = AuctionResponse(
     finishedAt = finishedAt,
 )
 
-fun CreateAuctionRequest.toDomain() =
-    Auction(null, artworkId, startBid, emptyList(), startedAt, finishedAt)
+fun CreateAuctionRequest.toDomainCreate() =
+    CreateAuction(
+        artworkId = artworkId,
+        startBid = startBid,
+        startedAt = startedAt,
+        finishedAt = finishedAt,
+    )
 
 fun Auction.Bid.toResponse() = AuctionResponse.BidResponse(buyerId, bid)
 

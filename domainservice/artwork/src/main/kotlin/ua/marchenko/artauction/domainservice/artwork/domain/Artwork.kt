@@ -1,7 +1,7 @@
 package ua.marchenko.artauction.domainservice.artwork.domain
 
 data class Artwork(
-    val id: String?,
+    val id: String,
     val title: String,
     val description: String,
     val style: ArtworkStyle,
@@ -10,6 +10,7 @@ data class Artwork(
     val status: ArtworkStatus,
     val artistId: String,
 ) {
+
     enum class ArtworkStyle {
         REALISM,
         IMPRESSIONISM,

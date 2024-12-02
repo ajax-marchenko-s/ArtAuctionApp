@@ -1,11 +1,12 @@
 package ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.mapper
 
-import org.bson.types.ObjectId
 import ua.marchenko.artauction.domainservice.user.domain.User
 import ua.marchenko.artauction.domainservice.user.infrastructure.mongo.mapper.toDomain
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
+import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
 import ua.marchenko.artauction.domainservice.artwork.domain.projection.ArtworkFull
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.entity.MongoArtwork
+import ua.marchenko.artauction.domainservice.common.infrastructure.mongodb.id.toObjectId
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.entity.projection.MongoArtworkFull as MongoArtworkFull
 
 fun MongoArtwork.toDomain() = Artwork(
@@ -19,15 +20,26 @@ fun MongoArtwork.toDomain() = Artwork(
     artistId = artistId?.toHexString() ?: "unknown",
 )
 
-fun Artwork.toMongo() = MongoArtwork(
-    id = id?.let { ObjectId(it) },
+fun CreateArtwork.toMongo() = MongoArtwork(
+    id = null,
     title = title,
     description = description,
     style = style.toMongoStyle(),
     width = width,
     height = height,
     status = status.toMongoStatus(),
-    artistId = ObjectId(artistId),
+    artistId = artistId.toObjectId(),
+)
+
+fun Artwork.toMongo() = MongoArtwork(
+    id = id.toObjectId(),
+    title = title,
+    description = description,
+    style = style.toMongoStyle(),
+    width = width,
+    height = height,
+    status = status.toMongoStatus(),
+    artistId = artistId.toObjectId(),
 )
 
 fun MongoArtworkFull.toDomain() = ArtworkFull(

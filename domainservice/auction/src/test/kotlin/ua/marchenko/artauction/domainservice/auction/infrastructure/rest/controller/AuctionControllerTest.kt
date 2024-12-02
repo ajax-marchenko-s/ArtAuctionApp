@@ -16,9 +16,9 @@ import ua.marchenko.artauction.domainservice.auction.domain.random
 import ua.marchenko.artauction.domainservice.auction.getRandomString
 import ua.marchenko.artauction.domainservice.auction.infrastructure.random
 import ua.marchenko.artauction.domainservice.auction.infrastructure.rest.dto.CreateAuctionRequest
-import ua.marchenko.artauction.domainservice.auction.infrastructure.rest.mapper.toDomain
 import ua.marchenko.artauction.domainservice.auction.infrastructure.rest.mapper.toResponse
 import ua.marchenko.artauction.core.auction.exception.AuctionNotFoundException
+import ua.marchenko.artauction.domainservice.auction.infrastructure.rest.mapper.toDomainCreate
 
 class AuctionControllerTest {
 
@@ -88,12 +88,12 @@ class AuctionControllerTest {
     }
 
     @Test
-    fun `should return AuctionResponse`() {
+    fun `should return AuctionResponse when creating auction`() {
         // GIVEN
         val auctionRequest = CreateAuctionRequest.random()
         val auction = Auction.random()
 
-        every { mockAuctionService.save(auctionRequest.toDomain()) } returns auction.toMono()
+        every { mockAuctionService.save(auctionRequest.toDomainCreate()) } returns auction.toMono()
 
         // WHEN
         val result = auctionController.addAuction(auctionRequest)

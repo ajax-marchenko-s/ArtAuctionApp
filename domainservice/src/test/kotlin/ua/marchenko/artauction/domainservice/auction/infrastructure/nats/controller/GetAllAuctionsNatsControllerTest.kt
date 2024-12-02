@@ -10,12 +10,12 @@ import org.springframework.beans.factory.annotation.Qualifier
 import reactor.kotlin.test.test
 import systems.ajax.nats.publisher.api.NatsMessagePublisher
 import ua.marchenko.artauction.domainservice.artwork.application.port.output.ArtworkRepositoryOutputPort
-import ua.marchenko.artauction.domainservice.auction.domain.Auction
 import ua.marchenko.artauction.domainservice.auction.domain.random
-import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
+import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
 import ua.marchenko.artauction.domainservice.artwork.domain.random
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.nats.mapper.toArtworkProto
 import ua.marchenko.artauction.domainservice.auction.application.port.output.AuctionRepositoryOutputPort
+import ua.marchenko.artauction.domainservice.auction.domain.CreateAuction
 import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toAuctionProto
 import ua.marchenko.artauction.domainservice.utils.AbstractBaseIntegrationTest
 import ua.marchenko.internal.NatsSubject
@@ -40,11 +40,10 @@ class GetAllAuctionsNatsControllerTest : AbstractBaseIntegrationTest {
     @Test
     fun `should return all auctions when they are exists`() {
         // GIVEN
-        val artworks = List(2) { artworkRepository.save(Artwork.random(id = null)).block()!!.toArtworkProto() }
+        val artworks = List(2) { artworkRepository.save(CreateArtwork.random()).block()!!.toArtworkProto() }
         val auctions = artworks.map { artwork ->
             auctionRepository.save(
-                Auction.random(
-                    id = null,
+                CreateAuction.random(
                     artworkId = artwork.id!!,
                     startedAt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     finishedAt = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS)

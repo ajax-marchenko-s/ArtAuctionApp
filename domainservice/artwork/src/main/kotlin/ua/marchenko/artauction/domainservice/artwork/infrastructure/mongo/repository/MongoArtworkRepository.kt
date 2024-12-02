@@ -20,6 +20,7 @@ import reactor.core.publisher.Mono
 import ua.marchenko.artauction.domainservice.user.infrastructure.mongo.entity.MongoUser
 import ua.marchenko.artauction.domainservice.artwork.application.port.output.ArtworkRepositoryOutputPort
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
+import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
 import ua.marchenko.artauction.domainservice.artwork.domain.projection.ArtworkFull
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.entity.projection.MongoArtworkFull as MongoArtworkFull
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.entity.MongoArtwork
@@ -32,7 +33,7 @@ class MongoArtworkRepository(
     private val reactiveMongoTemplate: ReactiveMongoTemplate,
 ) : ArtworkRepositoryOutputPort {
 
-    override fun save(artwork: Artwork): Mono<Artwork> =
+    override fun save(artwork: CreateArtwork): Mono<Artwork> =
         reactiveMongoTemplate.save(artwork.toMongo()).map { it.toDomain() }
 
     override fun findById(id: String): Mono<Artwork> {
@@ -88,19 +89,14 @@ class MongoArtworkRepository(
             .map { it.toDomain() }
     }
 
-    override fun updateById(id: String, artwork: Artwork): Mono<Artwork> {
-        val nonUpdatableFields = listOf(
-            MongoArtwork::id.name,
-            MongoArtwork::status.name,
-            MongoArtwork::artistId.name
-        )
-
+    override fun updateById(id: String, artwork: Artwork, nonUpdatableFields: List<String>): Mono<Artwork> {
+        val mongoArtwork = artwork.toMongo()
         val query = Query.query(Criteria.where(MongoArtwork::id.name).isEqualTo(id))
         val changes = Update()
         MongoArtwork::class.memberProperties
             .filter { !nonUpdatableFields.contains(it.name) }
             .forEach { property ->
-                property.get(artwork.toMongo())?.let { value ->
+                property.get(mongoArtwork)?.let { value ->
                     changes.set(property.name, value)
                 }
             }

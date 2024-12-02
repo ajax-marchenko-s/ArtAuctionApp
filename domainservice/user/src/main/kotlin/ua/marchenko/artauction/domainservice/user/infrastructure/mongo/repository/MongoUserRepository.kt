@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import ua.marchenko.artauction.domainservice.user.application.port.output.UserRepositoryOutputPort
+import ua.marchenko.artauction.domainservice.user.domain.CreateUser
 import ua.marchenko.artauction.domainservice.user.domain.User
 import ua.marchenko.artauction.domainservice.user.infrastructure.mongo.entity.MongoUser
 import ua.marchenko.artauction.domainservice.user.infrastructure.mongo.mapper.toDomain
@@ -19,7 +20,7 @@ class MongoUserRepository(
     private val reactiveMongoTemplate: ReactiveMongoTemplate,
 ) : UserRepositoryOutputPort {
 
-    override fun save(user: User): Mono<User> = reactiveMongoTemplate.save(user.toMongo())
+    override fun save(user: CreateUser): Mono<User> = reactiveMongoTemplate.save(user.toMongo())
         .map { it.toDomain() }
 
     override fun findById(id: String): Mono<User> {

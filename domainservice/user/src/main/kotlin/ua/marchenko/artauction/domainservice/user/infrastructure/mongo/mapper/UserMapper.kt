@@ -1,6 +1,6 @@
 package ua.marchenko.artauction.domainservice.user.infrastructure.mongo.mapper
 
-import org.bson.types.ObjectId
+import ua.marchenko.artauction.domainservice.user.domain.CreateUser
 import ua.marchenko.artauction.domainservice.user.domain.User
 import ua.marchenko.artauction.domainservice.user.infrastructure.mongo.entity.MongoUser
 
@@ -11,4 +11,4 @@ fun MongoUser.toDomain(): User = User(
     email ?: "unknown",
 )
 
-fun User.toMongo(): MongoUser = MongoUser(id?.let { ObjectId(it) }, name, lastName, email)
+fun CreateUser.toMongo(): MongoUser = MongoUser(null, name, lastName, email)

@@ -7,10 +7,10 @@ import reactor.kotlin.test.test
 import systems.ajax.nats.publisher.api.NatsMessagePublisher
 import ua.marchenko.artauction.domainservice.artwork.application.port.output.ArtworkRepositoryOutputPort
 import ua.marchenko.artauction.domainservice.auction.infrastructure.AuctionProtoFixture
-import ua.marchenko.artauction.domainservice.user.domain.User
-import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
+import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
 import ua.marchenko.artauction.domainservice.artwork.domain.random
 import ua.marchenko.artauction.domainservice.user.application.port.output.UserRepositoryOutputPort
+import ua.marchenko.artauction.domainservice.user.domain.CreateUser
 import ua.marchenko.artauction.domainservice.utils.AbstractBaseIntegrationTest
 import ua.marchenko.artauction.domainservice.user.domain.random
 import ua.marchenko.internal.NatsSubject
@@ -31,10 +31,10 @@ class AddAuctionNatsControllerTest : AbstractBaseIntegrationTest {
     @Test
     fun `should save new auction and return AuctionResponse with data from CreateAuctionRequest`() {
         // GIVEN
-        val savedArtist = userRepository.save(User.random(id = null)).block()
+        val savedArtist = userRepository.save(CreateUser.random()).block()
         val savedArtwork =
-            mongoArtworkRepository.save(Artwork.random(artistId = savedArtist!!.id!!)).block()
-        val request = AuctionProtoFixture.randomCreateAuctionRequestProto(artworkId = savedArtwork!!.id!!)
+            mongoArtworkRepository.save(CreateArtwork.random(artistId = savedArtist!!.id)).block()
+        val request = AuctionProtoFixture.randomCreateAuctionRequestProto(artworkId = savedArtwork!!.id)
         val expectedResponse = CreateAuctionResponseProto.newBuilder().apply {
             successBuilder.setAuction(
                 AuctionProto.newBuilder().apply {

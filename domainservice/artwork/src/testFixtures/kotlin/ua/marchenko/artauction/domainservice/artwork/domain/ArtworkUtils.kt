@@ -9,7 +9,7 @@ import ua.marchenko.artauction.domainservice.artwork.domain.projection.ArtworkFu
 import ua.marchenko.artauction.domainservice.user.domain.random
 
 fun Artwork.Companion.random(
-    id: String? = ObjectId().toHexString(),
+    id: String = ObjectId().toHexString(),
     artistId: String = ObjectId().toHexString(),
     status: ArtworkStatus = ArtworkStatus.VIEW,
 ): Artwork = Artwork(
@@ -25,6 +25,7 @@ fun Artwork.Companion.random(
 
 fun CreateArtwork.Companion.random(
     artistId: String = ObjectId().toHexString(),
+    status: ArtworkStatus = ArtworkStatus.VIEW,
 ): CreateArtwork = CreateArtwork(
     title = getRandomString(),
     description = getRandomString(),
@@ -32,6 +33,7 @@ fun CreateArtwork.Companion.random(
     width = Random.nextInt(10, 100),
     height = Random.nextInt(10, 100),
     artistId = artistId,
+    status = status,
 )
 
 fun ArtworkFull.Companion.random(

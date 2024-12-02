@@ -31,13 +31,14 @@ import ua.marchenko.artauction.domainservice.auction.infrastructure.mongo.mapper
 import ua.marchenko.artauction.domainservice.user.infrastructure.mongo.entity.MongoUser
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.entity.MongoArtwork
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.entity.projection.MongoArtworkFull
+import ua.marchenko.artauction.domainservice.auction.domain.CreateAuction
 
 @Repository
 class MongoAuctionRepository(
     private val reactiveMongoTemplate: ReactiveMongoTemplate,
 ) : AuctionRepositoryOutputPort {
 
-    override fun save(auction: Auction): Mono<Auction> =
+    override fun save(auction: CreateAuction): Mono<Auction> =
         reactiveMongoTemplate.save(auction.toMongo()).map { it.toDomain() }
 
     override fun findById(id: String): Mono<Auction> {

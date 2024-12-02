@@ -6,6 +6,7 @@ import java.time.Clock
 import ua.marchenko.artauction.domainservice.auction.domain.Auction
 import ua.marchenko.artauction.core.auction.exception.AuctionNotFoundException
 import ua.marchenko.artauction.core.auction.exception.InvalidAuctionOperationException
+import ua.marchenko.artauction.domainservice.auction.domain.CreateAuction
 import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toAuctionProto
 import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toBigDecimal
 import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toLocalDateTime
@@ -14,13 +15,12 @@ import ua.marchenko.internal.input.reqreply.auction.CreateAuctionResponse as Cre
 import ua.marchenko.internal.input.reqreply.auction.FindAllAuctionsResponse as FindAllAuctionsResponseProto
 import ua.marchenko.internal.input.reqreply.auction.FindAuctionByIdResponse as FindAuctionByIdResponseProto
 
-fun CreateAuctionRequestProto.toDomain(clock: Clock): Auction =
-    Auction(
+fun CreateAuctionRequestProto.toDomainCreate(clock: Clock): CreateAuction =
+    CreateAuction(
         artworkId = artworkId,
         startBid = startBid.toBigDecimal(),
         startedAt = startedAt.toLocalDateTime(clock),
         finishedAt = finishedAt.toLocalDateTime(clock),
-        buyers = emptyList()
     )
 
 fun Auction.toFindAuctionByIdSuccessResponseProto(clock: Clock): FindAuctionByIdResponseProto {

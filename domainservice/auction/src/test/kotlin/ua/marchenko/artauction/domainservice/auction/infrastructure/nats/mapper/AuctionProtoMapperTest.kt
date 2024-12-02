@@ -13,6 +13,7 @@ import ua.marchenko.artauction.domainservice.auction.domain.random
 import ua.marchenko.artauction.domainservice.auction.infrastructure.AuctionProtoFixture.randomCreateAuctionRequestProto
 import ua.marchenko.artauction.core.auction.exception.AuctionNotFoundException
 import ua.marchenko.artauction.core.auction.exception.InvalidAuctionOperationException
+import ua.marchenko.artauction.domainservice.auction.domain.CreateAuction
 import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toAuctionProto
 import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toBigDecimal
 import ua.marchenko.artauction.domainservice.auction.infrastructure.common.mapper.CommonMapper.toLocalDateTime
@@ -23,12 +24,11 @@ import ua.marchenko.internal.input.reqreply.auction.FindAuctionByIdResponse
 class AuctionProtoMapperTest {
 
     @Test
-    fun `should return Auction from CreateAuctionRequestProto`() {
+    fun `should return CreateAuction from CreateAuctionRequestProto`() {
         // GIVEN
         val fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
         val requestProto = randomCreateAuctionRequestProto()
-        val expectedResponse = Auction(
-            id = null,
+        val expectedResponse = CreateAuction(
             artworkId = requestProto.artworkId,
             startBid = requestProto.startBid.toBigDecimal(),
             startedAt = requestProto.startedAt.toLocalDateTime(fixedClock),
@@ -37,7 +37,7 @@ class AuctionProtoMapperTest {
         )
 
         // WHEN
-        val result = requestProto.toDomain(fixedClock)
+        val result = requestProto.toDomainCreate(fixedClock)
 
         // THEN
         assertEquals(expectedResponse, result)

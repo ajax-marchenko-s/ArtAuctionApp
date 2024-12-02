@@ -10,7 +10,7 @@ import ua.marchenko.artauction.domainservice.artwork.application.port.output.Art
 import ua.marchenko.artauction.domainservice.artwork.domain.random
 import ua.marchenko.internal.NatsSubject
 import ua.marchenko.commonmodels.Error
-import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
+import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.nats.mapper.toArtworkProto
 import ua.marchenko.artauction.domainservice.utils.AbstractBaseIntegrationTest
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdRequest
@@ -28,8 +28,8 @@ class GetArtworkByIdNatsControllerTest : AbstractBaseIntegrationTest {
     @Test
     fun `should return FindArtworkByIdResponse Success when artwork with this id exists`() {
         // GIVEN
-        val artwork = artworkRepository.save(Artwork.random(id = null)).block()!!
-        val request = FindArtworkByIdRequest.newBuilder().setId(artwork.id!!).build()
+        val artwork = artworkRepository.save(CreateArtwork.random()).block()!!
+        val request = FindArtworkByIdRequest.newBuilder().setId(artwork.id).build()
         val expectedResponse = FindArtworkByIdResponse.newBuilder().also { builder ->
             builder.successBuilder.setArtwork(artwork.toArtworkProto())
         }.build()

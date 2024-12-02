@@ -11,7 +11,7 @@ import systems.ajax.nats.handler.api.ProtoNatsMessageHandler
 import ua.marchenko.artauction.domainservice.auction.application.port.input.AuctionServiceInputPort
 import ua.marchenko.artauction.domainservice.auction.infrastructure.nats.mapper.toCreateAuctionFailureResponseProto
 import ua.marchenko.artauction.domainservice.auction.infrastructure.nats.mapper.toCreateAuctionSuccessResponseProto
-import ua.marchenko.artauction.domainservice.auction.infrastructure.nats.mapper.toDomain
+import ua.marchenko.artauction.domainservice.auction.infrastructure.nats.mapper.toDomainCreate
 import ua.marchenko.internal.NatsSubject
 import ua.marchenko.internal.input.reqreply.auction.CreateAuctionResponse as CreateAuctionResponseProto
 import ua.marchenko.internal.input.reqreply.auction.CreateAuctionRequest as CreateAuctionRequestProto
@@ -37,7 +37,7 @@ class AddAuctionNatsController(
         e.toCreateAuctionFailureResponseProto().toMono()
 
     override fun doHandle(inMsg: CreateAuctionRequestProto): Mono<CreateAuctionResponseProto> {
-        return auctionService.save(inMsg.toDomain(clock))
+        return auctionService.save(inMsg.toDomainCreate(clock))
             .map { it.toCreateAuctionSuccessResponseProto(clock) }
             .onErrorResume {
                 log.error("Error in CreateAuction for {}", inMsg, it)

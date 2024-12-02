@@ -8,9 +8,9 @@ import reactor.kotlin.test.test
 import systems.ajax.nats.publisher.api.NatsMessagePublisher
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.ArtworkProtoFixture
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.nats.mapper.toCreateArtworkFailureResponseProto
-import ua.marchenko.artauction.domainservice.user.domain.User
 import ua.marchenko.artauction.domainservice.user.infrastructure.mongo.repository.MongoUserRepository
 import ua.marchenko.artauction.core.user.exception.UserNotFoundException
+import ua.marchenko.artauction.domainservice.user.domain.CreateUser
 import ua.marchenko.artauction.domainservice.utils.AbstractBaseIntegrationTest
 import ua.marchenko.artauction.domainservice.user.domain.random
 import ua.marchenko.internal.NatsSubject
@@ -30,11 +30,8 @@ class AddArtworkNatsControllerTest : AbstractBaseIntegrationTest {
     @Test
     fun `should save new artwork and return ArtworkResponse with data from CreateArtworkRequest`() {
         // GIVEN
-        val savedArtist = userRepository.save(User.random(id = null)).block()
-        val request = ArtworkProtoFixture.randomCreateArtworkRequestProto(
-            artistId = savedArtist!!.id!!,
-            style = ArtworkStyle.ARTWORK_STYLE_ABSTRACT
-        )
+        val savedArtist = userRepository.save(CreateUser.random()).block()
+        val request = ArtworkProtoFixture.randomCreateArtworkRequestProto(artistId = savedArtist!!.id)
         val expectedResponse = CreateArtworkResponse.newBuilder().also { builder ->
             builder.successBuilder.setArtwork(
                 Artwork.newBuilder().also {

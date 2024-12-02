@@ -20,7 +20,7 @@ class GatewayModuleArchitectureTest {
 
     companion object {
         private val importedClasses = ClassFileImporter()
-            .importPackages("ua.marchenko.artauction.domainservice.auction")
+            .importPackages("ua.marchenko.artauction.gateway")
     }
 
 }

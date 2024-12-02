@@ -16,7 +16,7 @@ import ua.marchenko.artauction.domainservice.auction.application.port.input.Auct
 import ua.marchenko.artauction.domainservice.auction.infrastructure.rest.dto.AuctionFullResponse
 import ua.marchenko.artauction.domainservice.auction.infrastructure.rest.dto.AuctionResponse
 import ua.marchenko.artauction.domainservice.auction.infrastructure.rest.dto.CreateAuctionRequest
-import ua.marchenko.artauction.domainservice.auction.infrastructure.rest.mapper.toDomain
+import ua.marchenko.artauction.domainservice.auction.infrastructure.rest.mapper.toDomainCreate
 import ua.marchenko.artauction.domainservice.auction.infrastructure.rest.mapper.toFullResponse
 import ua.marchenko.artauction.domainservice.auction.infrastructure.rest.mapper.toResponse
 
@@ -47,5 +47,5 @@ class AuctionController(private val auctionService: AuctionServiceInputPort) {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun addAuction(@Valid @RequestBody auction: CreateAuctionRequest): Mono<AuctionResponse> =
-        auctionService.save(auction.toDomain()).map { it.toResponse() }
+        auctionService.save(auction.toDomainCreate()).map { it.toResponse() }
 }

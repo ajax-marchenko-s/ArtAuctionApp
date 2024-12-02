@@ -12,9 +12,9 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import ua.marchenko.artauction.domainservice.user.application.port.input.UserServiceInputPort
 import ua.marchenko.artauction.domainservice.user.infrastructure.rest.dto.CreateUserRequest
-import ua.marchenko.artauction.domainservice.user.infrastructure.rest.mapper.toDomain
 import ua.marchenko.artauction.domainservice.user.infrastructure.rest.mapper.toResponse
 import ua.marchenko.artauction.core.user.dto.UserResponse
+import ua.marchenko.artauction.domainservice.user.infrastructure.rest.mapper.toDomainCreate
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -32,5 +32,5 @@ class UserController(
 
     @PostMapping
     fun addUser(@Valid @RequestBody user: CreateUserRequest) =
-        userService.save(user.toDomain()).map { it.toResponse() }
+        userService.save(user.toDomainCreate()).map { it.toResponse() }
 }

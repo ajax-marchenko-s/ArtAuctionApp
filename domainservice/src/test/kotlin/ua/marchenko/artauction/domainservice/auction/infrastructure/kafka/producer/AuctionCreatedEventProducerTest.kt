@@ -14,10 +14,11 @@ import ua.marchenko.artauction.domainservice.auction.domain.Auction
 import ua.marchenko.artauction.domainservice.auction.domain.random
 import ua.marchenko.artauction.domainservice.auction.infrastructure.kafka.mapper.toAuctionCreatedEvent
 import ua.marchenko.artauction.domainservice.user.application.port.input.UserServiceInputPort
-import ua.marchenko.artauction.domainservice.user.domain.User
 import ua.marchenko.artauction.domainservice.user.domain.random
 import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
 import ua.marchenko.artauction.domainservice.artwork.domain.random
+import ua.marchenko.artauction.domainservice.auction.domain.CreateAuction
+import ua.marchenko.artauction.domainservice.user.domain.CreateUser
 import ua.marchenko.artauction.domainservice.utils.AbstractBaseIntegrationTest
 import ua.marchenko.artauction.domainservice.utils.KafkaTestConfiguration
 import ua.marchenko.internal.KafkaTopic
@@ -42,10 +43,18 @@ class AuctionCreatedEventProducerTest : AbstractBaseIntegrationTest {
     @Test
     fun `should send message to CreatedAuction topic when creating auction`() {
         // GIVEN
-        val user = userService.save(User.random(id = null)).block()!!
+        val user = userService.save(CreateUser.random()).block()!!
         val artwork =
-            artworkService.save(CreateArtwork.random(artistId = user.id!!)).block()!!
-        val auction = Auction.random(id = null, artworkId = artwork.id!!)
+            artworkService.save(CreateArtwork.random(artistId = user.id)).block()!!
+        val createAuction = CreateAuction.random(artworkId = artwork.id)
+        val expectedAuction = Auction(
+            id = EMPTY_STRING,
+            artworkId = createAuction.artworkId,
+            startBid = createAuction.startBid,
+            buyers = createAuction.buyers,
+            startedAt = createAuction.startedAt,
+            finishedAt = createAuction.finishedAt
+        )
 
         val testConsumer = kafkaMockExtension.listen<AuctionCreatedEvent>(
             topic = KafkaTopic.AuctionKafkaTopic.CREATED,
@@ -53,18 +62,19 @@ class AuctionCreatedEventProducerTest : AbstractBaseIntegrationTest {
         )
 
         // WHEN
-        auctionService.save(auction).subscribe()
+        auctionService.save(createAuction).subscribe()
 
         // THEN
         val receivedEvent: AuctionCreatedEvent = testConsumer.awaitFirst({
-            it.auction.artworkId == auction.artworkId
+            it.auction.artworkId == createAuction.artworkId
         })
-        assertEquals(receivedEvent.toAuctionCreatedEvent(clock).auction.copy(id = null), auction)
+        assertEquals(expectedAuction, receivedEvent.toAuctionCreatedEvent(clock).auction.copy(id = EMPTY_STRING))
     }
 
     companion object {
         @JvmField
         @RegisterExtension
         val kafkaMockExtension: KafkaMockExtension = KafkaMockExtension()
+        private const val EMPTY_STRING = ""
     }
 }

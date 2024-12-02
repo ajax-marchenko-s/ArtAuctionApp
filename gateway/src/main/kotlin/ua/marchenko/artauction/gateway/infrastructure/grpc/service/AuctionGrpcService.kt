@@ -5,7 +5,7 @@ import net.devh.boot.grpc.server.service.GrpcService
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
-import ua.marchenko.artauction.gateway.application.port.input.AuctionMessageHandlerInputPort
+import ua.marchenko.artauction.gateway.application.port.input.AuctionInputPort
 import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toAuctionProtoList
 import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toCreateAuctionRequestProtoInternal
 import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toCreateAuctionResponseProtoGrpc
@@ -21,7 +21,7 @@ import ua.marchenko.internal.input.reqreply.auction.FindAllAuctionsRequest
 
 @GrpcService
 class AuctionGrpcService(
-    private val auctionMessageHandlerInputPort: AuctionMessageHandlerInputPort
+    private val auctionMessageHandlerInputPort: AuctionInputPort
 ) : ReactorAuctionServiceGrpc.AuctionServiceImplBase() {
 
     override fun subscribeToAllAuctions(request: Mono<Empty>): Flux<Auction> {

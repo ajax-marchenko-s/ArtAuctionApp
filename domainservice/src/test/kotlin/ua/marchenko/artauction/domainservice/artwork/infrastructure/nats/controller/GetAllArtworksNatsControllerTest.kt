@@ -8,7 +8,7 @@ import reactor.kotlin.test.test
 import systems.ajax.nats.publisher.api.NatsMessagePublisher
 import ua.marchenko.artauction.domainservice.artwork.application.port.output.ArtworkRepositoryOutputPort
 import ua.marchenko.artauction.domainservice.artwork.domain.random
-import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
+import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.nats.mapper.toArtworkProto
 import ua.marchenko.artauction.domainservice.utils.AbstractBaseIntegrationTest
 import ua.marchenko.internal.NatsSubject
@@ -27,12 +27,7 @@ class GetAllArtworksNatsControllerTest : AbstractBaseIntegrationTest {
     @Test
     fun `should return all artworks when they are exists`() {
         // GIVEN
-        val artworks = listOf(
-            artworkRepository.save(Artwork.random(id = null)).block()!!
-                .toArtworkProto(),
-            artworkRepository.save(Artwork.random(id = null)).block()!!
-                .toArtworkProto(),
-        )
+        val artworks = List (2) { artworkRepository.save(CreateArtwork.random()).block()!!.toArtworkProto() }
         val request = FindAllArtworksRequest.newBuilder().setPage(0).setLimit(100).build()
 
         // WHEN

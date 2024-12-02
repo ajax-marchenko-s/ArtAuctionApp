@@ -9,6 +9,7 @@ import ua.marchenko.artauction.domainservice.user.application.exception.UserAlre
 import ua.marchenko.artauction.domainservice.user.application.port.input.UserServiceInputPort
 import ua.marchenko.artauction.core.user.exception.UserNotFoundException
 import ua.marchenko.artauction.domainservice.user.application.port.output.UserRepositoryOutputPort
+import ua.marchenko.artauction.domainservice.user.domain.CreateUser
 import ua.marchenko.artauction.domainservice.user.domain.User
 
 @Service
@@ -24,7 +25,7 @@ class UserService(private val userRepository: UserRepositoryOutputPort) :
         userRepository.findByEmail(email)
             .switchIfEmpty { Mono.error(UserNotFoundException(value = email, field = "email")) }
 
-    override fun save(user: User): Mono<User> =
+    override fun save(user: CreateUser): Mono<User> =
         userRepository.save(user)
             .onErrorMap(DuplicateKeyException::class.java) { UserAlreadyExistsException() }
 

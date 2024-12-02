@@ -13,7 +13,7 @@ import io.mockk.impl.annotations.MockK
 import org.junit.jupiter.api.Test
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
-import ua.marchenko.artauction.gateway.application.port.input.ArtworkMessageHandlerInputPort
+import ua.marchenko.artauction.gateway.application.port.input.ArtworkInputPort
 import ua.marchenko.artauction.gateway.infrastructure.rest.ArtworkController
 import ua.marchenko.artauction.gateway.infrastructure.rest.dto.CreateArtworkRequest
 import ua.marchenko.artauction.gateway.infrastructure.rest.mapper.toArtworkFullResponse
@@ -31,7 +31,7 @@ import ua.marchenko.internal.input.reqreply.artwork.FindArtworkFullByIdRequest a
 class ArtworkControllerTest {
 
     @MockK
-    private lateinit var artworkMessageHandlerInputPort: ArtworkMessageHandlerInputPort
+    private lateinit var artworkMessageHandlerInputPort: ArtworkInputPort
 
     @InjectMockKs
     private lateinit var artworkController: ArtworkController

@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
 import ua.marchenko.artauction.domainservice.utils.AbstractBaseIntegrationTest
 import ua.marchenko.artauction.domainservice.user.application.port.output.UserRepositoryOutputPort
+import ua.marchenko.artauction.domainservice.user.domain.CreateUser
 import ua.marchenko.artauction.domainservice.user.domain.User
 import ua.marchenko.artauction.domainservice.user.domain.random
 import ua.marchenko.artauction.domainservice.user.getRandomEmail
@@ -22,24 +23,30 @@ class MongoUserRepositoryTest : AbstractBaseIntegrationTest {
     @Test
     fun `should save user`() {
         // GIVEN
-        val user = User.random(id = null)
+        val createUser = CreateUser.random()
+        val expectedUser = User(
+            id = EMPTY_STRING,
+            name = createUser.name,
+            lastName = createUser.lastName,
+            email = createUser.email,
+        )
 
         // WHEN
-        val savedUser: Mono<User> = mongoUserRepository.save(user)
+        val savedUser: Mono<User> = mongoUserRepository.save(createUser)
 
         // THEN
         savedUser.test()
-            .assertNext { userFromMono -> assertEquals(user.copy(id = userFromMono.id), userFromMono) }
+            .assertNext { userFromMono -> assertEquals(expectedUser.copy(id = userFromMono.id), userFromMono) }
             .verifyComplete()
     }
 
     @Test
     fun `should find user by id when this user exists`() {
         // GIVEN
-        val savedUser = mongoUserRepository.save(User.random(id = null)).block()
+        val savedUser = mongoUserRepository.save(CreateUser.random()).block()
 
         // WHEN
-        val foundUser = mongoUserRepository.findById(savedUser!!.id.toString())
+        val foundUser = mongoUserRepository.findById(savedUser!!.id)
 
         // THEN
         foundUser.test()
@@ -60,10 +67,10 @@ class MongoUserRepositoryTest : AbstractBaseIntegrationTest {
     @Test
     fun `should return true when user with given id exists`() {
         // GIVEN
-        val savedUser = mongoUserRepository.save(User.random(id = null)).block()
+        val savedUser = mongoUserRepository.save(CreateUser.random()).block()
 
         // WHEN
-        val result = mongoUserRepository.existsById(savedUser!!.id!!)
+        val result = mongoUserRepository.existsById(savedUser!!.id)
 
         // THEN
         result.test()
@@ -85,7 +92,7 @@ class MongoUserRepositoryTest : AbstractBaseIntegrationTest {
     @Test
     fun `should return user when user with given email exists`() {
         // GIVEN
-        val savedUser = mongoUserRepository.save(User.random(id = null)).block()
+        val savedUser = mongoUserRepository.save(CreateUser.random()).block()
 
         // WHEN
         val foundUser = mongoUserRepository.findByEmail(savedUser!!.email)
@@ -109,7 +116,7 @@ class MongoUserRepositoryTest : AbstractBaseIntegrationTest {
     @Test
     fun `should return all users when they are exists`() {
         // GIVEN
-        val users = listOf(mongoUserRepository.save(User.random(id = null)).block())
+        val users = listOf(mongoUserRepository.save(CreateUser.random()).block())
 
         // WHEN
         val result = mongoUserRepository.findAll(page = 0, limit = 100).collectList()
@@ -118,5 +125,9 @@ class MongoUserRepositoryTest : AbstractBaseIntegrationTest {
         result.test()
             .assertNext { assertTrue(it.containsAll(users), "Users $users must be found") }
             .verifyComplete()
+    }
+
+    companion object {
+        private const val EMPTY_STRING = ""
     }
 }

@@ -10,7 +10,7 @@ import ua.marchenko.internal.input.reqreply.auction.FindAuctionByIdResponse as F
 import ua.marchenko.internal.input.reqreply.auction.CreateAuctionRequest as CreateAuctionRequestProto
 import ua.marchenko.internal.input.reqreply.auction.CreateAuctionResponse as CreateAuctionResponseProto
 
-interface AuctionMessageHandlerInputPort {
+interface AuctionInputPort {
     fun getAllAuctions(request: FindAllAuctionsRequestProto): Mono<FindAllAuctionsResponseProto>
     fun getAuctionById(request: FindAuctionByIdRequestProto): Mono<FindAuctionByIdResponseProto>
     fun createAuction(request: CreateAuctionRequestProto): Mono<CreateAuctionResponseProto>

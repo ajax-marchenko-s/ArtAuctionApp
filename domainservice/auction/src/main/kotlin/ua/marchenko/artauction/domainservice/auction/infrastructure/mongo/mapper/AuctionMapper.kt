@@ -10,6 +10,7 @@ import ua.marchenko.artauction.domainservice.user.infrastructure.mongo.entity.Mo
 import ua.marchenko.artauction.domainservice.user.infrastructure.mongo.mapper.toDomain
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.entity.projection.MongoArtworkFull
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.mapper.toDomain
+import ua.marchenko.artauction.domainservice.auction.domain.CreateAuction
 import ua.marchenko.artauction.domainservice.common.infrastructure.mongodb.id.toObjectId
 
 fun MongoAuction.toDomain() = Auction(
@@ -21,7 +22,7 @@ fun MongoAuction.toDomain() = Auction(
     finishedAt ?: LocalDateTime.MIN,
 )
 
-fun Auction.toMongo() =
+fun CreateAuction.toMongo() =
     MongoAuction(null, artworkId.toObjectId(), startBid, buyers.map { it.toMongo() }, startedAt, finishedAt)
 
 fun Auction.Bid.toMongo() = MongoAuction.Bid(buyerId.toObjectId(), bid)

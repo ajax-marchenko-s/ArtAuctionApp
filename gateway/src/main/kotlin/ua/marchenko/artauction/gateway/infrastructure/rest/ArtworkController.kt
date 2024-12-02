@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
-import ua.marchenko.artauction.gateway.application.port.input.ArtworkMessageHandlerInputPort
+import ua.marchenko.artauction.gateway.application.port.input.ArtworkInputPort
 import ua.marchenko.artauction.gateway.infrastructure.rest.dto.ArtworkFullResponse
 import ua.marchenko.artauction.gateway.infrastructure.rest.dto.ArtworkResponse
 import ua.marchenko.artauction.gateway.infrastructure.rest.dto.CreateArtworkRequest
@@ -28,7 +28,7 @@ import ua.marchenko.internal.input.reqreply.artwork.FindArtworkFullByIdRequest
 @RestController
 @RequestMapping("/api/v1/artworks")
 class ArtworkController(
-    private val artworkMessageHandlerInputPort: ArtworkMessageHandlerInputPort,
+    private val artworkMessageHandlerInputPort: ArtworkInputPort,
 ) {
     @GetMapping("{id}")
     fun getArtworkById(@PathVariable id: String): Mono<ArtworkResponse> {

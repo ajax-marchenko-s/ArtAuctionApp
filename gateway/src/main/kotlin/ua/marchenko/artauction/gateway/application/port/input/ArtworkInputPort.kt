@@ -12,7 +12,7 @@ import ua.marchenko.internal.input.reqreply.artwork.FindArtworkByIdResponse as F
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkFullByIdRequest as FindArtworkFullByIdRequestProto
 import ua.marchenko.internal.input.reqreply.artwork.FindArtworkFullByIdResponse as FindArtworkFullByIdResponseProto
 
-interface ArtworkMessageHandlerInputPort {
+interface ArtworkInputPort {
     fun getArtworkById(request: FindArtworkByIdRequestProto): Mono<FindArtworkByIdResponseProto>
     fun getFullArtworkById(request: FindArtworkFullByIdRequestProto): Mono<FindArtworkFullByIdResponseProto>
     fun getAllArtworks(request: FindAllArtworksRequestProto): Mono<FindAllArtworksResponseProto>

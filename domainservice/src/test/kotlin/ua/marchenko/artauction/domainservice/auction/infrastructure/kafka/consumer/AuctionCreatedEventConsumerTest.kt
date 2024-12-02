@@ -13,11 +13,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import ua.marchenko.artauction.domainservice.auction.domain.Auction
 import ua.marchenko.artauction.domainservice.auction.domain.random
-import ua.marchenko.artauction.domainservice.user.domain.User
 import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
 import ua.marchenko.artauction.domainservice.artwork.domain.random
+import ua.marchenko.artauction.domainservice.auction.domain.CreateAuction
+import ua.marchenko.artauction.domainservice.user.domain.CreateUser
 import ua.marchenko.artauction.domainservice.utils.AbstractBaseIntegrationTest
 import ua.marchenko.artauction.domainservice.user.domain.random
 
@@ -45,10 +45,10 @@ class AuctionCreatedEventConsumerTest : AbstractBaseIntegrationTest {
     @Test
     fun `should log auction create event received from kafka`() {
         // GIVEN
-        val user = userService.save(User.random(id = null)).block()!!
+        val user = userService.save(CreateUser.random()).block()!!
         val artwork =
-            artworkService.save(CreateArtwork.random(artistId = user.id!!)).block()!!
-        val auction = Auction.random(id = null, artworkId = artwork.id!!)
+            artworkService.save(CreateArtwork.random(artistId = user.id)).block()!!
+        val auction = CreateAuction.random(artworkId = artwork.id)
 
         // WHEN
         auctionService.save(auction).subscribe()

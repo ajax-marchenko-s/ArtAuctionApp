@@ -2,7 +2,6 @@ package ua.marchenko.artauction.domainservice.auction.infrastructure.rest.mapper
 
 import kotlin.test.Test
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.assertThrows
 import ua.marchenko.artauction.domainservice.auction.domain.Auction
 import ua.marchenko.artauction.domainservice.auction.domain.projection.AuctionFull
 import ua.marchenko.artauction.domainservice.auction.domain.random
@@ -11,6 +10,7 @@ import ua.marchenko.artauction.domainservice.auction.infrastructure.rest.dto.Auc
 import ua.marchenko.artauction.domainservice.auction.infrastructure.rest.dto.AuctionResponse
 import ua.marchenko.artauction.domainservice.auction.infrastructure.rest.dto.CreateAuctionRequest
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.rest.mapper.toFullResponse
+import ua.marchenko.artauction.domainservice.auction.domain.CreateAuction
 
 class AuctionMapperTest {
     @Test
@@ -18,12 +18,12 @@ class AuctionMapperTest {
         // GIVEN
         val auction = Auction.random()
         val expectedAuction = AuctionResponse(
-            auction.id!!,
+            auction.id,
             auction.artworkId,
             auction.startBid,
             auction.buyers.map { it.toResponse() },
             auction.startedAt,
-            auction.finishedAt
+            auction.finishedAt,
         )
 
         // WHEN
@@ -34,35 +34,22 @@ class AuctionMapperTest {
     }
 
     @Test
-    fun `should throw exception when Auction id is null`() {
-        // GIVEN
-        val auction = Auction.random(id = null)
-
-        // WHEN THEN
-        val exception = assertThrows<IllegalArgumentException> {
-            auction.toResponse()
-        }
-        assertEquals("auction id cannot be null", exception.message)
-    }
-
-    @Test
     fun `should return Auction from CreateAuctionRequest`() {
         // GIVEN
         val auction = CreateAuctionRequest.random()
-        val expectedAuction = Auction(
-            null,
+        val expectedCreateAuction = CreateAuction(
             auction.artworkId,
             auction.startBid,
             emptyList(),
             auction.startedAt,
-            auction.finishedAt
+            auction.finishedAt,
         )
 
         // WHEN
-        val result = auction.toDomain()
+        val result = auction.toDomainCreate()
 
         // THEN
-        assertEquals(expectedAuction, result)
+        assertEquals(expectedCreateAuction, result)
     }
 
     @Test
@@ -75,7 +62,7 @@ class AuctionMapperTest {
             auctionFull.startBid,
             auctionFull.buyers.map { it.toFullResponse() },
             auctionFull.startedAt,
-            auctionFull.finishedAt
+            auctionFull.finishedAt,
         )
 
         // WHEN
