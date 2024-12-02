@@ -145,13 +145,11 @@ class RedisArtworkRepository(
             .then(saveToRedis(createFullKeyById(id), byteArrayOf()))
 
     private fun saveArtworkToRedis(artwork: Artwork): Mono<Unit> {
-        val id = requireNotNull(artwork.id) { "artwork id cannot be null" }
-        return saveToRedis(createGeneralKeyById(id), objectMapper.writeValueAsBytes(artwork))
+        return saveToRedis(createGeneralKeyById(artwork.id), objectMapper.writeValueAsBytes(artwork))
     }
 
     private fun saveArtworkFullToRedis(artwork: ArtworkFull): Mono<Unit> {
-        val id = requireNotNull(artwork.id) { "artwork id cannot be null" }
-        return saveToRedis(createFullKeyById(id), objectMapper.writeValueAsBytes(artwork))
+        return saveToRedis(createFullKeyById(artwork.id), objectMapper.writeValueAsBytes(artwork))
     }
 
     private fun saveToRedis(key: String, value: ByteArray): Mono<Unit> =

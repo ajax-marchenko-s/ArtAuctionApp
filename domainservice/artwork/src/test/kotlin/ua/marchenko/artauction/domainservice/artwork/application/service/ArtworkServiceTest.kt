@@ -204,7 +204,7 @@ class ArtworkServiceTest {
         // WHEN
         val result = artworkService.update(artworkFromBd.id, updatedArtwork)
 
-        //THEN
+        // THEN
         result.test()
             .expectNext(expectedArtwork)
             .verifyComplete()
