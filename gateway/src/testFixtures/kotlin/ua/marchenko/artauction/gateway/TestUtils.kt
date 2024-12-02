@@ -1,4 +1,4 @@
-package ua.marchenko.artauction
+package ua.marchenko.artauction.gateway
 
 fun getRandomString(length: Int = 10): String {
     val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')

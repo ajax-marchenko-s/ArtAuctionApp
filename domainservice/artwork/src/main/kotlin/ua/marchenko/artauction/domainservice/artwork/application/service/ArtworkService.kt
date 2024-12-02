@@ -12,6 +12,7 @@ import ua.marchenko.artauction.domainservice.artwork.application.port.input.Artw
 import ua.marchenko.artauction.domainservice.artwork.application.port.output.ArtworkRepositoryOutputPort
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork.ArtworkStatus
+import ua.marchenko.artauction.domainservice.artwork.domain.Artwork.Companion.mergeOnUpdate
 import ua.marchenko.artauction.domainservice.artwork.domain.projection.ArtworkFull
 import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
 
@@ -59,11 +60,4 @@ class ArtworkService(
     }
 
     override fun existsById(id: String) = artworkRepository.existsById(id)
-
-    private fun mergeOnUpdate(previousArtwork: Artwork, updatedArtwork: Artwork): Artwork =
-        updatedArtwork.copy(
-            id = previousArtwork.id,
-            status = previousArtwork.status,
-            artistId = previousArtwork.artistId
-        )
 }

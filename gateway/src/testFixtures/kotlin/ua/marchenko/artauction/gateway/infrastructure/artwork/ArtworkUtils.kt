@@ -1,6 +1,6 @@
-package ua.marchenko.artauction.infrastructure.artwork
+package ua.marchenko.artauction.gateway.infrastructure.artwork
 
-import ua.marchenko.artauction.getRandomString
+import ua.marchenko.artauction.gateway.getRandomString
 import kotlin.random.Random
 import ua.marchenko.artauction.gateway.infrastructure.rest.dto.CreateArtworkRequest
 import ua.marchenko.artauction.gateway.infrastructure.rest.dto.enums.ArtworkStyle

@@ -1,12 +1,12 @@
-package infrastructure.rest.controller
+package ua.marchenko.artauction.gateway.infrastructure.rest.controller
 
-import ua.marchenko.artauction.infrastructure.artwork.ArtworkProtoFixture.randomSuccessCreateArtworkResponseProto
-import ua.marchenko.artauction.infrastructure.artwork.ArtworkProtoFixture.randomSuccessFindAllArtworkFullResponseProto
-import ua.marchenko.artauction.infrastructure.artwork.ArtworkProtoFixture.randomSuccessFindAllArtworkResponseProto
-import ua.marchenko.artauction.infrastructure.artwork.ArtworkProtoFixture.randomSuccessFindArtworkByIdResponseProto
-import ua.marchenko.artauction.infrastructure.artwork.ArtworkProtoFixture.randomSuccessFindArtworkFullByIdResponseProto
-import ua.marchenko.artauction.infrastructure.artwork.random
-import ua.marchenko.artauction.getRandomString
+import ua.marchenko.artauction.gateway.infrastructure.artwork.ArtworkProtoFixture.randomSuccessCreateArtworkResponseProto
+import ua.marchenko.artauction.gateway.infrastructure.artwork.ArtworkProtoFixture.randomSuccessFindAllArtworkFullResponseProto
+import ua.marchenko.artauction.gateway.infrastructure.artwork.ArtworkProtoFixture.randomSuccessFindAllArtworkResponseProto
+import ua.marchenko.artauction.gateway.infrastructure.artwork.ArtworkProtoFixture.randomSuccessFindArtworkByIdResponseProto
+import ua.marchenko.artauction.gateway.infrastructure.artwork.ArtworkProtoFixture.randomSuccessFindArtworkFullByIdResponseProto
+import ua.marchenko.artauction.gateway.infrastructure.artwork.random
+import ua.marchenko.artauction.gateway.getRandomString
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -31,7 +31,7 @@ import ua.marchenko.internal.input.reqreply.artwork.FindArtworkFullByIdRequest a
 class ArtworkControllerTest {
 
     @MockK
-    private lateinit var artworkMessageHandlerInputPort: ArtworkInputPort
+    private lateinit var artworkInputPort: ArtworkInputPort
 
     @InjectMockKs
     private lateinit var artworkController: ArtworkController
@@ -43,7 +43,7 @@ class ArtworkControllerTest {
         val response = randomSuccessCreateArtworkResponseProto()
 
         every {
-            artworkMessageHandlerInputPort.createArtwork(request.toCreateArtworkRequestProto())
+            artworkInputPort.createArtwork(request.toCreateArtworkRequestProto())
         } returns response.toMono()
 
         // WHEN
@@ -64,7 +64,7 @@ class ArtworkControllerTest {
             status = ArtworkStatusProto.ARTWORK_STATUS_ON_AUCTION
         )
         every {
-            artworkMessageHandlerInputPort.getArtworkById(FindArtworkByIdRequestProto.newBuilder().setId(id).build())
+            artworkInputPort.getArtworkById(FindArtworkByIdRequestProto.newBuilder().setId(id).build())
         } returns response.toMono()
 
         // WHEN
@@ -85,7 +85,7 @@ class ArtworkControllerTest {
             status = ArtworkStatusProto.ARTWORK_STATUS_SOLD
         )
         every {
-            artworkMessageHandlerInputPort.getFullArtworkById(
+            artworkInputPort.getFullArtworkById(
                 FindArtworkFullByIdRequestProto.newBuilder().setId(id).build()
             )
         } returns response.toMono()
@@ -104,7 +104,7 @@ class ArtworkControllerTest {
         // GIVEN
         val response = randomSuccessFindAllArtworkResponseProto()
         every {
-            artworkMessageHandlerInputPort.getAllArtworks(
+            artworkInputPort.getAllArtworks(
                 FindAllArtworksRequestProto.newBuilder().setPage(0).setLimit(10).build()
             )
         } returns response.toMono()
@@ -123,7 +123,7 @@ class ArtworkControllerTest {
         // GIVEN
         val response = randomSuccessFindAllArtworkFullResponseProto()
         every {
-            artworkMessageHandlerInputPort.getAllFullArtworks(
+            artworkInputPort.getAllFullArtworks(
                 FindAllArtworksFullRequestProto.newBuilder().setPage(0).setLimit(10).build()
             )
         } returns response.toMono()

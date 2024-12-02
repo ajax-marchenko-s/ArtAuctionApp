@@ -1,6 +1,7 @@
-package architecture
+package ua.marchenko.artauction.gateway.architecture
 
 import com.tngtech.archunit.core.importer.ClassFileImporter
+import com.tngtech.archunit.core.importer.ImportOption
 import com.tngtech.archunit.library.Architectures.onionArchitecture
 import kotlin.test.Test
 
@@ -20,6 +21,8 @@ class GatewayModuleArchitectureTest {
 
     companion object {
         private val importedClasses = ClassFileImporter()
+            .withImportOption(ImportOption.DoNotIncludeTests())
+            .withImportOption(ImportOption.DoNotIncludeGradleTestFixtures())
             .importPackages("ua.marchenko.artauction.gateway")
     }
 

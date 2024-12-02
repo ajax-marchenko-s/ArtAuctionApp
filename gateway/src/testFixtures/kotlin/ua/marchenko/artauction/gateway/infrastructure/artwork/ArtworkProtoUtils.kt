@@ -1,8 +1,8 @@
-package ua.marchenko.artauction.infrastructure.artwork
+package ua.marchenko.artauction.gateway.infrastructure.artwork
 
-import ua.marchenko.artauction.getRandomString
+import ua.marchenko.artauction.gateway.getRandomString
 import kotlin.random.Random
-import ua.marchenko.artauction.infrastructure.user.UserProtoFixture
+import ua.marchenko.artauction.gateway.infrastructure.user.UserProtoFixture
 import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStatus as ArtworkStatusProto
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse as CreateArtworkResponseProto
 import ua.marchenko.internal.commonmodels.artwork.Artwork as ArtworkProto

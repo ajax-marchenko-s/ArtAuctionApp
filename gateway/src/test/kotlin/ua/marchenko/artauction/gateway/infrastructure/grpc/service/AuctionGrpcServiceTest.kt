@@ -1,10 +1,10 @@
-package infrastructure.grpc.service
+package ua.marchenko.artauction.gateway.infrastructure.grpc.service
 
-import ua.marchenko.artauction.infrastructure.auction.AuctionProtoFixture.randomAuctionProto
-import ua.marchenko.artauction.infrastructure.auction.AuctionProtoFixture.randomCreateAuctionRequestProtoGrpc
-import ua.marchenko.artauction.infrastructure.auction.AuctionProtoFixture.randomSuccessCreateAuctionResponseProto
-import ua.marchenko.artauction.infrastructure.auction.AuctionProtoFixture.randomSuccessFindAllAuctionsResponseProto
-import ua.marchenko.artauction.infrastructure.auction.AuctionProtoFixture.randomSuccessFindByIdResponseProto
+import ua.marchenko.artauction.gateway.infrastructure.auction.AuctionProtoFixture.randomAuctionProto
+import ua.marchenko.artauction.gateway.infrastructure.auction.AuctionProtoFixture.randomCreateAuctionRequestProtoGrpc
+import ua.marchenko.artauction.gateway.infrastructure.auction.AuctionProtoFixture.randomSuccessCreateAuctionResponseProto
+import ua.marchenko.artauction.gateway.infrastructure.auction.AuctionProtoFixture.randomSuccessFindAllAuctionsResponseProto
+import ua.marchenko.artauction.gateway.infrastructure.auction.AuctionProtoFixture.randomSuccessFindByIdResponseProto
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -20,15 +20,14 @@ import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toCreateAuctio
 import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toCreateAuctionResponseProtoGrpc
 import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toFindAuctionByIdRequestProtoInternal
 import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toFindAuctionByIdResponseProtoGrpc
-import ua.marchenko.artauction.gateway.infrastructure.grpc.service.AuctionGrpcService
-import ua.marchenko.artauction.getRandomString
+import ua.marchenko.artauction.gateway.getRandomString
 import ua.marchenko.internal.input.reqreply.auction.FindAllAuctionsRequest
 import ua.marchenko.grpcapi.input.reqreply.auction.FindAuctionByIdRequest as FindAuctionByIdRequestProtoGrpc
 
 class AuctionGrpcServiceTest {
 
     @MockK
-    private lateinit var auctionMessageHandlerInputPort: AuctionInputPort
+    private lateinit var auctionInputPort: AuctionInputPort
 
     @InjectMockKs
     private lateinit var auctionGrpcService: AuctionGrpcService
@@ -39,7 +38,7 @@ class AuctionGrpcServiceTest {
         val request = randomCreateAuctionRequestProtoGrpc()
         val response = randomSuccessCreateAuctionResponseProto()
         every {
-            auctionMessageHandlerInputPort.createAuction(request.toCreateAuctionRequestProtoInternal())
+            auctionInputPort.createAuction(request.toCreateAuctionRequestProtoInternal())
         } returns response.toMono()
 
         // WHEN
@@ -58,7 +57,7 @@ class AuctionGrpcServiceTest {
         val request = FindAuctionByIdRequestProtoGrpc.newBuilder().also { it.id = id }.build()
         val response = randomSuccessFindByIdResponseProto()
         every {
-            auctionMessageHandlerInputPort.getAuctionById(request.toFindAuctionByIdRequestProtoInternal())
+            auctionInputPort.getAuctionById(request.toFindAuctionByIdRequestProtoInternal())
         } returns response.toMono()
 
         // WHEN
@@ -77,7 +76,7 @@ class AuctionGrpcServiceTest {
         val auctionsFromNats = List(3) { randomAuctionProto() }
 
         every {
-            auctionMessageHandlerInputPort.getAllAuctions(
+            auctionInputPort.getAllAuctions(
                 FindAllAuctionsRequest.newBuilder().apply {
                     page = START_PAGE
                     limit = Int.MAX_VALUE
@@ -86,7 +85,7 @@ class AuctionGrpcServiceTest {
         } returns randomSuccessFindAllAuctionsResponseProto(existedAuctions).toMono()
 
         every {
-            auctionMessageHandlerInputPort.subscribeToCreatedAuction()
+            auctionInputPort.subscribeToCreatedAuction()
         } returns auctionsFromNats.toFlux()
 
         // WHEN

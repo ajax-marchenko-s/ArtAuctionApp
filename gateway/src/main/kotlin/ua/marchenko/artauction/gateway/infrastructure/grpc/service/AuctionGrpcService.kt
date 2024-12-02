@@ -21,7 +21,7 @@ import ua.marchenko.internal.input.reqreply.auction.FindAllAuctionsRequest
 
 @GrpcService
 class AuctionGrpcService(
-    private val auctionMessageHandlerInputPort: AuctionInputPort
+    private val auctionInputPort: AuctionInputPort
 ) : ReactorAuctionServiceGrpc.AuctionServiceImplBase() {
 
     override fun subscribeToAllAuctions(request: Mono<Empty>): Flux<Auction> {
@@ -31,10 +31,10 @@ class AuctionGrpcService(
         }.build()
 
         val existingAuctions =
-            auctionMessageHandlerInputPort.getAllAuctions(allAuctionRequest)
+            auctionInputPort.getAllAuctions(allAuctionRequest)
                 .flatMapMany { it.toAuctionProtoList().toFlux() }
 
-        return auctionMessageHandlerInputPort.subscribeToCreatedAuction().startWith(existingAuctions)
+        return auctionInputPort.subscribeToCreatedAuction().startWith(existingAuctions)
     }
 
     override fun findAuctionById(request: Mono<FindAuctionByIdRequest>):
@@ -42,7 +42,7 @@ class AuctionGrpcService(
         return request
             .map { it.toFindAuctionByIdRequestProtoInternal() }
             .flatMap {
-                auctionMessageHandlerInputPort.getAuctionById(it)
+                auctionInputPort.getAuctionById(it)
             }.map { it.toFindAuctionByIdResponseProtoGrpc() }
     }
 
@@ -50,7 +50,7 @@ class AuctionGrpcService(
         return request
             .map { it.toCreateAuctionRequestProtoInternal() }
             .flatMap {
-                auctionMessageHandlerInputPort.createAuction(it)
+                auctionInputPort.createAuction(it)
             }.map { it.toCreateAuctionResponseProtoGrpc() }
     }
 }

@@ -28,18 +28,18 @@ import ua.marchenko.internal.input.reqreply.artwork.FindArtworkFullByIdRequest
 @RestController
 @RequestMapping("/api/v1/artworks")
 class ArtworkController(
-    private val artworkMessageHandlerInputPort: ArtworkInputPort,
+    private val artworkInputPort: ArtworkInputPort,
 ) {
     @GetMapping("{id}")
     fun getArtworkById(@PathVariable id: String): Mono<ArtworkResponse> {
         val request = FindArtworkByIdRequest.newBuilder().setId(id).build()
-        return artworkMessageHandlerInputPort.getArtworkById(request).map { it.toArtworkResponse() }
+        return artworkInputPort.getArtworkById(request).map { it.toArtworkResponse() }
     }
 
     @GetMapping("{id}/full")
     fun getFullArtworkById(@PathVariable id: String): Mono<ArtworkFullResponse> {
         val request = FindArtworkFullByIdRequest.newBuilder().setId(id).build()
-        return artworkMessageHandlerInputPort.getFullArtworkById(request).map { it.toArtworkFullResponse() }
+        return artworkInputPort.getFullArtworkById(request).map { it.toArtworkFullResponse() }
     }
 
     @GetMapping
@@ -48,7 +48,7 @@ class ArtworkController(
         @RequestParam(required = false, defaultValue = "10") limit: Int
     ): Mono<List<ArtworkResponse>> {
         val request = FindAllArtworksRequest.newBuilder().setPage(page).setLimit(limit).build()
-        return artworkMessageHandlerInputPort.getAllArtworks(request).map { it.toArtworksList() }
+        return artworkInputPort.getAllArtworks(request).map { it.toArtworksList() }
     }
 
     @GetMapping("/full")
@@ -57,13 +57,13 @@ class ArtworkController(
         @RequestParam(required = false, defaultValue = "10") limit: Int
     ): Mono<List<ArtworkFullResponse>> {
         val request = FindAllArtworksFullRequest.newBuilder().setPage(page).setLimit(limit).build()
-        return artworkMessageHandlerInputPort.getAllFullArtworks(request).map { it.toFullArtworkList() }
+        return artworkInputPort.getAllFullArtworks(request).map { it.toFullArtworkList() }
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun addArtwork(@Valid @RequestBody artwork: CreateArtworkRequest): Mono<ArtworkResponse> {
-        return artworkMessageHandlerInputPort.createArtwork(artwork.toCreateArtworkRequestProto())
+        return artworkInputPort.createArtwork(artwork.toCreateArtworkRequestProto())
             .map { it.toArtworkResponse() }
     }
 }

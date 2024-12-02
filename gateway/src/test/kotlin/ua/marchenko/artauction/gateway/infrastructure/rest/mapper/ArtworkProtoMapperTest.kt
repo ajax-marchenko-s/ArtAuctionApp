@@ -1,4 +1,4 @@
-package infrastructure.rest.mapper
+package ua.marchenko.artauction.gateway.infrastructure.rest.mapper
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -12,18 +12,9 @@ import ua.marchenko.artauction.gateway.infrastructure.rest.dto.ArtworkResponse
 import ua.marchenko.artauction.gateway.infrastructure.rest.dto.CreateArtworkRequest
 import ua.marchenko.artauction.gateway.infrastructure.rest.dto.enums.ArtworkStyle
 import ua.marchenko.artauction.gateway.infrastructure.rest.dto.enums.ArtworkStatus
-import ua.marchenko.artauction.gateway.infrastructure.rest.mapper.toArtworkFullResponse
-import ua.marchenko.artauction.gateway.infrastructure.rest.mapper.toArtworkResponse
-import ua.marchenko.artauction.gateway.infrastructure.rest.mapper.toArtworkStatus
-import ua.marchenko.artauction.gateway.infrastructure.rest.mapper.toArtworkStyle
-import ua.marchenko.artauction.gateway.infrastructure.rest.mapper.toArtworkStyleProto
-import ua.marchenko.artauction.gateway.infrastructure.rest.mapper.toArtworksList
-import ua.marchenko.artauction.gateway.infrastructure.rest.mapper.toCreateArtworkRequestProto
-import ua.marchenko.artauction.gateway.infrastructure.rest.mapper.toFullArtworkList
-import ua.marchenko.artauction.gateway.infrastructure.rest.mapper.toUserResponse
-import ua.marchenko.artauction.infrastructure.artwork.ArtworkProtoFixture
-import ua.marchenko.artauction.infrastructure.artwork.random
-import ua.marchenko.artauction.infrastructure.user.UserProtoFixture
+import ua.marchenko.artauction.gateway.infrastructure.artwork.ArtworkProtoFixture
+import ua.marchenko.artauction.gateway.infrastructure.artwork.random
+import ua.marchenko.artauction.gateway.infrastructure.user.UserProtoFixture
 import ua.marchenko.artauction.core.user.exception.UserNotFoundException
 import ua.marchenko.internal.input.reqreply.artwork.CreateArtworkResponse
 import ua.marchenko.internal.commonmodels.artwork.Artwork.ArtworkStatus as ArtworkStatusProto

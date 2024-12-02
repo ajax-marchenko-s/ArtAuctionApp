@@ -1,10 +1,10 @@
-package ua.marchenko.artauction.infrastructure.auction
+package ua.marchenko.artauction.gateway.infrastructure.auction
 
 import com.google.protobuf.ByteString
 import java.time.Instant
 import com.google.protobuf.Timestamp as TimestampProto
 import kotlin.random.Random
-import ua.marchenko.artauction.getRandomString
+import ua.marchenko.artauction.gateway.getRandomString
 import ua.marchenko.commonmodels.auction.Auction as AuctionProto
 import ua.marchenko.grpcapi.input.reqreply.auction.CreateAuctionRequest as CreateAuctionRequestProtoGrpc
 import ua.marchenko.internal.input.reqreply.auction.CreateAuctionResponse as CreateAuctionResponseProto

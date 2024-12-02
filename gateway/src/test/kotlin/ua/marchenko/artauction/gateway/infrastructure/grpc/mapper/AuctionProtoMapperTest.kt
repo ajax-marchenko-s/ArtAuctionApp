@@ -1,4 +1,4 @@
-package infrastructure.grpc.mapper
+package ua.marchenko.artauction.gateway.infrastructure.grpc.mapper
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -7,16 +7,11 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import ua.marchenko.artauction.infrastructure.auction.AuctionProtoFixture
-import ua.marchenko.artauction.infrastructure.auction.AuctionProtoFixture.randomCreateAuctionRequestProtoGrpc
-import ua.marchenko.artauction.infrastructure.auction.AuctionProtoFixture.randomSuccessCreateAuctionResponseProto
-import ua.marchenko.artauction.infrastructure.auction.AuctionProtoFixture.randomSuccessFindByIdResponseProto
-import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toAuctionProtoList
-import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toCreateAuctionRequestProtoInternal
-import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toCreateAuctionResponseProtoGrpc
-import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toFindAuctionByIdRequestProtoInternal
-import ua.marchenko.artauction.gateway.infrastructure.grpc.mapper.toFindAuctionByIdResponseProtoGrpc
-import ua.marchenko.artauction.getRandomString
+import ua.marchenko.artauction.gateway.infrastructure.auction.AuctionProtoFixture
+import ua.marchenko.artauction.gateway.infrastructure.auction.AuctionProtoFixture.randomCreateAuctionRequestProtoGrpc
+import ua.marchenko.artauction.gateway.infrastructure.auction.AuctionProtoFixture.randomSuccessCreateAuctionResponseProto
+import ua.marchenko.artauction.gateway.infrastructure.auction.AuctionProtoFixture.randomSuccessFindByIdResponseProto
+import ua.marchenko.artauction.gateway.getRandomString
 import ua.marchenko.artauction.core.auction.exception.AuctionNotFoundException
 import ua.marchenko.artauction.core.auction.exception.InvalidAuctionOperationException
 import ua.marchenko.grpcapi.input.reqreply.auction.FindAuctionByIdRequest
