@@ -186,4 +186,27 @@ class ArtworkServiceTest {
             .assertNext { assertTrue(it, "ExistsById should return false") }
             .verifyComplete()
     }
+
+    @Test
+    fun `should update artwork by id when artwork with this id exists`() {
+        // GIVEN
+        val artworkFromBd = Artwork.random()
+        val updatedArtwork = Artwork.random()
+        val expectedArtwork = updatedArtwork.copy(
+            id = artworkFromBd.id,
+            status = artworkFromBd.status,
+            artistId = artworkFromBd.artistId
+        )
+
+        every { mockArtworkRepository.findById(artworkFromBd.id) } returns artworkFromBd.toMono()
+        every { mockArtworkRepository.save(expectedArtwork) } returns expectedArtwork.toMono()
+
+        // WHEN
+        val result = artworkService.update(artworkFromBd.id, updatedArtwork)
+
+        //THEN
+        result.test()
+            .expectNext(expectedArtwork)
+            .verifyComplete()
+    }
 }

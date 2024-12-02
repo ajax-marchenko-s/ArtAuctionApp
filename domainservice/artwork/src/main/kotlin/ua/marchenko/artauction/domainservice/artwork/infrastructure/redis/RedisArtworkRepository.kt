@@ -83,9 +83,14 @@ class RedisArtworkRepository(
             }.onErrorResume(::isErrorFromRedis) { mongoArtworkRepository.findFullById(id) }
     }
 
-    override fun updateById(id: String, artwork: Artwork, nonUpdatableFields: List<String>): Mono<Artwork> =
-        mongoArtworkRepository.updateById(id, artwork, nonUpdatableFields)
-            .doOnSuccess { deleteKeysFromRedisWithRetries(createGeneralKeyById(id), createFullKeyById(id)) }
+    override fun save(artwork: Artwork): Mono<Artwork> =
+        mongoArtworkRepository.save(artwork)
+            .doOnSuccess {
+                deleteKeysFromRedisWithRetries(
+                    createGeneralKeyById(artwork.id),
+                    createFullKeyById(artwork.id)
+                )
+            }
 
     override fun updateStatusByIdAndPreviousStatus(id: String, prevStatus: ArtworkStatus, newStatus: ArtworkStatus):
             Mono<Artwork> =

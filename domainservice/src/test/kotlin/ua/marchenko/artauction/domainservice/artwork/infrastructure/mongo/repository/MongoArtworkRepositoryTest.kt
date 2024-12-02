@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.springframework.beans.factory.annotation.Autowired
 import reactor.kotlin.test.test
 import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
-import ua.marchenko.artauction.domainservice.artwork.getRandomString
 import ua.marchenko.artauction.domainservice.user.domain.CreateUser
 import ua.marchenko.artauction.domainservice.utils.AbstractBaseIntegrationTest
 import ua.marchenko.artauction.domainservice.user.domain.random
@@ -27,7 +26,7 @@ class MongoArtworkRepositoryTest : AbstractBaseIntegrationTest {
     private lateinit var userRepository: MongoUserRepository
 
     @Test
-    fun `should save artwork`() {
+    fun `should save new artwork`() {
         // GIVEN
         val createArtwork = CreateArtwork.random()
         val expectedArtwork = Artwork(
@@ -216,42 +215,16 @@ class MongoArtworkRepositoryTest : AbstractBaseIntegrationTest {
     }
 
     @Test
-    fun `should update artwork if artwork with id exist`() {
+    fun `should save artwork`() {
         // GIVEN
-        val savedArtwork = artworkRepository.save(
-            CreateArtwork.random()
-        ).block()
         val updatedArtwork = Artwork.random()
-        val nonUpdatableFields = listOf(
-            Artwork::id.name,
-            Artwork::status.name,
-            Artwork::artistId.name
-        )
 
         // WHEN
-        val result = artworkRepository.updateById(savedArtwork!!.id, updatedArtwork, nonUpdatableFields)
+        val result = artworkRepository.save(updatedArtwork)
 
         // THEN
         result.test()
-            .assertNext { artwork ->
-                assertEquals(
-                    updatedArtwork.copy(
-                        id = savedArtwork.id,
-                        status = savedArtwork.status,
-                        artistId = savedArtwork.artistId
-                    ), artwork
-                )
-            }
-            .verifyComplete()
-    }
-
-    @Test
-    fun `should return empty if artwork to update id doesnt exist`() {
-        // WHEN
-        val result = artworkRepository.updateById(getRandomString(), Artwork.random(), emptyList())
-
-        // THEN
-        result.test()
+            .expectNext(updatedArtwork)
             .verifyComplete()
     }
 

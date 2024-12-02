@@ -45,7 +45,7 @@ class RedisArtworkRepositoryTest : AbstractBaseIntegrationTest {
     private lateinit var objectMapper: ObjectMapper
 
     @Test
-    fun `should remove empty bytearray from artwork and artwork full`() {
+    fun `should remove empty bytearray from artwork and artwork full when saving new artwork`() {
         // GIVEN
         val createArtwork = CreateArtwork.random()
         val expectedArtwork = Artwork(
@@ -216,14 +216,9 @@ class RedisArtworkRepositoryTest : AbstractBaseIntegrationTest {
     }
 
     @Test
-    fun `should remove general and full key from redis when updating artwork`() {
+    fun `should remove general and full key from redis when saving artwork`() {
         // GIVEN
         val savedArtwork = mongoArtworkRepository.save(CreateArtwork.random()).block()!!
-        val nonUpdatableFields = listOf(
-            Artwork::id.name,
-            Artwork::status.name,
-            Artwork::artistId.name
-        )
 
         reactiveRedisTemplate.opsForValue().set(
             createGeneralKeyById(savedArtwork.id),
@@ -238,7 +233,7 @@ class RedisArtworkRepositoryTest : AbstractBaseIntegrationTest {
         ).block()
 
         // WHEN
-        redisArtworkRepository.updateById(savedArtwork.id, Artwork.random(), nonUpdatableFields).block()
+        redisArtworkRepository.save(Artwork.random(id = savedArtwork.id)).block()
 
         // THEN
         await().atMost(timeToWait).untilAsserted {

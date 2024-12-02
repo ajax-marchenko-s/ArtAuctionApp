@@ -44,12 +44,9 @@ class ArtworkService(
     }
 
     override fun update(artworkId: String, artwork: Artwork): Mono<Artwork> {
-        val nonUpdatableFields = listOf(
-            Artwork::id.name,
-            Artwork::status.name,
-            Artwork::artistId.name
-        )
-        return artworkRepository.updateById(artworkId, artwork, nonUpdatableFields)
+        return getById(artworkId)
+            .map { mergeOnUpdate(it, artwork) }
+            .flatMap { artworkRepository.save(it) }
             .switchIfEmpty { Mono.error(ArtworkNotFoundException(artworkId)) }
     }
 
@@ -62,4 +59,11 @@ class ArtworkService(
     }
 
     override fun existsById(id: String) = artworkRepository.existsById(id)
+
+    private fun mergeOnUpdate(previousArtwork: Artwork, updatedArtwork: Artwork): Artwork =
+        updatedArtwork.copy(
+            id = previousArtwork.id,
+            status = previousArtwork.status,
+            artistId = previousArtwork.artistId
+        )
 }

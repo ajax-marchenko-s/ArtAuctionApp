@@ -1,6 +1,5 @@
 package ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.repository
 
-import kotlin.reflect.full.memberProperties
 import org.springframework.data.mongodb.core.FindAndModifyOptions
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Aggregation
@@ -24,7 +23,6 @@ import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
 import ua.marchenko.artauction.domainservice.artwork.domain.projection.ArtworkFull
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.entity.projection.MongoArtworkFull as MongoArtworkFull
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.entity.MongoArtwork
-import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.mapper.getMongoField
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.mapper.toDomain
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.mapper.toMongo
 import ua.marchenko.artauction.domainservice.artwork.infrastructure.mongo.mapper.toMongoStatus
@@ -35,6 +33,9 @@ class MongoArtworkRepository(
 ) : ArtworkRepositoryOutputPort {
 
     override fun save(artwork: CreateArtwork): Mono<Artwork> =
+        reactiveMongoTemplate.save(artwork.toMongo()).map { it.toDomain() }
+
+    override fun save(artwork: Artwork): Mono<Artwork> =
         reactiveMongoTemplate.save(artwork.toMongo()).map { it.toDomain() }
 
     override fun findById(id: String): Mono<Artwork> {
@@ -85,25 +86,6 @@ class MongoArtworkRepository(
                 .isEqualTo(prevStatus.toMongoStatus())
         )
         val changes = Update.update(MongoArtwork::status.name, newStatus.toMongoStatus())
-        val options = FindAndModifyOptions.options().returnNew(true)
-        return reactiveMongoTemplate.findAndModify(query, changes, options, MongoArtwork::class.java)
-            .map { it.toDomain() }
-    }
-
-    override fun updateById(id: String, artwork: Artwork, nonUpdatableFields: List<String>): Mono<Artwork> {
-        val mongoArtwork = artwork.toMongo()
-        val query = Query.query(Criteria.where(MongoArtwork::id.name).isEqualTo(id))
-        val changes = Update()
-        MongoArtwork::class.memberProperties
-            .filter {
-                val mongoField = getMongoField(it.name)
-                mongoField != null && !nonUpdatableFields.contains(getMongoField(it.name))
-            }
-            .forEach { property ->
-                property.get(mongoArtwork)?.let { value ->
-                    changes.set(property.name, value)
-                }
-            }
         val options = FindAndModifyOptions.options().returnNew(true)
         return reactiveMongoTemplate.findAndModify(query, changes, options, MongoArtwork::class.java)
             .map { it.toDomain() }
