@@ -71,7 +71,7 @@ class MongoAuctionRepositoryTest : AbstractBaseIntegrationTest {
         ).block()
 
         // WHEN
-        val result = auctionRepository.findById(savedAuction!!.id.)
+        val result = auctionRepository.findById(savedAuction!!.id)
 
         // THEN
         result.test()
