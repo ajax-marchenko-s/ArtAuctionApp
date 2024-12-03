@@ -1,0 +1,31 @@
+plugins {
+    id("subproject-conventions")
+}
+
+dependencies {
+    implementation(project(":core"))
+    implementation(project(":internal-api"))
+    implementation(project(":domainservice:user"))
+    implementation(project(":domainservice:artwork"))
+    implementation(project(":domainservice:common"))
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive:3.3.2")
+    implementation("com.google.protobuf:protobuf-kotlin:3.25.5")
+    implementation("systems.ajax:nats-spring-boot-starter:4.1.0.186.MASTER-SNAPSHOT")
+    implementation("org.springframework.boot:spring-boot-starter-validation:3.3.2")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("systems.ajax:kafka-spring-boot-starter:3.0.3.170.MASTER-SNAPSHOT")
+    testImplementation(kotlin("test"))
+    testImplementation("systems.ajax:kafka-mock:3.0.3.170.MASTER-SNAPSHOT")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:testcontainers:1.19.0")
+    testImplementation("org.testcontainers:mongodb:1.19.0")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("io.mockk:mockk:1.13.12")
+    testImplementation("com.tngtech.archunit:archunit-junit5:1.3.0")
+    testFixturesImplementation(testFixtures(project(":domainservice:user")))
+    testImplementation(testFixtures(project(":domainservice:user")))
+    testFixturesImplementation(testFixtures(project(":domainservice:artwork")))
+    testImplementation(testFixtures(project(":domainservice:artwork")))
+}

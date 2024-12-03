@@ -5,6 +5,11 @@ plugins {
 dependencies {
     implementation(project(":core"))
     implementation(project(":internal-api"))
+    implementation(project(":domainservice:user"))
+    implementation(project(":domainservice:artwork"))
+    implementation(project(":domainservice:auction"))
+    implementation(project(":domainservice:common"))
+    implementation(project(":domainservice:migration"))
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive:3.3.2")
     implementation("org.springframework.boot:spring-boot-starter-validation:3.3.2")
@@ -26,4 +31,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("io.mockk:mockk:1.13.12")
     testImplementation("com.ninja-squad:springmockk:4.0.2")
+    testImplementation(testFixtures(project(":domainservice:user")))
+    testImplementation(testFixtures(project(":domainservice:artwork")))
+    testImplementation(testFixtures(project(":domainservice:auction")))
 }
