@@ -12,7 +12,6 @@ import ua.marchenko.artauction.domainservice.artwork.application.port.input.Artw
 import ua.marchenko.artauction.domainservice.artwork.application.port.output.ArtworkRepositoryOutputPort
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork
 import ua.marchenko.artauction.domainservice.artwork.domain.Artwork.ArtworkStatus
-import ua.marchenko.artauction.domainservice.artwork.domain.Artwork.Companion.mergeOnUpdate
 import ua.marchenko.artauction.domainservice.artwork.domain.projection.ArtworkFull
 import ua.marchenko.artauction.domainservice.artwork.domain.CreateArtwork
 
@@ -46,7 +45,7 @@ class ArtworkService(
 
     override fun update(artworkId: String, artwork: Artwork): Mono<Artwork> {
         return getById(artworkId)
-            .map { mergeOnUpdate(it, artwork) }
+            .map { previousArtwork -> artwork.mergeOnUpdate(previousArtwork) }
             .flatMap { artworkRepository.save(it) }
             .switchIfEmpty { Mono.error(ArtworkNotFoundException(artworkId)) }
     }

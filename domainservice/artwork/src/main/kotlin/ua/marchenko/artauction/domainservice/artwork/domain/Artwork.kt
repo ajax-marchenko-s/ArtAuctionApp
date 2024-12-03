@@ -31,12 +31,12 @@ data class Artwork(
         UNKNOWN,
     }
 
-    companion object {
-        fun mergeOnUpdate(previousArtwork: Artwork, updatedArtwork: Artwork): Artwork =
-            updatedArtwork.copy(
-                id = previousArtwork.id,
-                status = previousArtwork.status,
-                artistId = previousArtwork.artistId
-            )
-    }
+    fun mergeOnUpdate(previousArtwork: Artwork): Artwork =
+        this.copy(
+            id = previousArtwork.id,
+            status = previousArtwork.status,
+            artistId = previousArtwork.artistId
+        )
+
+    companion object
 }
