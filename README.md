@@ -20,8 +20,3 @@ So firstly artist could add new artwork to the platform and then (whenever he/sh
 - Connection to MongoDB + create repository impl using MongoTemplate
 - Unit test for controllers, services, mappers
 - General utils for tests (getRandomUser etc)
-
-## Key Features
-**User Roles:**
-- Artist: Organize auctions for artworks, post new artworks.
-- Buyer: Buy artwork on auctions.
