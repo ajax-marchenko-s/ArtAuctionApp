@@ -73,3 +73,7 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         run: |
           echo "Commit message: ${{ github.event.head_commit.message }}"
+
+      - name: Logging
+        run: |
+          echo "${{toJSON(github.event)}}"
