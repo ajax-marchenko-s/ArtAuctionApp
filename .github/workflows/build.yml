@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'master'
+      - 'feature/gh-playground'
   pull_request:
     branches:
       - '**'
@@ -67,3 +68,8 @@ jobs:
         with:
           check_name: 'General Tests Report'
           files: '**/build/test-results/**/TEST-*.xml'
+
+      - name: Print commit name
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          echo "Commit message: ${{ github.event.head_commit.message }}"
