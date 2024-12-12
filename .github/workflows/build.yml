@@ -1,6 +1,7 @@
 name: Build
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - 'master'
@@ -70,9 +71,13 @@ jobs:
           files: '**/build/test-results/**/TEST-*.xml'
 
       - name: Print commit name
-        if: ${{ github.event_name == 'push' }}
+#        if: ${{ github.event_name == 'push' }}
         run: |
           echo "Commit message: ${{ github.event.head_commit.message }}"
+
+      - name: Print commit hash
+        run: |
+          echo "Commit hash: ${{ github.event.head_commit.id }}"
 
       - name: Logging
         run: |
