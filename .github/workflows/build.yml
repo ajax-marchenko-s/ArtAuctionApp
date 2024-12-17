@@ -30,7 +30,7 @@ jobs:
         run: |
            COMMIT_SHA=${{ github.event.pull_request.head.sha }}
            COMMIT_JSON=$(gh search commits --hash=$COMMIT_SHA)
-           echo "Raw JSON Response: $COMMIT_JSON"
+           echo "JSON: $COMMIT_JSON"
            COMMIT_MESSAGE=$(echo "$COMMIT_JSON" | jq -r '.[0]')
            echo "Commit Message: $COMMIT_MESSAGE"
         env:
