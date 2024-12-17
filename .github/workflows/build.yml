@@ -116,7 +116,7 @@ jobs:
           latest_commit_sha=$(echo "$latest_commit" | jq -r '.sha')
           echo "$latest_commit_sha"
 
-            - name: Print commit message from cli
-              run: |
-                echo "Commit search result:"
-                gh search commits --hash ${{ github.event.pull_request.head.sha }}
+      - name: Print commit message from cli
+        run: |
+          echo "Commit search result:"
+          gh search commits --hash ${{ github.event.pull_request.head.sha }}
