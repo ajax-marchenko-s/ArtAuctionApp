@@ -32,3 +32,5 @@ jobs:
            COMMIT_JSON=$(gh search commits --hash=$COMMIT_SHA --json=commit)
            COMMIT_MESSAGE=$(echo "$COMMIT_JSON" | jq -r '.[0].commit.message')
            echo "Commit Message: $COMMIT_MESSAGE"
+        env:
+           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
