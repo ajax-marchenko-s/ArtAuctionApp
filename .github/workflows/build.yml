@@ -26,9 +26,9 @@ jobs:
       checks: write
 
     steps:      
-      - name: Print commit message from cli
+      - name: Print commit message from CLI
         run: |
-          echo "Commit search result:"
-          gh search commits --hash ${{ github.event.pull_request.head.sha }}
+          echo "Commit:"
+          gh search commits --hash=${{ github.event.pull_request.head.sha }}
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
