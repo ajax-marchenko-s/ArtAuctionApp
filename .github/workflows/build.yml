@@ -26,7 +26,6 @@ jobs:
       checks: write
 
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -116,3 +115,8 @@ jobs:
           echo "Get commit SHA of the latest commit:"
           latest_commit_sha=$(echo "$latest_commit" | jq -r '.sha')
           echo "$latest_commit_sha"
+
+            - name: Print commit message from cli
+              run: |
+                echo "Commit search result:"
+                gh search commits --hash ${{ github.event.pull_request.head.sha }}
