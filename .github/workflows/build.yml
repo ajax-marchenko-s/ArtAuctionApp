@@ -81,9 +81,11 @@ jobs:
         run: |
           echo "${{toJSON(github.event)}}"
 
-      - name: github.event.commits[0]
+      - name: Print commit message
         run: |
-          echo "${github.event.commits[0]}"
+          SHA=${{ github.event.pull_request.head.sha }}
+          MESSAGE=$(git log --format=%B -n 1 $SHA)
+          echo "Commit Message: $MESSAGE"
       
       - name: List commits on the pull request
         run: |
