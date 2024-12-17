@@ -28,7 +28,7 @@ jobs:
     steps:      
       - name: Print commit message from CLI
         run: |
-          COMMIT_MESSAGE=$(gh search commits --hash=${{ github.event.pull_request.head.sha }} --json)
+          COMMIT_MESSAGE=$(gh search commits --hash=${{ github.event.pull_request.head.sha }} --json=commit)
           echo "$COMMIT_MESSAGE"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
