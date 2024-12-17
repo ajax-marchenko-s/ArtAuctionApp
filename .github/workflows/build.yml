@@ -80,6 +80,10 @@ jobs:
       - name: Logging
         run: |
           echo "${{toJSON(github.event)}}"
+
+      - name: github.event.commits[0]
+        run: |
+          echo "${github.event.commits[0]}"
       
       - name: List commits on the pull request
         run: |
