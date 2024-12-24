@@ -29,7 +29,9 @@ jobs:
       - name: Print commit message from CLI
         run: |
            COMMIT_SHA=${{ github.event.pull_request.head.sha }}
-           echo "commit-full=$(gh api repos/${{ github.repository }}/commits/$COMMIT_SHA --jq)"
-           echo "commit-message=$(gh api repos/${{ github.repository }}/commits/$COMMIT_SHA --jq '.commit.message | tr -d '\n'')"
+           commit_full=$(gh api repos/ajax-marchenko-s/ArtAuctionApp/commits/$COMMIT_SHA --jq '.')
+           commit_message=$(gh api repos/ajax-marchenko-s/ArtAuctionApp/commits/$COMMIT_SHA --jq '.commit.message' | tr -d '\n')
+           echo "commit-full=$commit_full"
+           echo "commit-message=$commit_message"
         env:
            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
