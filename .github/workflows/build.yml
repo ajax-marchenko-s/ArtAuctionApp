@@ -29,7 +29,7 @@ jobs:
       - name: Print commit message from CLI
         run: |
            COMMIT_SHA=${{ github.event.pull_request.head.sha }}
-           COMMIT_JSON=$(gh search commits --hash=$COMMIT_SHA --json=commit)
-           echo "JSON: $COMMIT_JSON"
+           echo "commit-full=$(gh api repos/${{ github.repository }}/commits/$COMMIT_SHA --jq)"
+           echo "commit-message=$(gh api repos/${{ github.repository }}/commits/$COMMIT_SHA --jq '.commit.message | tr -d '\n'')"
         env:
            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
