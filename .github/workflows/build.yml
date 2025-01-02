@@ -40,4 +40,4 @@ jobs:
             curl -v \
           -H "Authorization: token $TOKEN" \
           -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/repos/$REPO/commits/$COMMIT_SHA"
+            "https://api.github.com/repos/$REPO/actions/runs/111111232456/attempts/1/jobs"
