@@ -34,7 +34,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           REPO=${{ github.repository }}
-          COMMIT_SHA=$COMMIT_SHA
+          COMMIT_SHA=ghjerkfbjerrjkrrr
           TOKEN=${{ secrets.GITHUB_TOKEN }}
   
             curl -v \
