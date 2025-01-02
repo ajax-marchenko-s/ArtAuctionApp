@@ -25,13 +25,13 @@ jobs:
       contents: read
       checks: write
 
-    steps:      
-      - name: Print commit message from CLI
-        run: |
-           COMMIT_SHA=${{ github.event.pull_request.head.sha }}
-           commit_full=$(gh api repos/ajax-marchenko-s/ArtAuctionApp/commits/$COMMIT_SHA --jq '.')
-           commit_message=$(gh api repos/ajax-marchenko-s/ArtAuctionApp/commits/$COMMIT_SHA --jq '.commit.message')
-           echo "commit-full=$commit_full"
-           echo "commit-message=$commit_message"
+    steps:
+      - name: Get Commit Message
+        id: get-commit-message
+        if: ${{ github.event_name == 'pull_request' }}
         env:
-           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "commit-message=$(gh api repos/${{ github.repository }}/commitsbhhbh/$COMMIT_SHA --jq '.commit.message' | head -n 1)" >> $GITHUB_OUTPUT
+        
