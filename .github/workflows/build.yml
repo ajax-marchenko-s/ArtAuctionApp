@@ -33,5 +33,11 @@ jobs:
           COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "commit-message=$(gh api repos/${{ github.repository }}/commitsbhhbh/$COMMIT_SHA)" >> $GITHUB_OUTPUT
-        
+          REPO=${{ github.repository }}
+          COMMIT_SHA=$COMMIT_SHA
+          TOKEN=${{ secrets.GITHUB_TOKEN }}
+  
+            curl -v \
+          -H "Authorization: token $TOKEN" \
+          -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/$REPO/commits/$COMMIT_SHA"
