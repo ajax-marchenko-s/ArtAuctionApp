@@ -28,10 +28,13 @@ runs:
         "echo action name ${{ inputs.action-name }}"
         "echo action inputs ${{ inputs.action-inputs }}"
 
-    - name: Proxy
-      id: proxy
-      uses: "${{ inputs.action-name }}"
-      with: ${{ fromJSON(inputs.action-inputs) }}
+    - name: Run Action
+      shell: bash
+      run: |
+        echo '${{ inputs.action-inputs }}' > action-inputs.json
+        gh workflow run "${{ inputs.action-name }}" --json-file action-inputs.json
+      env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 #    - name: Set outputs
 #      id: set-outputs
