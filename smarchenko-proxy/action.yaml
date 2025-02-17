@@ -42,6 +42,7 @@ runs:
         test-name: ${{ inputs.test-name }}
 
     - name: Set outputs
+      id: set-outputs
       shell: bash
       run: |
         echo Outputs from proxy action
