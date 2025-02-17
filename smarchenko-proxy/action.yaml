@@ -36,5 +36,6 @@ runs:
     - name: Set outputs
       shell: bash
       run: |
+        echo Outputs from proxy action
         echo "ref=${{ steps.proxy.outputs.ref }}" >> $GITHUB_OUTPUT
         echo "commit=${{ steps.proxy.outputs.commit }}" >> $GITHUB_OUTPUT
