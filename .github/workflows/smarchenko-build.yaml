@@ -20,11 +20,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: first step
-        run: echo "This is first step"
-
       - name: my action
+        id: my-action
         uses: ./smarchenko-proxy
         with:
           s3-destination-path: 'test'
 
+      - name: my-result
+        shell: bash
+        run: |
+          echo ref ${{ needs.my-action.outputs.ref }}
+          echo commit ${{ needs.my-action.outputs.commit }}
