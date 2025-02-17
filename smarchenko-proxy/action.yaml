@@ -33,16 +33,27 @@ runs:
       with:
         fetch-depth: 0
 
-    - name: Run Dynamic Action
+    - name: Convert JSON to Key-Value Format
+      id: parse_json
       shell: bash
       run: |
-        echo "Converting JSON to key-value format..."
-        echo '${{ inputs.action-inputs }}' | jq -r 'to_entries | map("--\(.key)=\"\(.value)\"") | join(" ")' > action-params.txt
-          
-        PARAMS=$(cat action-params.txt)
-        echo "Running action: ${{ inputs.action-name }} with params: $PARAMS"
-          
-        act -j "${{ inputs.action-name }}" $PARAMS
+        echo '${{ inputs.action-inputs }}' | jq -r 'to_entries | map("\(.key)=\(.value)") | join("\n")' >> $GITHUB_ENV
+
+    - name: Run Dynamic Action
+      id: proxy
+      uses: ${{ inputs.action-name }}
+      with: ${{ env }}
+
+#    - name: Run Action
+#      shell: bash
+#      run: |
+#        echo "Converting JSON to key-value format..."
+#        echo '${{ inputs.action-inputs }}' | jq -r 'to_entries | map("--\(.key)=\"\(.value)\"") | join(" ")' > action-params.txt
+#
+#        PARAMS=$(cat action-params.txt)
+#        echo "Running action: ${{ inputs.action-name }} with params: $PARAMS"
+#
+#        act -j "${{ inputs.action-name }}" $PARAMS
 
 #    - name: Run proxy
 #      id: proxy
