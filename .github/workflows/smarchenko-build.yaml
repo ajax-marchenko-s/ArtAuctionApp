@@ -24,7 +24,7 @@ jobs:
         id: my-action
         uses: ./smarchenko-proxy
         with:
-          action-name: my-name
+          action-name: './smarchenko'
           action-inputs: >
             {
                 "s3-destination-path":"some-value-1"
