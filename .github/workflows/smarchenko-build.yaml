@@ -24,13 +24,19 @@ jobs:
         id: my-action
         uses: ./smarchenko-proxy
         with:
-          s3-destination-path: 'my test'
+          action-name: my-name
+          action-inputs: >
+            {
+                "s3-destination-path":"some-value-1"
+            }
+#        with:
+#          s3-destination-path: 'my test'
 #          test-name: 'my test name'
 #          file-path: 'my file path'
 
-      - name: my-result
-        shell: bash
-        run: |
-          echo 'Outputs inside workflows'
-          echo 'ref ${{ steps.my-action.outputs.ref }}'
-          echo 'commit ${{ steps.my-action.outputs.commit }}'
+#      - name: my-result
+#        shell: bash
+#        run: |
+#          echo 'Outputs inside workflows'
+#          echo 'ref ${{ steps.my-action.outputs.ref }}'
+#          echo 'commit ${{ steps.my-action.outputs.commit }}'
