@@ -12,7 +12,7 @@ on:
 
 jobs:
   test-gha:
-    runs-on: ${{ vars.RUNNER_MICRO_ARM }}
+    runs-on: ubuntu-latest
     steps:
 
       - name: first step
