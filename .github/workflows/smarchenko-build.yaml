@@ -25,8 +25,8 @@ jobs:
         uses: ./smarchenko-proxy
         with:
           s3-destination-path: 'my test'
-          test-name: 'my test name'
-          file-path: 'my file path'
+#          test-name: 'my test name'
+#          file-path: 'my file path'
 
       - name: my-result
         shell: bash
