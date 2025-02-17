@@ -1,0 +1,42 @@
+name: smarchenko personal action
+description: svitlana's personal action
+
+inputs:
+  file-path:
+    description: Path to the file to upload to S3
+    required: false
+
+  s3-destination-path:
+    description: Destination path in the S3 bucket
+    required: true
+
+  test-name:
+    description: Destination path in the S3 bucket
+    required: false
+    default: "Svitlana"
+
+outputs:
+  ref:
+    description: 'The branch, tag or SHA that was checked out'
+    value: ${{ steps.set-outputs.outputs.ref }}
+  commit:
+    description: 'The commit SHA that was checked out'
+    value: ${{ steps.set-outputs.outputs.commit }}
+
+runs:
+  using: 'composite'
+
+  steps:
+    - name: Upload file to S3
+      shell: bash
+      run: |
+        'echo file-path ${{ inputs.file-path }}'
+        'echo s3-destination-path ${{ inputs.s3-destination-path }}'
+        'echo test-name ${{ inputs.test-name }}'
+
+    - name: Set outputs
+      id: set-outputs
+      shell: bash
+      run: |
+        echo "ref=${{ steps.checkout.outputs.ref }}" >> $GITHUB_OUTPUT
+        echo "commit=${{ steps.checkout.outputs.commit }}" >> $GITHUB_OUTPUT

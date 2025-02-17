@@ -1,0 +1,25 @@
+name: Playground for Svitlana Marchenko
+run-name: SMarchenko Workflow experiments
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  test-gha:
+    runs-on: ${{ vars.RUNNER_MICRO_ARM }}
+    steps:
+
+      - name: first step
+        run: echo "This is first step"
+
+      - name: my action
+        uses: ./smarchenko-proxy
+        with:
+          s3-destination-path: 'test'
+
