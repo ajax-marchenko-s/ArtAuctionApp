@@ -33,13 +33,19 @@ runs:
       with:
         fetch-depth: 0
 
-    - name: Run Action
-      shell: bash
-      run: |
-        echo '${{ inputs.action-inputs }}' > action-inputs.json
-        gh workflow run "${{ inputs.action-name }}" --json-file action-inputs.json
-      env:
-          GH_TOKEN: ${{ github.token }}
+    - name: Run proxy
+      id: proxy
+      uses: ${{ inputs.action-name }}
+      with: ${{ fromJSON(inputs.action-inputs) }}
+
+
+#    - name: Run Action
+#      shell: bash
+#      run: |
+#        echo '${{ inputs.action-inputs }}' > action-inputs.json
+#        gh workflow run "${{ inputs.action-name }}" --json-file action-inputs.json
+#      env:
+#          GH_TOKEN: ${{ github.token }}
 
 #    - name: Set outputs
 #      id: set-outputs
