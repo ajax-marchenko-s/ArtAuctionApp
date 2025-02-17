@@ -24,10 +24,12 @@ jobs:
         id: my-action
         uses: ./smarchenko-proxy
         with:
-          s3-destination-path: 'test'
+          s3-destination-path: 'my test'
+          test-name: 'my test name'
+          file-path: 'my file path'
 
       - name: my-result
         shell: bash
         run: |
-          echo ref ${{ needs.my-action.outputs.ref }}
-          echo commit ${{ needs.my-action.outputs.commit }}
+          echo 'ref ${{ needs.my-action.outputs.ref }}'
+          echo 'commit ${{ needs.my-action.outputs.commit }}'
