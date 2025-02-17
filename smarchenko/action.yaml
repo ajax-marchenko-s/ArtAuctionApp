@@ -30,13 +30,13 @@ runs:
     - name: Upload file to S3
       shell: bash
       run: |
-        'echo file-path ${{ inputs.file-path }}'
-        'echo s3-destination-path ${{ inputs.s3-destination-path }}'
-        'echo test-name ${{ inputs.test-name }}'
+        echo file-path ${{ inputs.file-path }}
+        echo s3-destination-path ${{ inputs.s3-destination-path }}
+        echo test-name ${{ inputs.test-name }}
 
     - name: Set outputs
       id: set-outputs
       shell: bash
       run: |
-        echo "ref=${{ steps.checkout.outputs.ref }}" >> $GITHUB_OUTPUT
-        echo "commit=${{ steps.checkout.outputs.commit }}" >> $GITHUB_OUTPUT
+        echo "ref=test-ref" >> $GITHUB_OUTPUT
+        echo "commit=test-commit" >> $GITHUB_OUTPUT
