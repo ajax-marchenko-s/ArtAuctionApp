@@ -25,8 +25,8 @@ runs:
       shell: bash
       run: |
         echo Inputs inside proxy action
-        "echo action name ${{ inputs.action-name }}"
-        "echo action inputs ${{ inputs.action-inputs }}"
+        echo "action name ${{ inputs.action-name }}"
+        echo "action inputs ${{ inputs.action-inputs }}"
 
     - name: Checkout
       uses: actions/checkout@v4
