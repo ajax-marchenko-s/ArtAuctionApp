@@ -31,5 +31,6 @@ jobs:
       - name: my-result
         shell: bash
         run: |
+          echo 'Outputs inside workflows'
           echo 'ref ${{ steps.my-action.outputs.ref }}'
           echo 'commit ${{ steps.my-action.outputs.commit }}'
