@@ -37,12 +37,18 @@ runs:
       id: parse_json
       shell: bash
       run: |
-        echo '${{ inputs.action-inputs }}' | jq -r 'to_entries | map("\(.key)=\(.value)") | join("\n")' >> $GITHUB_ENV
+          echo '${{ inputs.action-inputs }}' | jq -r 'to_entries | map("\(.key)=\"\(.value)\"") | join("\n")' >> $GITHUB_ENV
 
     - name: Run Dynamic Action
-      id: proxy
-      uses: ${{ inputs.action-name }}
-      with: ${{ env }}
+      shell: bash
+      run: |
+        echo "Running dynamic action: ${{ inputs.action-name }}"
+        echo "Inputs:"
+        env | grep -E '^s3-destination-path=' || true
+        echo "Executing..."
+        gh run start "${{ inputs.action-name }}"
+      env:
+        GH_TOKEN: ${{ github.token }}
 
 #    - name: Run Action
 #      shell: bash
