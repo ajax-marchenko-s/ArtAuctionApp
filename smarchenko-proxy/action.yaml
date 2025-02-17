@@ -28,6 +28,11 @@ runs:
         "echo action name ${{ inputs.action-name }}"
         "echo action inputs ${{ inputs.action-inputs }}"
 
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
     - name: Run Action
       shell: bash
       run: |
@@ -42,3 +47,12 @@ runs:
 #      run: |
 #        echo Outputs from proxy action
 #        echo "result=${{ steps.proxy.outputs }}" >> $GITHUB_OUTPUT
+
+#  - name: Run Action
+#    shell: bash
+#    run: |
+#      echo '${{ inputs.action-inputs }}' | jq -r 'to_entries | map("--\(.key) \"\(.value)\"") | join(" ")' > action-params.txt
+#      PARAMS=$(cat action-params.txt)
+#      echo "Running action: ${{ inputs.action-name }} with params: $PARAMS"
+#      act -j "${{ inputs.action-name }}" $PARAMS
+
