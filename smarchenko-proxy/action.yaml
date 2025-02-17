@@ -25,6 +25,14 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: Upload file to S3
+      shell: bash
+      run: |
+        echo Inputs inside proxy action
+        echo file-path ${{ inputs.file-path }}
+        echo s3-destination-path ${{ inputs.s3-destination-path }}
+        echo test-name ${{ inputs.test-name }}
+
     - name: Proxy
       id: proxy
       uses: ./smarchenko

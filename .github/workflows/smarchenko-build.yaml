@@ -31,5 +31,5 @@ jobs:
       - name: my-result
         shell: bash
         run: |
-          echo 'ref ${{ needs.my-action.outputs.ref }}'
-          echo 'commit ${{ needs.my-action.outputs.commit }}'
+          echo 'ref ${{ steps.my-action.outputs.ref }}'
+          echo 'commit ${{ steps.my-action.outputs.commit }}'
