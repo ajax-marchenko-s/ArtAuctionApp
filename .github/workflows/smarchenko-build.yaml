@@ -32,7 +32,7 @@ jobs:
         uses: ./my-proxy
         with:
           uses: 'Kaven-Universe/github-action-current-date-time@v1'
-          with: '{"format": "DD-MM-YYYY"}'
+          with: '{"format": "YYYY-MM-DD"}'
 
       - name: my action outputs
         shell: bash
