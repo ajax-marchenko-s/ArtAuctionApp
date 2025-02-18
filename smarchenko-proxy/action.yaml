@@ -1,0 +1,84 @@
+name: Checkout@v4
+description: Proxy for actions/checkout@v4
+
+inputs:
+  action-name:
+    required: true
+    description: action to call
+
+  action-inputs:
+    description: inputs for action
+    required: true
+
+
+#outputs:
+#  result:
+#    description: 'all outputs'
+#    value: ${{ steps.set-outputs.outputs.result }}
+
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Upload file to S3
+      shell: bash
+      run: |
+        echo Inputs inside proxy action
+        echo "action name ${{ inputs.action-name }}"
+        echo "action inputs ${{ inputs.action-inputs }}"
+
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Run proxy
+      id: proxy
+      uses: ${{ inputs.action-name }}
+      with: ${{ fromJSON(inputs.action-inputs) }}
+
+#    - name: Convert JSON
+#      id: parse_json
+#      shell: bash
+#      run: |
+#          echo '${{ inputs.action-inputs }}' | jq -r 'to_entries | map("\(.key)=\"\(.value)\"") | join("\n")' >> $GITHUB_ENV
+
+#    - name: Run Dynamic Action
+#      shell: bash
+#      run: |
+#        echo "Running dynamic action: ${{ inputs.action-name }}"
+#        echo "Inputs:"
+#        env | grep -E '^s3-destination-path=' || true
+#        echo "Executing..."
+#        gh run start "${{ inputs.action-name }}"
+#      env:
+#        GH_TOKEN: ${{ github.token }}
+
+#    - name: Run Action
+#      shell: bash
+#      run: |
+#        echo "Converting JSON to key-value format..."
+#        echo '${{ inputs.action-inputs }}' | jq -r 'to_entries | map("--\(.key)=\"\(.value)\"") | join(" ")' > action-params.txt
+#
+#        PARAMS=$(cat action-params.txt)
+#        echo "Running action: ${{ inputs.action-name }} with params: $PARAMS"
+#
+#        act -j "${{ inputs.action-name }}" $PARAMS
+
+#    - name: Run Action
+#      shell: bash
+#      run: |
+#        echo '${{ inputs.action-inputs }}' > action-inputs.json
+#        gh workflow run "${{ inputs.action-name }}" --json-file action-inputs.json
+#      env:
+#          GH_TOKEN: ${{ github.token }}
+
+#    - name: Set outputs
+#      id: set-outputs
+#      shell: bash
+#      run: |
+#        echo Outputs from proxy action
+#        echo "result=${{ steps.proxy.outputs }}" >> $GITHUB_OUTPUT
+
+

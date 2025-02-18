@@ -1,0 +1,16 @@
+name: Playground for Svitlana Marchenko
+run-name: SMarchenko Workflow experiments
+
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  first-job:
+    uses: ./.github/workflows/my-workflow.yaml
+    with:
+      name: "Svitlana"

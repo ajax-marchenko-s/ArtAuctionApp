@@ -1,0 +1,33 @@
+name: Playground for Svitlana Marchenko workflow3
+run-name: SMarchenko Reusable workflow3
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        description: 'Your name'
+        type: string
+        required: true
+
+jobs:
+  first-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: my action with proxy
+        id: my-action-with-proxy
+        uses: ./my-proxy
+        with:
+          uses: './smarchenko'
+          with: '{
+        my-secret : ${{ inputs.name }}
+        }'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'

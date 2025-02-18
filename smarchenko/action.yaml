@@ -1,0 +1,33 @@
+name: smarchenko personal action
+description: svitlana's personal action
+
+inputs:
+  my-secret:
+    description: Path to the file to upload to S3
+    required: false
+
+outputs:
+  ref:
+    description: 'The branch, tag or SHA that was checked out'
+    value: ${{ steps.set-outputs.outputs.ref }}
+  commit:
+    description: 'The commit SHA that was checked out'
+    value: ${{ steps.set-outputs.outputs.commit }}
+
+runs:
+  using: 'composite'
+
+  steps:
+    - name: Get a test key
+      id: get-key
+      shell: bash
+      run: |
+        echo "Test: ${{ inputs.my-secret }}"
+
+    - name: Set outputs
+      id: set-outputs
+      shell: bash
+      run: |
+        echo Outputs from original action
+        echo "ref=test-ref" >> $GITHUB_OUTPUT
+        echo "commit=test-commit" >> $GITHUB_OUTPUT
