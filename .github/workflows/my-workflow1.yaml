@@ -11,6 +11,6 @@ on:
 
 jobs:
   first-job:
-    uses: ./.github/workflows/my-workflow3.yaml@feature/test-proxy-gha
+    uses: ./.github/workflows/my-workflow2.yaml
     with:
       name: ${{ inputs.name }}
