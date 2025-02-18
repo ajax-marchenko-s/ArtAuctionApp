@@ -32,3 +32,98 @@ jobs:
         shell: bash
         run: |
           echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
