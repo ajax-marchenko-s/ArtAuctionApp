@@ -22,10 +22,11 @@ jobs:
       - name: my action with proxy
         id: my-action-with-proxy
         uses: ./my-proxy
-#        secrets: inherit
         with:
           uses: './smarchenko'
-          with: '{}'
+          with: '{
+          my-secret : ${{ secrets.TEST_KEY }}
+          }'
 
       - name: my action with proxy outputs
         shell: bash

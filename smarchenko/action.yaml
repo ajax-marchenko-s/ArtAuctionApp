@@ -2,18 +2,9 @@ name: smarchenko personal action
 description: svitlana's personal action
 
 inputs:
-  file-path:
+  my-secret:
     description: Path to the file to upload to S3
     required: false
-
-  s3-destination-path:
-    description: Destination path in the S3 bucket
-    required: true
-
-  test-name:
-    description: Destination path in the S3 bucket
-    required: false
-    default: "Svitlana"
 
 outputs:
   ref:
