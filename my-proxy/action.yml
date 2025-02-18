@@ -9,6 +9,7 @@ inputs:
     description: 'JSON-ified `inputs` for the action, e.g. `{"node-version": "18"}`'
     required: false
     default: "{}"
+
 outputs:
   outputs:
     description: 'JSON-ified `outputs` from the action, e.g. `{"node-version": "v18.12.0", "cache-hit": true}`'
@@ -29,4 +30,6 @@ runs:
       id: set-outputs
       shell: bash
       run: |
-        echo "outputs=${{ steps.dynamic-uses.outputs.outputs }}" >> $GITHUB_OUTPUT
+          echo "outputs<<EOF" >> "$GITHUB_OUTPUT"
+          echo "${{ steps.dynamic-uses.outputs.outputs }}" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
