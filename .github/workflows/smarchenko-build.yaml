@@ -2,7 +2,6 @@ name: Playground for Svitlana Marchenko
 run-name: SMarchenko Workflow experiments
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - 'master'
@@ -23,13 +22,12 @@ jobs:
       - name: my action with proxy
         id: my-action-with-proxy
         uses: ./my-proxy
+#        secrets: inherit
         with:
-          uses: 'Kaven-Universe/github-action-current-date-time@v1'
-          with: '{"format": "YYYY-MM-DD"}'
+          uses: './smarchenko'
+          with: '{}'
 
       - name: my action with proxy outputs
         shell: bash
         run: |
           echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
-          TIME=$(echo '${{ steps.my-action-with-proxy.outputs.outputs }}' | jq -r '.time')
-          echo "My action with proxy time $TIME"

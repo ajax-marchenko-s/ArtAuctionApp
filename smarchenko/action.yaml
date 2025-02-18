@@ -27,13 +27,11 @@ runs:
   using: 'composite'
 
   steps:
-    - name: Upload file to S3
+    - name: Get a test key
+      id: get a test key
       shell: bash
       run: |
-        echo Inputs inside original action
-        echo file-path ${{ inputs.file-path }}
-        echo s3-destination-path ${{ inputs.s3-destination-path }}
-        echo test-name ${{ inputs.test-name }}
+        echo "Test: ${{ secrets.TEST_KEY }}"
 
     - name: Set outputs
       id: set-outputs
