@@ -20,16 +20,6 @@ jobs:
         with:
           fetch-depth: 0
 
-#      - name: my action
-#        id: my-action
-#        uses: ./smarchenko-proxy
-#        with:
-#          action-name: './smarchenko'
-#          action-inputs: >
-#            {
-#                "s3-destination-path":"some-value-1"
-#            }
-
       - name: my action
         id: my-action
         uses: jenseng/dynamic-uses@v1
@@ -37,8 +27,20 @@ jobs:
           uses: Kaven-Universe/github-action-current-date-time@v1
           with: '{"format": "YYYY-MM-DD"}'
 
-      - name: my action result
+      - name: my action with proxy
+        id: my-action-with-proxy
+        uses: ./my-proxy
+        with:
+          uses: 'Kaven-Universe/github-action-current-date-time@v1'
+          with: '{"format": "DD-MM-YYYY"}'
+
+      - name: my action outputs
         shell: bash
         run: |
-          echo 'Outputs ${{ steps.my-action.outputs.outputs }}'
+          echo 'My action outputs ${{ steps.my-action.outputs.outputs }}'
+
+      - name: my action with proxy outputs
+        shell: bash
+        run: |
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
 
