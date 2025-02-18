@@ -1,0 +1,16 @@
+name: Playground for Svitlana Marchenko workflow2
+run-name: SMarchenko Reusable workflow2
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        description: 'Your name'
+        type: string
+        required: true
+
+jobs:
+  first-job:
+    uses: ./.github/workflows/my-workflow3.yaml@feature/test-proxy-gha
+    with:
+      name: ${{ inputs.name }}
