@@ -22,7 +22,7 @@ jobs:
       - name: my action with proxy
         id: my-action-with-proxy
         uses: ./my-proxy
-#        secrets: inherit
+        secrets: inherit
         with:
           uses: './smarchenko'
           with: '{}'
