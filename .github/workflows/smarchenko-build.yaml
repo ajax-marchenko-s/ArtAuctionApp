@@ -25,6 +25,6 @@ jobs:
       - name: my action with proxy outputs
         shell: bash
         run: |
-          echo 'My action with proxy outputs ${{ steps.my-action.outputs.outputs }}'
-          TIME=$(echo '${{ steps.foo.outputs.outputs }}' | jq -r '.time')
+          echo 'My action with proxy outputs ${{ steps.my-action-with-proxy.outputs.outputs }}'
+          TIME=$(echo '${{ steps.my-action-with-proxy.outputs.outputs }}' | jq -r '.time')
           echo "My action with proxy time $TIME"
