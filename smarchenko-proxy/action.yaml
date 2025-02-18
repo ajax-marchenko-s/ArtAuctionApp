@@ -33,22 +33,27 @@ runs:
       with:
         fetch-depth: 0
 
-    - name: Convert JSON to Key-Value Format
-      id: parse_json
-      shell: bash
-      run: |
-          echo '${{ inputs.action-inputs }}' | jq -r 'to_entries | map("\(.key)=\"\(.value)\"") | join("\n")' >> $GITHUB_ENV
+    - name: Run proxy
+      id: proxy
+      uses: ${{ inputs.action-name }}
+      with: ${{ fromJSON(inputs.action-inputs) }}
 
-    - name: Run Dynamic Action
-      shell: bash
-      run: |
-        echo "Running dynamic action: ${{ inputs.action-name }}"
-        echo "Inputs:"
-        env | grep -E '^s3-destination-path=' || true
-        echo "Executing..."
-        gh run start "${{ inputs.action-name }}"
-      env:
-        GH_TOKEN: ${{ github.token }}
+#    - name: Convert JSON
+#      id: parse_json
+#      shell: bash
+#      run: |
+#          echo '${{ inputs.action-inputs }}' | jq -r 'to_entries | map("\(.key)=\"\(.value)\"") | join("\n")' >> $GITHUB_ENV
+
+#    - name: Run Dynamic Action
+#      shell: bash
+#      run: |
+#        echo "Running dynamic action: ${{ inputs.action-name }}"
+#        echo "Inputs:"
+#        env | grep -E '^s3-destination-path=' || true
+#        echo "Executing..."
+#        gh run start "${{ inputs.action-name }}"
+#      env:
+#        GH_TOKEN: ${{ github.token }}
 
 #    - name: Run Action
 #      shell: bash
@@ -60,12 +65,6 @@ runs:
 #        echo "Running action: ${{ inputs.action-name }} with params: $PARAMS"
 #
 #        act -j "${{ inputs.action-name }}" $PARAMS
-
-#    - name: Run proxy
-#      id: proxy
-#      uses: ${{ inputs.action-name }}
-#      with: ${{ fromJSON(inputs.action-inputs) }}
-
 
 #    - name: Run Action
 #      shell: bash
@@ -82,11 +81,4 @@ runs:
 #        echo Outputs from proxy action
 #        echo "result=${{ steps.proxy.outputs }}" >> $GITHUB_OUTPUT
 
-#  - name: Run Action
-#    shell: bash
-#    run: |
-#      echo '${{ inputs.action-inputs }}' | jq -r 'to_entries | map("--\(.key) \"\(.value)\"") | join(" ")' > action-params.txt
-#      PARAMS=$(cat action-params.txt)
-#      echo "Running action: ${{ inputs.action-name }} with params: $PARAMS"
-#      act -j "${{ inputs.action-name }}" $PARAMS
 
