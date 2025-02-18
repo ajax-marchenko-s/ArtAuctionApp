@@ -15,6 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: my action with proxy
         id: my-action-with-proxy
         uses: ./my-proxy
