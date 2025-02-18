@@ -30,8 +30,10 @@ runs:
     - name: Get a test key
       id: get-key
       shell: bash
+      env:
+        TEST: ${{ secrets.TEST_KEY }}
       run: |
-        echo "Test: ${{ secrets.TEST_KEY }}"
+        echo "Test: $TEST"
 
     - name: Set outputs
       id: set-outputs
