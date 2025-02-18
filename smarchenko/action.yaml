@@ -28,7 +28,7 @@ runs:
 
   steps:
     - name: Get a test key
-      id: get a test key
+      id: get-key
       shell: bash
       run: |
         echo "Test: ${{ secrets.TEST_KEY }}"
