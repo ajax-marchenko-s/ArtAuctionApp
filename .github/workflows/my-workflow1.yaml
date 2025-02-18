@@ -11,6 +11,6 @@ on:
 
 jobs:
   first-job:
-    uses: ./.github/workflows/my-workflow2.yaml
+    uses: ./.github/workflows/my-workflow1.yaml
     with:
       name: ${{ inputs.name }}
