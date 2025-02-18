@@ -15,18 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: my action
-        id: my-action
-        uses: jenseng/dynamic-uses@v1
-        with:
-          uses: Kaven-Universe/github-action-current-date-time@v1
-          with: '{"format": "YYYY-MM-DD"}'
-
       - name: my action with proxy
         id: my-action-with-proxy
         uses: ./my-proxy
@@ -34,13 +22,9 @@ jobs:
           uses: 'Kaven-Universe/github-action-current-date-time@v1'
           with: '{"format": "YYYY-MM-DD"}'
 
-      - name: my action outputs
-        shell: bash
-        run: |
-          echo 'My action outputs ${{ steps.my-action.outputs.outputs }}'
-
       - name: my action with proxy outputs
         shell: bash
         run: |
           echo 'My action with proxy outputs ${{ steps.my-action.outputs.outputs }}'
-
+          TIME=$(echo '${{ steps.foo.outputs.outputs }}' | jq -r '.time')
+          echo "My action with proxy time $TIME"
